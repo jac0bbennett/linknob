@@ -74,10 +74,10 @@ def signup():
                 return render_template('signup.html', title=title, invitecode=invitecode)
             # Validate the invite code
             invitecheck = Invite.query.filter_by(code=invitecode).first()
-            if (invitecheck == None or invitecheck.activated == 1) and invitecode != 'STEWIEGRIFFIN4':
+            if invitecheck == None or invitecheck.activated == 1:
                 flash('Invalid Invite Code! If you do not have one, get one from someone who has an account.')
                 return render_template('signup.html', title=title)
-            elif invitecheck != None or invitecode == 'STEWIEGRIFFIN4':
+            elif invitecheck != None:
                 saltkey = email.encode('utf-8')
                 key = key.encode('utf-8')
                 pepperkey = pepper.encode('utf-8')
@@ -90,10 +90,9 @@ def signup():
                     db.session.add(user)
                     db.session.commit()
                     # Set invite to Used
-                    if invitecode != 'STEWIEGRIFFIN4':
-                        invitecheck.activated = 1
-                        invitecheck.userid = User.query.filter_by(pseudo=pseudo).first().id
-                        db.session.commit()
+                    invitecheck.activated = 1
+                    invitecheck.userid = User.query.filter_by(pseudo=pseudo).first().id
+                    db.session.commit()
                     # Send confirmation Email
                     requests.post(
                         "https://api.mailgun.net/v3/linknob.com/messages",
