@@ -1,5 +1,9 @@
+# 11/28/16 bV1.0.4.6
+  - Page refreshes on back button for lasted data
+================================================================================
 # 11/15/16 bV1.0.4.5
   - Shows user's points on profile
+  - Shows hot links on homepage
 ================================================================================
 # 11/15/16 bV1.0.4.4
   - Modified User and Chain search algorithms
