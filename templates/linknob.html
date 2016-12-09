@@ -1,0 +1,72 @@
+{% extends 'base.html' %}{% block content %}
+<body>
+    <div id="links">
+      <button posit='+' class="add toggle">+</button>
+        <div class="addlnc">
+            {% if 'user' in session %}
+            <div>
+                <h3>Post a Link:</h3>
+                <center>
+                    <input type="text" name="link" id="link" placeholder="Link">
+                    <br>
+                    <br>
+                    <input type="text" name="comment" id="comment" placeholder="Comment/Tags (Optional)">
+                    <br>
+                    <br>
+                    <input type="text" name="ptname" id="ptname" placeholder="Point Name (default=Cool)">
+                    <br>
+                    <br>
+                    <button class="sublnc greenbutton" style="background: #29bf5d;">Submit</button><span class="msg"></span>
+                </center>
+            </div>
+            {% else %}
+            <h3>Please Sign in to add a Link</h3> {% endif %}
+            <br>
+            <hr>
+        </div>
+        <div id="catg">
+            {% if catg == 'new' %}<a tip="New" class="tooltip newicon" href="/i/new"><img title="New" src="/static/images/newhover.png" width="35px" align="middle"></a>{% else %}
+            <a tip="New" class="tooltip newicon" href="/i/new"><img class="newicon" src="/static/images/newbefore.png" width="35px" align="middle">
+            </a>{% endif %} {% if catg == 'scored' %}<a tip="Scored" class="tooltip" href="/i/scored"><img title="Scored" src="/static/images/scoredhover.png" width="28px" align="middle"></a>{% else %}
+            <a tip="Scored" class="tooltip" href="/i/scored"><img class="todayicon" src="/static/images/scoredbefore.png" width="28px" align="middle">
+            </a>{% endif %}{% if catg == 'top' %}<a tip="Top" class="tooltip topicon" href="/i/top"><img title="Top" src="/static/images/tophover.png" width="32px" align="middle"></a>{% else %}
+            <a tip="Top" class="tooltip topicon" href="/i/top"><img class="topicon" src="/static/images/topbefore.png" width="32px" align="middle">
+            </a>{% endif %}
+        </div>
+        {% if catg == 'scored' %}
+        <h4>The "Scored" algorithm is currently in the Alpha stages. You can help it improve by using points.</h4>
+        {% endif %}
+        <br>
+        <div id="link_container">
+            {% include "post.html" %}
+        </div>
+        <div class=pagination>
+            {% if pagination.has_prev %}
+            <a class="profilelink" style="float:left;" href="/i/{{ catg }}?after={{ after }}&page={{ pagination.page - 1 }}">
+                < {{ pagination.page - 1 }} Page</a>
+                    {% endif %} {% if pagination.has_next %}
+                    <a class="profilelink" style="float:right;" href="/i/{{ catg }}?after={{ after }}&page={{ pagination.page + 1 }}">Page {{ pagination.page + 1 }} ></a> {% endif %}
+                    <br>
+        </div>
+        <br>
+        <h3 style="display:inline;">Top Trending Urls: </h3>
+        {% for url in trendingurls %}
+        <span class="graytext">{{ url }}</span>
+        {% endfor %}
+        <br>
+    </div>
+    <div id="ad">
+        <h4>Advertisement:</h4>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Linknob responsive -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-9370950272768707"
+     data-ad-slot="2194741873"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    </div>
+    </body>
+{% endblock %}

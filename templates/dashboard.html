@@ -1,0 +1,44 @@
+{% extends 'base.html' %}{% block content %}
+<body>
+          <div id="links">
+            <div class="gencontent">
+              <h4>Statistics:</h4>
+              <div style="font-size: 11pt;font-family:Roboto;">
+                Total Users: <b>{{ totalusers }}</b><br>
+                Total Links: <b>{{ totallinks }}</b><br>
+                Total Points: <b>{{ totalpoints }}</b><br><hr>
+                <h4>Recent Users:</h4>
+                {% for user in users %}
+                <a class="genlink" href="/{{ user.pseudo }}">{{ user.name }}</a> | {{ user.pseudo }} | {% if user.joindate != None %}{{ user.joindate|datetimeformat }}{% endif %}<br><br>
+                {% endfor %}
+                <hr>
+                <h4>Recent Links:</h4>
+                {% for link in links %}
+                <a class="genlink" href="/link/{{ link.uuid }}">{% if link.title == None or link.title == 'None' %}<a id="{{ link.id }}" href="/link/{{ link.uuid }}" target="_blank" rel="nofollow" class="genlink">{{ link.link|truncate(50) }}</a> {% else %}
+                <a id="{{ link.id }}" href="/link/{{ link.uuid }}" target="_blank" rel="nofollow" class="genlink">{{ link.title|truncate(100) }}</a>
+                <span class="linkurl">{{ link.link|truncate(50) }}</span> {% endif %}</a> | {{ link.pseudo() }} | {{ link.time|datetimeformat }}<br><br>
+                {% endfor %}
+                <hr>
+                <h4>Recent Points:</h4>
+                {% for point in points %}
+                <a class="genlink" href="/link/{{ point.link|linkuuid }}">{{ point.link|linkid }}</a> | {{ point.pseudo() }} | {{ point.time|datetimeformat }}<br><br>
+                {% endfor %}
+                <hr>
+                <h4>Trends:</h4>
+                <b>Top 3 Urls: </b>
+                {% for url in trendingurls %}
+                <span class="graytext">{{ url }}</span>
+                {% endfor %}
+                <hr>
+                <h4>Pages:</h4>
+                <a href="/i/newdoc"><button style="float:right;" class="greenbutton">+New</button></a>
+                {% if activepage %}Active: <a href="/i/editdoc/{{ activepage.url }}" class="genlink">{{ activepage.header }}</a><br><br>{% endif %}
+                Others: <br>
+                {% for page in pages %}
+                <a href="/i/editdoc/{{ page.url }}" class="genlink">{{ page.title }}</a> |
+                {% endfor %}
+              </div>
+          </div>
+        </div>
+    </div>
+  </body> {% endblock %}

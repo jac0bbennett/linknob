@@ -1,0 +1,47 @@
+{% extends 'base.html' %}{% block content %}
+
+<body>
+    <div id="links">
+        <span style="float:right;" class="graytext" title="Points">🔺{{ user.points|conInt }}</span>
+        <h1>{{ user.name }}{% if user.verified == 1 %} <span class="tooltip" tip="{{ user.flair }}"><img src="/static/images/verified.png" width="32px" style="vertical-align:middle;"></span>{% endif %}</h1>
+        <span class="graytext" style="font-size:16pt;">{{ user.pseudo }}</span> {% if user.istrailing() != True %}{% if 'user' in session and session['userid'] != user.id %}
+        <button id="trail" data-userid="{{ user.id }}" class="unfollow-button" style="display:none;">&#10003;Trailing</button>
+        <button id="trail" data-userid="{{ user.id }}" class="follow-button">+Trail</button>{% elif 'user' in session and session['userid'] == user.id %}<span style="float:right;">{% if user.rank >= 2 or user.verified == 1 %}<a href="/i/invite" class="genlink">Invites</a> |{% endif %} <a href="/i/settings" class="genlink">Settings</a> | <a href="/i/signout" class="genlink">Sign Out</a></span>{% endif %}{% else %}
+        <button id="trail" data-userid="{{ user.id }}" class="follow-button" style="display:none;">+Trail</button>
+        <button id="trail" data-userid="{{ user.id }}" class="unfollow-button">&#10003;Trailing</button>{% endif %}<br><br>
+        <span class="graytext">{{ user.bio|hashtag }}</span>
+        <center>
+            <table id="profilestats">
+                <tr>
+                    <th style="border-bottom: 2px solid #EA4335;" class="stattitle" align="center">Posts</th>
+                    <th class="stattitle" align="center" style="border-bottom: 2px solid #FBBC05;">Trailers</th>
+                    <th class="stattitle" align="center" style="border-bottom: 2px solid #34A853;">Trailing</th>
+                </tr>
+                <tr>
+                    <td align="center" style="color:#EA4335"><a href="/{{ user.pseudo }}" class="statlink">{{ user.postcount() }}</a></td>
+                    <td align="center" style="color:#FBBC05;"><a href="/{{ user.pseudo }}/trailers" class="statlink">{{ user.trailscount() }}</a></td>
+                    <td align="center" style="color:#34A853;"><a href="/{{ user.pseudo }}/trailing" class="statlink">{{ user.trailingcount() }}</a></td>
+            </table>
+        </center>
+        <div id="catg">
+            {% if catg == 'new' %}<a tip="New" class="tooltip newicon" href="/{{ user.pseudo }}"><img title="New" src="/static/images/newhover.png" width="35px" align="middle"></a>{% else %}
+            <a tip="New" class="tooltip newicon" href="/{{ user.pseudo }}"><img class="newicon" src="/static/images/newbefore.png" width="35px" align="middle">
+            </a>{% endif %} {% if catg == 'top' %}<a tip="Top" class="tooltip topicon" href="/{{ user.pseudo }}?catg=top"><img title="Top" src="/static/images/tophover.png" width="32px" align="middle"></a>{% else %}
+            <a tip="Top" class="tooltip topicon" href="/{{ user.pseudo }}?catg=top"><img class="topicon" src="/static/images/topbefore.png" width="32px" align="middle">
+            </a>{% endif %}
+        </div>
+        <a href="/{{ user.pseudo }}/chains" class="genlink" style="float:right;margin-top:-15px;">Chains</a>
+        <br>
+        {% block profcontent %}{% endblock %}
+        <br>
+    </div>
+    <div id="ad">
+        <h4>Advertisement:</h4>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- linknob responsive -->
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9370950272768707" data-ad-slot="2194741873" data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+  </body> {% endblock %}

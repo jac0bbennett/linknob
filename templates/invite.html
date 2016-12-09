@@ -1,0 +1,46 @@
+{% extends 'base.html' %}{% block content %}
+
+<body>
+    <div id="links">
+      <div class="gencontent">
+      <span class="graytext" style="line-height:150%;">
+        <b style="color:#000;">Instructions: </b>To generate an invite, click the "Generate Invite" button. A code will then be added to the top of the table.
+        Then send the person of your choice the corresponding URL. After they signup, the status will changed to "Used".</span>
+        <h1>Get Invite</h1> <h3><span id="inviteremain">{{ remain }}</span> out of 5 remaining</h3>
+        {% if remain != 0 %}
+        <button class="greenbutton geninvite">
+          Generate Invite
+        </button>
+        {% endif %}
+        <hr><center>
+        <h3>Generated Invites</h3>
+        <table id="stats">
+          <thead>
+          <tr>
+              <th style="border-bottom: 2px solid #EA4335;" class="stattitle" align="center">Code</th>
+              <th class="stattitle" align="center" style="border-bottom: 2px solid #FBBC05;">Date Created</th>
+              <th class="stattitle" align="center" style="border-bottom: 2px solid #34A853;">Status</th>
+              <th class="stattitle" align="center" style="border-bottom: 2px solid #EA4335;">Url</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for invite in invites %}
+            <tr>
+              <td>{{ invite.code }}</td><td>{{ invite.timegen|datetimeformat }}</td><td>{% if invite.activated == 0 %}Active{% else %}Used{% endif %}</td>
+              <td>http://lknb.co/signup?code={{ invite.code }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        </table>
+      </center>
+    </div></div>
+    <div id="ad">
+        <h4>Advertisement:</h4>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- linknob responsive -->
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9370950272768707" data-ad-slot="2194741873" data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+  </body>{% endblock %}

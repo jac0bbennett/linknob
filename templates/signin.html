@@ -1,0 +1,32 @@
+{% extends 'base.html' %}{% block content %}
+
+<body>
+    <div id="links" style="width:400px;">
+      <div class="gencontent">
+        <center>
+            <form class="sigfor" method="post">
+                <h1 style="color:#2196F3;">Sign In</h1>
+                {% with messages = get_flashed_messages() %} {% if messages %}
+                <div class="flash">
+                    <center> {% for message in messages %}{{ message }}
+                        <br>{% endfor %}
+                    </center>
+                </div>
+                {% endif %} {% endwith %}
+                <br>
+                <input type="text" required="true" placeholder="pseudonym" name="pseudonym" class="pseudonym geninput">
+                <br>
+                <br>
+                <br>
+                <input type="password" required="true" placeholder="key" name="key" class="key geninput">
+                <br>
+                <br>
+                <a href="/signup" class="genlink">Sign Up</a> |
+                <button class="greenbutton signinbut" style="float:none;" type="submit">Sign In</button>
+                <br><br>
+                <a class="graytext" href="/i/resetkey" style="font-size:10pt;float:right;">Forgot key?</a>
+            </form>
+    </div></div>
+    </center>
+        <br>
+        {% endblock %}

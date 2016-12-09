@@ -1,0 +1,13 @@
+{% extends 'profilebase.html' %}{% block profcontent %}
+
+
+        <div id="statblock">
+        <center><h2>{{ statname }}</h2></center>
+        {% for stat in stats %}
+        {% if statname == 'Trailing' %}
+        <a class="genlink" href="/{{ stat.followed|userid }}">{{ stat.followed|userid }}</a><br><br>
+        {% else %}
+        <a class="genlink" href="/{{ stat.follower|userid }}">{{ stat.follower|userid }}</a><br><br>
+        {% endif %}
+        {% endfor %}
+      </div>{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}{% block content %}
+<div id="links">
+<center><h4>Interactions Beta</h4></center>
+<b>Latest:</b> <a class="genlink" {% if catg=='points' %}style="border-bottom: 2px solid #303F9F;"{% endif %} href="/i/interactions">Points <span class="orngtext">{{ pointcount }}</span></a> |
+<a class="genlink" {% if catg=='trails' %}style="border-bottom: 2px solid #303F9F;"{% endif %} href="/i/interactions?catg=trails">Trails <span class="orngtext">{{ trailcount }}</span></a>
+|
+<a class="genlink" {% if catg=='comments' %}style="border-bottom: 2px solid #303F9F;"{% endif %} href="/i/interactions?catg=comments">Comments <span class="orngtext">{{ commentcount }}</span></a>
+<hr><br>
+{% if catg == 'points' %}
+{% for point in points %}
+  <a class="genlink" href="/{{ point.pseudo() }}">{{ point.pseudo() }}</a> <span class="graytext">{{ point.amount }} points on
+  <a class="genlink" href="/link/{{ point.link|linkuuid }}">{{ point.link|linkid|truncate(150) }}</a> {{ point.time|datetimeformat }}</span><br><br>
+{% else %}
+  <h3>This is where you can view the most recent points given to your links</h3>
+{% endfor %}
+{% elif catg == 'trails' %}
+{% for trail in trails %}
+  <a class="genlink" href="/{{ trail.follower|userid }}">{{ trail.follower|userid }}</a> <span class="graytext"> trailed you
+  {{ trail.time|datetimeformat }}</span><br><br>
+{% else %}
+  <h3>This is where you can view the users who have trailed you most recently</h3>
+{% endfor %}
+{% elif catg == 'comments' %}
+{% for comment in comments %}
+  <a class="genlink" href="/{{ comment.pseudo() }}">{{ comment.pseudo() }}</a> <span class="graytext">commented on your link:
+  <a class="genlink" href="/link/{{ comment.link|linkuuid }}#commentthread">{{ comment.text|truncate(150) }}</a> {{ comment.time|datetimeformat }}</span><br><br>
+{% else %}
+  <h3>This is where you can view recent comments</h3>
+{% endfor %}
+{% endif %}
+</div>
+{% endblock %}

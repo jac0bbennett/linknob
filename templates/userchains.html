@@ -1,0 +1,13 @@
+{% extends 'profilebase.html' %}{% block profcontent %}
+        <center><h2>Chains</h2></center>
+        {% for chain in chains %}
+        <a href="/c/{{ chain.uuid }}" class="genlink" style="font-size:14pt;">{{ chain.title }}</a>{% if chain.visibility == 2 %} <span class="graytext" style="font-size:11pt">- Unlisted</span>{% endif %}<br>
+        <span class="graytext">{{ chain.description }}</span>
+        <hr> {% else %}
+        <center>
+            <h3>No chains yet!</h3>
+        </center>
+        {% endfor %}
+
+        <br>
+    {% endblock %}

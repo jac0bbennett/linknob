@@ -1,0 +1,52 @@
+{% extends 'base.html' %}{% block content %}
+<body>
+    <div id="links">
+        <button posit='+' class="add toggle">+</button>
+        <div class="addlnc">
+            {% if 'user' in session %}
+            <div>
+                <h3>Create a new chain:</h3>
+                <center>
+                    <input type="text" name="chainlink" id="chaintitle" placeholder="Title">
+                    <br>
+                    <br>
+                    <input type="text" name="chaindesc" id="chaindesc" placeholder="Description">
+                    <br>
+                    <br></center>
+                    <h4>Visibility</h4>
+                    <label><input type="radio" name="visibility" value="Public" checked> Public</label> |
+                    <label><input type="radio" name="visibility" value="Unlisted"> Unlisted</label>
+                    <br>
+                    <br><center>
+                    <button class="subchain greenbutton" style="background: #29bf5d;">Create</button><span class="msg"></span></center>
+
+            </div>
+            {% else %}
+            <h3>Please Sign in to add a Link</h3> {% endif %}
+            <br>
+            <hr>
+        </div>
+        <br>
+        <div class="gencontent">
+          <center><h2>Chains</h2></center>
+          {% for chain in chains %}
+          <a href="/c/{{ chain.uuid }}" class="genlink" style="font-size:14pt;">{{ chain.title }}</a><br>
+          <span class="graytext">{{ chain.description }}</span>
+          <hr> {% else %}
+          <center>
+              <h3>No chains yet!</h3>
+          </center>
+          {% endfor %}
+        </div>
+        <br>
+    </div>
+    <div id="ad">
+        <h4>Advertisement:</h4>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- linknob responsive -->
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9370950272768707" data-ad-slot="2194741873" data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+  </body> {% endblock %}

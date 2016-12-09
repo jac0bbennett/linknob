@@ -1,0 +1,13 @@
+{% extends 'profilebase.html' %}{% block profcontent %}
+<div id="link_container">
+    {% include "post.html" %}
+</div>
+<div class=pagination>
+    {% if pagination.has_prev %}
+    <a class="profilelink" style="float:left;" href="/{{ user.pseudo }}?catg={{ catg }}&after={{ after }}&page={{ pagination.page - 1 }}">
+        < {{ pagination.page - 1 }} Page</a>
+            {% endif %} {% if pagination.has_next %}
+            <a class="profilelink" style="float: right;" href="/{{ user.pseudo }}?catg={{ catg }}&after={{ after }}&page={{ pagination.page + 1 }}">Page {{ pagination.page + 1 }} ></a> {% endif %}
+            <br>
+</div>
+{% endblock %}

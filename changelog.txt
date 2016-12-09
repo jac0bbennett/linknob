@@ -1,0 +1,37 @@
+# 11/15/16 bV1.0.4.5
+  - Shows user's points on profile
+================================================================================
+# 11/15/16 bV1.0.4.4
+  - Modified User and Chain search algorithms
+================================================================================
+# 11/11/16 bV1.0.4.3
+  - Added pages to admin dashboard
+  - Disabled chrome/lastpass autocomplete
+================================================================================
+# 11/6/16 bV1.0.4.2
+  - Displays date instead of ago if > 1 year
+  - Replace uses of userid filter_by
+  - Added recrawl button to chainlink page
+================================================================================
+# 10/28/16 bV1.0.4.1
+  - Cleaned up some profile code
+  - Added some functions to DB models
+  - Revert some changes from previous commit and added some back
+================================================================================
+# 10/21/16 bV1.0.4
+  - Ability to create and edit new pages and announcements
+================================================================================
+# 10/17/16 bV1.0.3
+  - Shows count for each tab on interactions page
+================================================================================
+# 10/15/16 bV1.0.2
+  - Added Flair customization for verified users
+  - Fixed search bug
+  - Added error message when commenting without signing in
+  - Added Git
+================================================================================
+# 10/4/16 bV1.0.1
+  - Added reset key function
+  - Added recrawling of links by mods along with "/api/crawl" route
+  - Added simple limits to reduce email abuse
+  - Cleaned up session signout

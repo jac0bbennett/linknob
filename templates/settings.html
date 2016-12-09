@@ -1,0 +1,50 @@
+{% extends 'base.html' %}{% block content %}
+
+<body>
+    <div id="links">
+      <div class="gencontent" style="font-family:Roboto;">
+      <h3>Settings</h3>
+      {% with messages = get_flashed_messages() %} {% if messages %}
+      <div class="flash">
+          <center> {% for message in messages %}{{ message|safe }}
+              <br>{% endfor %}
+          </center>
+      </div>
+      {% endif %} {% endwith %}
+      <form class="setfor" method="post">
+          <b>Name:</b><br>
+          <input id="fake-search" autocomplete="false" class="geninput" value="{{ user.name }}" placeholder="name" name="name" type="text">
+          <br><br>
+          <b>Pseudonym:</b><br>
+          <input id="fake-search" autocomplete="false" class="geninput" value="{{ user.pseudo }}" placeholder="pseudonym" name="pseudo" type="text">
+          <br><br>
+          <b>Email:</b><br>
+          <input id="fake-search" autocomplete="false" class="geninput" value="{{ user.email }}" placeholder="email" name="email" type="email">
+          <br><br>
+          <b>Short Bio:</b><br>
+          <input id="fake-search" autocomplete="false" class="geninput" value="{{ user.bio }}" placeholder="About Me" name="bio" type="text">
+          <br><br><br><br>
+          {% if user.verified == 1 %}
+          <b>Flair:</b><br>
+          <input id="fake-search" autocomplete="false" class="geninput" value="{{ user.flair }}" placeholder="Badge Flair" name="flair" type="text">
+          <br><br><br><br>
+          {% endif %}
+          <b>Change Key:</b> <span style="color:#777777;">(leave blank if not changing)</span><br>
+          <input id="fake-search" autocomplete="false" class="geninput"  placeholder="new key" name="newkey" type="password">
+          <br><br><br><br>
+          <b>Enter Current Key to allow changes:</b><br>
+          <input id="fake-search" autocomplete="false" class="geninput"  placeholder="key" name="curkey" type="password">
+          <br><br>
+          <button class="greenbutton" type="submit">Save</button>
+      </form>
+    </div></div>
+    <div id="ad">
+        <h4>Advertisement:</h4>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- linknob responsive -->
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9370950272768707" data-ad-slot="2194741873" data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+  </body>{% endblock %}

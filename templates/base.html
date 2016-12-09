@@ -1,0 +1,70 @@
+<html>
+<head>
+    <title>{{ title }}</title>
+    <meta name="Description" content="A simple link sharing website. Find new, popular and interesting links. All the links are submitted and judged by the users using a point system.">
+    <meta name="Keywords" content="links, articles, social, linknob, interesting, funny, videos, top, new, today, news">
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=.75, user-scalable=1">
+    <meta name="theme-color" content="#1d7d74">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type=text/javascript src="{{
+url_for('static', filename='script.js') }}"></script>
+    <meta name="google-site-verification" content="QmLRg60FlAdLtGqnZcaJ-kSqkhIZtnGgmU4mjVD-rFk" />
+    <link rel="icon" href="/favicon.ico">
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-59800017-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head>
+<div id="topbar">
+    <div id="topbardiv">
+        <a id="logotitle" href="/"><img src="/static/images/wordlogo.png" height="auto" class="linklogo" style="width:140px;">
+            </a>
+            <center>
+                <form id="searchbar" action="/search">
+                    <input type="text" id="searchinput" name="q" value="{{ search }}" placeholder="{{ session['loadinglabel'] }}">
+                </form>
+            </center><span id="top-right">{% if 'name' in session %}
+      <span class="selfcool othtip" tip="Your points"> {{ session['points'] }}</span>
+            <a class="name" href="/{{ session['user'] }}">{{ session['user'] }}</a> {% else %}
+            <a class="name signinout" href="/signin">Sign In</a> {% endif %}
+            </span>
+        </div>
+    </div>
+    <div id="secondarybar">
+        <div id="seconddiv">
+            <div class="loading"></div>
+            <center>
+              {% if 'user' in session %}
+              <a class="toplink {% if catgpage == 'path' %}catgpage{% endif %}" href="/i/path">Path</a> | <a class="toplink {% if catgpage == 'global' %}catgpage{% endif %}" href="/i/new">Global</a>
+              | <a class="toplink {% if catgpage == 'chains' %}catgpage{% endif %}" href="/i/chains">Chains</a> | <a class="toplink {% if catgpage == 'interactions' %}catgpage{% endif %}" href="/i/interactions">Interactions <span class="intcount"></span></a>
+              {% else %}
+              <a class="toplink {% if catgpage == 'about' %}catgpage{% endif %}" href="/d/about">About</a> | <a class="toplink {% if catgpage == 'signup' %}catgpage{% endif %}" href="/signup">Signup</a>
+              {% endif %}
+            </center>
+        </div>
+    </div>
+      </center>
+      <br>
+      {% if 'alert' in session %}
+      <div class="graytext pagealert">{{ session['alert'] }} <a class="graytext flatbutton" href="/d/{{ session['alerturl'] }}">MORE</a> <span class="graytext flatbutton closepagealert">CLOSE</a></div> {% endif %}
+{% block content %}
+
+{% endblock %}
+<br>
+<footer>
+    <center>
+        <img title="Jwb Media" src="/static/images/logotest2two.png" width=23px>
+        <br>
+        <a href="/d/about" class="profilelink">About</a> | <a href="/d/privacypolicy" class="profilelink">Privacy Policy</a> | <a href="/d/termsofservice" class="profilelink">Terms of Service</a> | <a href="https://chrome.google.com/webstore/detail/linknob/hgnngloicpmdfdffnoodlpmfcflkbcfd?utm_source=chrome-ntp-icon" class="profilelink">Chrome Extension</a>
+        <br><span style="color:#5a5a5a;font-size:10pt;font-family:Roboto;" title="Server returned a response in {{ session['reqtime'] }} seconds">&copy; 2016 Jwb Media</span>{{ session['closedalert'] }}
+    </center>
+</footer>
+
+</html>

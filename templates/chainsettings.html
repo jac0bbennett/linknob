@@ -1,0 +1,36 @@
+{% extends 'base.html' %}{% block content %}
+
+<body>
+    <div id="links">
+      <div class="gencontent" style="font-family:Roboto;">
+      <h3 class="chainsethead">{{ chain.title }} Settings</h3><a href="/c/{{ chain.uuid }}" class="genlink" style="float:right;">View</a>
+          <b>Title:</b><br>
+          <input class="geninput chaintitle" value="{{ chain.title }}" placeholder="Title" name="chaintitle" type="text">
+          <br><br>
+          <!--
+          <b>Url:</b><br>
+          <input class="geninput chainurl" value="{{ chain.url }}" placeholder="Url" name="chainurl" type="text">
+          <br><br> -->
+          <b>Description:</b><br>
+          <input class="geninput chaindesc" value="{{ chain.description }}" placeholder="Description" name="chaindesc" type="text">
+          <br><br>
+          <h4>Visibility</h4>
+          <label><input type="radio" name="visibility" value="Public" {% if chain.visibility == 1 %}checked{% endif %}> Public</label> |
+          <label><input type="radio" name="visibility" value="Unlisted" {% if chain.visibility == 2 %}checked{% endif %}> Unlisted</label>
+          <br><br>
+          <button class="greenbutton savechain" type="submit">Save</button><span class="msg"></span>
+          <br>
+          <hr>
+          <br>
+          <button style="float:right;" class="deletebutton deletechain" data-id="{{ chain.id }}">Delete</button><br>
+    </div></div>
+    <div id="ad">
+        <h4>Advertisement:</h4>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- linknob responsive -->
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9370950272768707" data-ad-slot="2194741873" data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+  </body>{% endblock %}

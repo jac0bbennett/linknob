@@ -1,0 +1,137 @@
+{% extends 'base.html' %}{% block content %}
+<link rel="stylesheet" href="/static/css/autocomplete.css">
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script>
+  $(function () {
+  $('.sublinktochain').autocomplete({
+      source: '/api/chainsuggest',
+      minLength: 1,
+  });
+});
+  </script>
+    <div id="links">
+      <span style="float:right;">
+      <span class="graytext">Added by </span><a href="/{{ linkchain.pseudo() }}" class="genlink">{{ linkchain.pseudo() }}</a> {% if link.visibility == 2 %}<span class="graytext">only here</span>{% endif %}</span>
+      <a href="/c/{{ chain.uuid }}" style="color:inherit;text-decoration:none;"><h2 class="linkchainhead"><img src="/static/images/linkicon.png" width="15px" style="vertical-align:middle;"> {{ chain.title }}</h2></a><hr>
+        <div id="link_container">
+          <style>
+          .linkcard {
+          width:100%;
+          height:400px;
+          font-family:Roboto;
+          background-size:cover;
+          {% if link.image != 'None' %}background-image:url('/api/getexternalimage?url={{ link.image|safeurl }}');
+          {% else %}background: {{ color }};{% endif %}
+          }
+          </style>
+          {% if link.favicon != 'None' %}<img src="/api/getexternalimage?url={{ link.favicon|safeurl }}" class="webfavicon">{% else %}<img src="/static/images/defaultglobe.ico" class="webfavicon">{% endif %}<span class="graytext" style="float:right;">{{ link.link|baseurl }}</span><br><br>
+          <div class="linkcard">
+          <div class="info">
+          <div class="infotitle">{% if link.title == None or link.title == 'None' %}
+          <a id="{{ link.id }}" href="{{ link.link|urlstrain }}" target="_blank" rel="nofollow">{{ link.link|truncate(50) }}</a> {% else %}
+          <a id="{{ link.id }}" href="{{ link.link|urlstrain }}" target="_blank" rel="nofollow">{{ link.title|truncate(80) }}</a>{% endif %}
+           </div><br>
+          {% if link.description != 'None' %}<div class="infodescription">{{ link.description|truncate(220) }}</div>{% endif %}
+          </div>
+          </div><br>
+          <div class="lowerlinkbloc" style="margin-left:0px;">
+          <span class="linkcomment">{{ link.comment|hashtag }}</span>
+          <br>
+          <br> {% if link.userid != session['userid'] %}
+          <button data="{{ link.id }}" data-tc="{{ link.pointcount() }}" data-pt-type="{% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}" {% if point != None %}style="color:#fff;background:#D32F2F;" {% endif %} class="cool">
+          {% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}</button>{% else %}<span class="graytext">{{ link.ptname }}:</span> {% endif %}
+          <span title="Points on Link" data-id="{{ link.id }}" class="coolcount {{ link.id }} {% if link.userid != session['userid'] %}didipoint{% endif %}">
+          {{ link.pointcount() }}</span> {% if link.userid == session['userid'] %}
+          <span class="graytext">Clicks:</span> {{ link.clicks }}
+          </span> {% endif %}
+          <span class="linkoptions">
+            <span class="profilelink sharelink" shareid="{{ link.uuid }}">Share</span>
+             {% if 'user' in session %}&#183; <span class="profilelink moreoptions">Options</span>{% endif %} |
+            {{ link.time | datetimeformat }} by <a href="/{{ user.pseudo }}" class="profilelink pseudonym">{{ user.pseudo }}</a></span>
+            {% if 'user' in session %}
+            <div class="moreoptionbox">
+              <br>
+            <center>
+              {% if session['userid'] == link.userid or session['rank'] >= 2 %}
+              <span class="profilelink addref">New Reference</span> &#183;
+              {% endif %}
+              {% if link.visibility == 1 %}
+              <span class="profilelink addtochain">Add to Chain</span> &#183;
+              {% if 'user' in session and (chain.userid == session['userid'] or session['rank'] >= 2 or linkchain.userid == session['userid']) %}
+              <span class="profilelink removelink" data-id="{{ link.id }}" data-c-id="{{ chain.id }}">Remove</span> &#183;{% endif %}{% endif %}
+              {% if session['userid'] == link.userid or session['rank'] >= 2 %}
+              <span data-id="{{ link.id }}" class="profilelink deletelink" style="cursor:pointer;">Delete</span>
+              {% endif %}
+              &#183;
+             {% if session['rank'] >= 2 %}
+             <span data-id="{{ link.id }}" class="profilelink recrawllink" style="cursor:pointer;">Recrawl</span>
+             {% endif %}
+            </center>
+              {% endif %}
+
+             <center>
+                <span class="addrefbox">
+                  <br>
+                  <br>
+                  <input data-id="{{ link.id }}" type="text" class="geninput subref" placeholder="Reference Link">
+                  <button class="subrefbut greenbutton">Add</button>
+                  <br>
+                  <span class="msg"></span>
+                </span>
+               <span class="addtochainbox">
+                 <br>
+                 <br>
+                 <input data-id="{{ link.id }}" type="text" class="geninput sublinktochain" placeholder="Chain title">
+                 <button class="sublinktochainbut greenbutton">Add to Chain</button>
+                 <br>
+                 <span class="msg"></span>
+               </span>
+           </center>
+          <br>
+          </div>
+          </div>
+            <hr>
+            {% if reflinks %}
+        <div class="refblock">
+          <center><h4>Reference Links:</h4></center>
+          {% for link in reflinks %}
+          {% if 'user' in session and link.userid == session['userid'] %}
+          <span data-id="{{ link.id }}" class="profilelink deleteref othtip" tip="Delete Reference">X</span>
+          {% endif %}
+          {% if link.favicon != 'None' %}<img src="/api/getexternalimage?url={{ link.favicon|safeurl }}" class="webfavicon">{% endif %}
+            {% if link.title == None or link.title == 'None' %}
+            <a id="{{ link.id }}" class="genlink" href="{{ link.link }}" rel="nofollow" target="_blank">{{ link.link|truncate(50) }}</a> {% else %}
+            <a id="{{ link.id }}" class="genlink" href="{{ link.link }}" rel="nofollow" target="_blank">{{ link.title|truncate(80) }}</a> <span class="graytext baseurl">{{ link.link|baseurl }}</span>{% endif %}
+            <br><br>
+          {% endfor %}
+        </div>
+        <hr>
+        {% endif %}
+        <div id="statblock">
+          {% for point in points %}
+          <a class="genlink" href="/{{ point.pseudo() }}">{{ point.pseudo() }}</a> <span class="graytext">{{ point.amount }} points {{ point.time|datetimeformat }}</span><br><br>
+          {% else %}
+          <center><h4>No recent activity</h4></center>
+          {% endfor %}
+          <hr>
+          <div id="commentboxholder">
+            <textarea type="text" class="commentbox" placeholder="Comment"></textarea><br>
+            <button class="greenbutton subcomment" data-id="{{ link.id }}" data-c-id="{{ chain.id }}" style="background:#FB8C00;float:right;margin-top:10px;">Post</button>
+            <span class="commsg msg"></span>
+            <br><br><br>
+          </div>
+            {% if link.visibility == 1 %}
+            <a class="genlink" href="/link/{{ link.uuid }}#commentthread" style="float:right;font-size:10pt;">View Original</a>
+            {% endif %}
+            <div id="commentthread">
+            {% for comment in comments %}
+            <span id="com{{ comment.id }}">
+            <a class="genlink comuser" href="/{{ comment.pseudo() }}">{{ comment.pseudo() }}</a> <span class="graytext" style="font-size: 9pt;"> - {{ comment.time|datetimeformat }} {% if (comment.userid == session['userid'] or session['rank'] >= 2) and (comment.userid != 0) %}<span class="delcomment" data-id="{{ comment.id }}">X</span>{% endif %}</span><br>
+            <span class="graytext comtext" style="margin-left:10px;">{{ comment.text|hashtag }}</span></span><br><br>
+            {% endfor %}
+          </div>
+        </div>
+    </div>
+  </div>
+</body>
+{% endblock %}

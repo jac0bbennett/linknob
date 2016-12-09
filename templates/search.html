@@ -1,0 +1,54 @@
+{% extends 'base.html' %}{% block content %}
+
+<body>
+    <div id="links">
+        <br>
+        <div id="link_container">
+            <h4>Results:</h4>
+            {% if accounts %}
+            <h3>Accounts:</h3> {% for user in accounts %}
+            <a class="genlink" href="/{{ user.pseudo }}">{{ user.name }} {% if user.verified == 1 %} <span class="tooltip" tip="{{ user.flair }}"><img src="/static/images/verified.png" width="16px" style="vertical-align:middle;"></span>{% endif %}</a> | {{ user.pseudo }}{% if user.bio %}<br>
+            <span class="graytext" style="font-size:11pt;">{{ user.bio|truncate(100) }}</span>{% endif %}
+            <br><br> {% endfor %}
+            <hr>
+            {% endif %}
+            {% if chains %}
+            <h3>Chains:</h3> {% for chain in chains %}
+            <a class="genlink" href="/c/{{ chain.uuid }}">{{ chain.title }}</a>{% if chain.visibility == 2 %} <span class="graytext" style="font-size:11pt">- Unlisted</span>{% endif %}<br><span class="graytext" style="font-size:11pt;">{{ chain.description|truncate(100) }}</span>
+            <br><br> {% endfor %}
+            <hr>{% endif %}
+            <h3>Posts:</h3>
+            <span style="float:right;font-size:11pt;margin-top:-50px;" class="graytext">{{ count }} links shown</span>
+             {% for link in links %}
+            <div class="postedlinks">
+              {% if link.favicon != 'None' %}<img src="/api/getexternalimage?url={{ link.favicon|safeurl }}" class="webfavicon">{% else %}<img src="/static/images/defaultglobe.ico" class="webfavicon">{% endif %}
+              {% if link.title == None or link.title == 'None' %}
+              <a id="{{ link.id }}" href="/link/{{ link.uuid }}" rel="nofollow">{{ link.link|truncate(50) }}</a> {% else %}
+              <a id="{{ link.id }}" href="/link/{{ link.uuid }}" rel="nofollow">{{ link.title|truncate(80) }}</a> <a class="graylink" rel="nofollow" href="{{ link.link }}" target="_blank" data-id="{{ link.uuid }}"><span class="graytext baseurl">{{ link.link|baseurl }}</span></a>{% endif %}
+              <br>
+            </div>
+            <div class="lowerlinkbloc">
+            <span class="linkcomment">{{ link.comment|hashtag }}</span>
+            <br>
+            <br> {% if link.userid != session['userid'] %}
+            <button data="{{ link.id }}" data-tc="{{ link.pointcount() }}" data-pt-type="{% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}" {{ link.pointed() }} class="cool">
+            {% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}</button>{% else %}<span class="graytext">{{ link.ptname }}:</span> {% endif %}
+        <span title="Points on Link" data-id="{{ link.id }}" class="coolcount {{ link.id }} {% if link.userid != session['userid'] %}didipoint{% endif %}">
+          {{ link.pointcount() }}</span> {% if link.userid == session['userid'] %}
+        <span class="graytext">Clicks:</span> {{ link.clicks }}
+          </span> {% endif %}
+          <span class="linkoptions">{% if 'user' in session %}
+            {% if session['userid'] == link.userid or session['rank'] >= 2 %}
+            {% endif %}
+            {% endif %}
+            <span class="profilelink sharelink othtip" tip="Get share Link" shareid="{{ link.id }}">Share</span> |
+           {{ link.time | datetimeformat }} by <a href="/{{ link.pseudo() }}" class="profilelink pseudonym">{{ link.pseudo() }}</a></span>
+            <br>
+          </div>
+            <hr> {% else %}
+            <center>
+                <h3>No results in posts matching "{{ search }}"</center>
+            {% endfor %}
+          </div>
+        </div>
+      </body>{% endblock %}

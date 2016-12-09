@@ -1,0 +1,28 @@
+{% for link in links %}
+<div class="postedlinks">
+  {% if link.favicon != 'None' %}<img src="/api/getexternalimage?url={{ link.favicon|safeurl }}" class="webfavicon">{% else %}<img src="/static/images/defaultglobe.ico" class="webfavicon">{% endif %}
+    {% if link.title == None or link.title == 'None' %}
+    <a id="{{ link.uuid }}" href="/link/{{ link.uuid }}">{{ link.link|truncate(50) }}</a> {% else %}
+    <a id="{{ link.uuid }}" href="/link/{{ link.uuid }}">{{ link.title|truncate(80) }}</a> <a class="graylink" rel="nofollow" href="{{ link.link }}" target="_blank" data-id="{{ link.uuid }}"><span class="graytext baseurl">{{ link.link|baseurl }}</span></a>{% endif %}
+    <br>
+</div>
+<div class="lowerlinkbloc">
+<span class="linkcomment">{{ link.comment|hashtag }}</span>
+<br>
+<br> {% if link.userid != session['userid'] %}
+<button data="{{ link.id }}" data-tc="{{ link.pointcount() }}" data-pt-type="{% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}" {{ link.pointed() }} class="cool">
+    {% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}</button>{% else %}<span class="graytext">{{ link.ptname }}:</span> {% endif %}
+<span title="Points on Link" data-id="{{ link.id }}" class="coolcount {{ link.id }} {% if link.userid != session['userid'] %}didipoint{% endif %}">
+  {{ link.pointcount() }}</span> {% if link.userid == session['userid'] %}
+<span class="graytext">Clicks:</span> {{ link.clicks }}
+  </span> {% endif %}
+<span class="linkoptions">
+  <span class="profilelink sharelink othtip" tip="Get share Link" shareid="{{ link.uuid }}">Share</span> |
+ {{ link.time | datetimeformat }} by <a href="/{{ link.pseudo() }}" class="profilelink pseudonym">{{ link.pseudo() }}</a></span>
+<br>
+</div>
+<hr> {% else %}
+<center>
+    <h3>No posts yet!</h3>
+</center>
+{% endfor %}

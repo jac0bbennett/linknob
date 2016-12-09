@@ -1,0 +1,88 @@
+<html>
+
+<head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=.75, user-scalable=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type=text/javascript src="{{
+url_for('static', filename='script.js') }}"></script>
+<link rel="icon" href="/favicon.ico">
+</head>
+<div id="topbar">
+    <div id="topbardiv">
+        <a id="logotitle" href="/"><img src="/static/images/wordlogo.png" height="auto" class="linklogo" style="width:140px;">
+            </a><a href="/" id="catgtitle">&rsaquo; link</a>
+            <center>
+                <form id="searchbar" action="/search">
+                    <input type="text" id="searchinput" name="q" value="{{ search }}" placeholder="Search">
+                </form>
+            </center><span id="top-right">{% if 'name' in session %}
+      <span class="selfcool othtip" tip="Your points"> {{ session['points'] }}</span>
+            <a class="name" href="/{{ session['user'] }}">{{ session['user'] }}</a> {% else %}
+            <a class="name signinout" href="/signin">Sign In</a> {% endif %}
+            </span>
+        </div>
+    </div>
+    {% if 'user' in session %}
+    <div id="secondarybar">
+        <div id="seconddiv">
+            <center>
+                <a class="toplink {% if catgpage == 'path' %}catgpage{% endif %}" href="/path">Path</a> | <a class="toplink {% if catgpage == 'global' %}catgpage{% endif %}" href="/new">Global</a>
+            </center>
+        </div>
+    </div>
+    {% endif %}
+    <div id="links">
+        <div id="link_container">
+          <style>
+          .linkcard {
+          width:100%;
+          height:400px;
+          font-family:Roboto;
+          background-size:cover;
+          {% if link.image != 'None' %}background-image:url('/api/getexternalimage?url={{ link.image|safeurl }}');
+          {% else %}background-image:url('/static/images/stocklink.png');{% endif %}
+          }
+          </style>
+          {% if link.favicon != 'None' %}<img src="/api/getexternalimage?url={{ link.favicon|safeurl }}" class="webfavicon"><span class="graytext baseurl" style="float:right;">{{ link.link|splitslash }}</span><br><br>{% endif %}
+          <div class="linkcard">
+          <div class="info">
+          <div class="infotitle">{% if link.title == None or link.title == 'None' %}
+          <a id="{{ link.id }}" href="{{ link.link|urlstrain }}" target="_blank" rel="nofollow">{{ link.link|truncate(50) }}</a> {% else %}
+          <a id="{{ link.id }}" href="{{ link.link|urlstrain }}" target="_blank" rel="nofollow">{{ link.title|truncate(60) }}</a>{% endif %}
+           </div><br>
+          {% if link.description == 'None' %}<div class="infodescription">{{ link.description|truncate(120) }}</div>{% endif %}
+          </div>
+          </div><br>
+          <div class="lowerlinkbloc">
+          <span class="linkcomment">{{ link.comment|hashtag }}</span>
+          <br>
+          <br> {% if link.userid != session['userid'] %}
+          <button data="{{ link.id }}" data-tc="{{ link.pointcount() }}" data-pt-type="{% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}" {% if point != None %}style="color:#fff;background:#D32F2F;" {% endif %} class="cool">
+          {% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}</button>{% else %}<span class="graytext">{{ link.ptname }}:</span> {% endif %}
+          <span title="Points on Link" data-id="{{ link.id }}" class="coolcount {{ link.id }} {% if link.userid != session['userid'] %}didipoint{% endif %}">
+          {{ link.pointcount() }}</span> {% if link.userid == session['userid'] %}
+          <span class="graytext">Clicks:</span> {{ link.clicks }}
+          </span> {% endif %}
+          <span class="linkoptions">{% if 'user' in session %}
+            {% if session['userid'] == link.userid or session['rank'] >= 2 %}
+            <a data-id="{{ link.id }}" class="profilelink deletelink othtip" tip="Delete Link" style="cursor:pointer;">X</a> |
+            {% endif %}
+            {% endif %}
+            <a href="/{{ user.pseudo }}" class="profilelink pseudonym">{{ user.pseudo }}</a> |
+            {{ link.time | datetimeformat }}</span>
+          <br>
+          </div>
+    </div></div><br>
+    <footer>
+        <center>
+            <img title="Jwb Media" src="/static/images/logotest2two.png" width=23px>
+            <br>
+            <a href="/i/privacypolicy" class="profilelink">Privacy Policy</a> | <a href="/i/termsofservice" class="profilelink">Terms of Service</a> | <a href="https://chrome.google.com/webstore/detail/linknob/hgnngloicpmdfdffnoodlpmfcflkbcfd?utm_source=chrome-ntp-icon" class="profilelink">Chrome Extension</a>
+            <br><span style="color:#5a5a5a;font-size:10pt;font-family:Roboto;">&copy; 2015 Jwb Media</span>
+        </center>
+    </footer>
+</body>
+
+</html>

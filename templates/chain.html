@@ -1,0 +1,106 @@
+{% extends 'base.html' %}{% block content %}
+<body>
+
+    <div id="links">
+        <button posit='+' class="add toggle">+</button>
+        <div class="addlnc">
+            {% if 'user' in session %}
+            <div>
+                <h3>Post a link to this Chain:</h3>
+                <center>
+                    <input type="text" name="link" id="link" placeholder="Link">
+                    <br>
+                    <br>
+                    <input type="text" name="comment" id="comment" placeholder="Comment/Tags (Optional)">
+                    <br>
+                    <br>
+                    <input type="text" name="ptname" id="ptname" placeholder="Point Name (default=Cool)">
+                    <br>
+                    <br>
+                  </center>
+                    <h4>Visibility</h4>
+                    <label><input type="radio" name="visibility" value="Public" {% if chain.visibility == 1 %}checked{% endif %}> Public</label> |
+                    <label><input type="radio" name="visibility" value="Unlisted" {% if chain.visibility == 2 %}checked{% endif %}> Only this chain</label>
+                    <br><br><center>
+                    <button data-c-id="{{ chain.id }}" class="sublncchain greenbutton" style="background: #29bf5d;">Submit</button><span class="msg"></span>
+                </center>
+            </div>
+            {% else %}
+            <h3>Please Sign in to add a Link</h3> {% endif %}
+            <br>
+            <hr>
+        </div>
+        <h2><img src="/static/images/linkicon.png" width="15px" style="vertical-align:middle;"> {{ chain.title }}</h2>
+        <span class="graytext">{{ chain.description }}</span><br>
+        <br>
+        <div id="catg">
+        {% if catg == 'new' %}<a tip="New" class="tooltip newicon" href="/c/{{ chain.uuid }}"><img title="New" src="/static/images/newhover.png" width="35px" align="middle"></a>{% else %}
+        <a tip="New" class="tooltip newicon" href="/c/{{ chain.uuid }}"><img class="newicon" src="/static/images/newbefore.png" width="35px" align="middle">
+        </a>{% endif %} {% if catg == 'scored' %}<a tip="Scored" class="tooltip" href="/c/{{ chain.uuid }}?catg=scored"><img title="Scored" src="/static/images/scoredhover.png" width="28px" align="middle"></a>{% else %}
+        <a tip="Scored" class="tooltip" href="/c/{{ chain.uuid }}?catg=scored"><img class="todayicon" src="/static/images/scoredbefore.png" width="28px" align="middle">
+        </a>{% endif %}
+      </div><br>
+        <div id="link_container">
+          {% for link in links %}
+          <div class="postedlinks">
+            {% if link.favicon != 'None' %}<img src="/api/getexternalimage?url={{ link.favicon|safeurl }}" class="webfavicon">{% else %}<img src="/static/images/defaultglobe.ico" class="webfavicon">{% endif %}
+              {% if link.title == None or link.title == 'None' %}
+              <a id="{{ link.id }}" href="/c/{{ chain.uuid }}/{{ link.uuid }}" rel="nofollow">{{ link.link|truncate(50) }}</a> {% else %}
+              <a id="{{ link.id }}" href="/c/{{ chain.uuid }}/{{ link.uuid }}" rel="nofollow">{{ link.title|truncate(80) }}</a> <a class="graylink" rel="nofollow" href="{{ link.link }}" target="_blank" data-id="{{ link.uuid }}"><span class="graytext baseurl">{{ link.link|baseurl }}</span></a>{% endif %}
+              <br>
+          </div>
+          <div class="lowerlinkbloc">
+          <span class="linkcomment">{{ link.comment|hashtag }}</span>
+          <br>
+          <br> {% if link.userid != session['userid'] %}
+          <button data="{{ link.id }}" data-tc="{{ link.pointcount() }}" data-pt-type="{% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}" {{ link.pointed() }} class="cool">
+              {% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}</button>{% else %}<span class="graytext">{{ link.ptname }}:</span> {% endif %}
+          <span title="Points on Link" data-id="{{ link.id }}" class="coolcount {{ link.id }} {% if link.userid != session['userid'] %}didipoint{% endif %}">
+            {{ link.pointcount() }}</span> {% if link.userid == session['userid'] %}
+          <span class="graytext">Clicks:</span> {{ link.clicks }}
+            </span> {% endif %}
+          <span class="linkoptions">{% if 'user' in session %}
+            {% if session['userid'] == link.userid or session['rank'] >= 2 %}
+            {% endif %}
+            {% endif %}
+
+            <span class="profilelink sharelink" shareid="{{ link.id }}">Share</span> |
+           {{ link.time | datetimeformat }} by <a href="/{{ link.pseudo() }}" class="profilelink pseudonym">{{ link.pseudo() }}</a></span>
+          <br>
+          </div>
+          <hr> {% else %}
+          <center>
+              <h3>No posts yet!</h3>
+          </center>
+          {% endfor %}
+        </div>
+        <div class=pagination>
+            {% if pagination.has_prev %}
+            <a class="profilelink" style="float:left;" href="/c/{{ chain.uuid }}?after={{ after }}&page={{ pagination.page - 1 }}">
+                < {{ pagination.page - 1 }} Page</a>
+                    {% endif %} {% if pagination.has_next %}
+                    <a class="profilelink" style="float:right;" href="/c/{{ chain.uuid }}?after={{ after }}&page={{ pagination.page + 1 }}">Page {{ pagination.page + 1 }} ></a> {% endif %}
+                    <br>
+        </div>
+        <br>
+        <span class="graytext">Created {{ chain.created|datetimeformat }} by <a href="/{{ chain.pseudo() }}" class="genlink">{{ chain.pseudo() }}</a></span>
+        {% if chain.userid == session['userid'] %}
+        <a href="/c/{{ chain.uuid }}/settings" class="genlink" style="float:right;">Settings</a>
+        {% endif %}
+        <br>
+    </div>
+    <div id="ad">
+        <h4>Advertisement:</h4>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Linknob responsive -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-9370950272768707"
+     data-ad-slot="2194741873"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+    </div>
+    </body>
+{% endblock %}

@@ -1,0 +1,63 @@
+<html style="overflow-x:hidden;">
+<head>
+    <title>{{ title }}</title>
+    <meta name="Description" content="A simple link sharing website. Find new, popular and interesting links. All the links are submitted and judged by the users using a point system.">
+    <meta name="Keywords" content="links, articles, social, linknob, interesting, funny, videos, top, new, today, news, knob">
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/animate.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type=text/javascript src="{{
+url_for('static', filename='script.js') }}"></script>
+<script type=text/javascript src="{{
+url_for('static', filename='homepage.js') }}"></script>
+    <meta name="google-site-verification" content="QmLRg60FlAdLtGqnZcaJ-kSqkhIZtnGgmU4mjVD-rFk" />
+    <link rel="icon" href="/favicon.ico">
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-59800017-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</head>
+<body style="margin:-10px;background:#26A69A;">
+  <a href="/"><img src="/static/images/wordlogoshadow.png" height="8%" style="padding-left:20px;padding-top:15px;"></a><span style="float:right;padding-right:50px;padding-top:35px;color:#fff;">
+  <a href="/d/about" class="genlink" style="color:#fff;">About</a> &#183; <a href="/i/new" class="genlink" style="color:#fff;">Global</a> &#183; <a href="/signin"><button class="greenbutton" style="background:#D64747;">Sign In</button></a></span><br>
+<img id="homeheader" src="/static/images/linknobheader.png" style="max-height:50%;width:100%;">
+<div id="homelinks" style="background:#fff;padding-bottom:10px;"><br>
+  <div class="postedlinks" style="width:500px;padding-left:50px;margin-left:auto;margin-right:auto;">
+  <b style="margin-top:-5px;">Couple of popular links:</b><br>
+  {% for link in toplinks %}
+  {% if link.favicon != 'None' %}<img src="/api/getexternalimage?url={{ link.favicon|safeurl }}" class="webfavicon">{% else %}<img src="/static/images/defaultglobe.ico" class="webfavicon">{% endif %}
+    {% if link.title == None or link.title == 'None' %}
+    <a id="{{ link.uuid }}" href="/link/{{ link.uuid }}" style="font-size:12pt;">{{ link.link|truncate(50) }}</a> {% else %}
+    <a id="{{ link.uuid }}" href="/link/{{ link.uuid }}" style="font-size:12pt;">{{ link.title|truncate(80) }}</a> {% endif %}
+    <br>
+    {% endfor %}
+  </div>
+</div>
+<center>
+<div id="homedark" style="background:#5a5a5a;padding-bottom:10px;"><br>
+<h1 style="color:#fff;font-weight:300;margin-left:80px;margin-right:80px;">A tool to share and discover the web. A portal to the best of the internet.
+  Post, share and find
+the best links on the web.</h1><br>
+<img src="/static/images/linknobhome.png" style="max-width:40%;"><br>
+<h3 style="color:#fff;font-weight:300;margin-left:80px;margin-right:80px;">Built with an effective, simple and beautiful design</h3><br>
+<h1 style="color:#D64747;text-shadow: rgb(0, 0, 0) 0px 0px 5px;">Coming Early 2017</h1>
+</div>
+<div style="background:#fff;padding-bottom:10px;"><br>
+<form action="/i/requestinvite" method="POST">
+<h2 style="color:#FB8C00;">GET EARLY ACCESS</h2>
+<input class="geninput" type="email" required="true" placeholder="email" name="email" style="width:200px;color:#FB8C00;font-weight:400;border:2px solid #FB8C00;height:35px;">
+<button type="submit" class="greenbutton" style="height:35px;background:#FB8C00;">Request Invite</button>
+</form><hr>
+<br>
+      <h4 style="color:#607D8B;"><img title="Jwb Media" src="/static/images/logotest2two.png" style="vertical-align:middle;" width=23px> A Jwb Media Project</h4>
+    </center>
+</div>
+</body>
+</html>

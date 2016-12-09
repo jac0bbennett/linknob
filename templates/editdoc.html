@@ -1,0 +1,102 @@
+{% extends 'base.html' %} {% block content %}
+<body>
+<style>
+.activebutton {
+    background: #263238;
+    border-radius: 2px;
+    border: none;
+    color: white;
+    font-family: Tahoma;
+    font-weight: bold;
+    font-size: 14px;
+    width: 30px;
+    cursor: pointer;
+    outline: none;
+}
+
+.normbutton {
+    border-radius: 2px;
+    background: #607D8B;
+    border: none;
+    color: white;
+    font-family: Tahoma;
+    font-weight: bold;
+    font-size: 14px;
+    width: 30px;
+    cursor: pointer;
+    outline: none;
+}
+</style>
+  <div id="links">
+    <h1>New Page/Announcement</h1>
+    <b>Page Title</b><br>
+    <input type="text" id="pagetitle" class="geninput" placeholder="Text put in title tag" value="{{ page.title }}"><br><br>
+    <b>Url</b><br>
+    <input type="text" id="pageurl" class="geninput" placeholder="Unique Url" value="{{ page.url }}"><br><br>
+    <b>Header</b><br>
+    <input type="text" id="pageheader" class="geninput" placeholder="Headline" value="{{ page.header }}"><br><br>
+    <b>Body</b><br>
+    <button class="bolds" title="Bold">B</button>
+    <button class="italics" title="Italic"><i>I</i>
+    </button>
+    <button class="underlines" title="Underline"><u>U</u>
+    </button><br>
+    <div contenteditable="true" class="gencondiv" id="pagecontent">{{ page.content|safe }}</div><br>
+    <h4>Type</h4>
+    <label><input type="radio" name="type" value="page" {% if page.active == 0 or not page %}checked{% endif %}> Page</label> |
+    <label><input type="radio" name="type" value="active" {% if page.active == 1 %}checked{% endif %}> Active</label><br><br>
+
+    <button class="greenbutton {% if page %}editdocsave{% else %}newdocsave{% endif %}" type="submit">{% if page %}Save{% else %}Submit{% endif %}</button> <span class="msg"></span>{% if page %}<hr>
+    <button style="float:right;" class="deletebutton deletedoc" data-id="{{ page.id }}">Delete</button><br>{% endif %}
+  </div>
+  <script>
+  setInterval(function () {
+        isBold = document.queryCommandValue("Bold");
+        isItalic = document.queryCommandValue("Italic");
+        isUnderline = document.queryCommandValue("Underline");
+
+        if (isBold === 'true') {
+            $('.bolds').removeClass('normbutton');
+            $('.bolds').addClass('activebutton');
+        } else {
+            $('.bolds').removeClass('activebutton');
+            $('.bolds').addClass('normbutton');
+        }
+
+        if (isItalic === 'true') {
+            $('.italics').removeClass('normbutton');
+            $('.italics').addClass('activebutton');
+        } else {
+            $('.italics').removeClass('activebutton');
+            $('.italics').addClass('normbutton');
+        }
+
+        if (isUnderline === 'true') {
+            $('.underlines').removeClass('normbutton');
+            $('.underlines').addClass('activebutton');
+        } else {
+            $('.underlines').removeClass('activebutton');
+            $('.underlines').addClass('normbutton');
+        }
+    }, 100)
+
+    $('.bolds, .italics, .underlines').addClass("normbutton");
+    $('.bolds, .italics, .underlines').click(function () {
+        $('#pagecontent').focus();
+    });
+
+    $('.bolds').click(function () {
+        var highlight = document.getSelection();
+        $('#pagecontent').text().replace(highlight, document.execCommand('bold'));
+    });
+    $('.italics').click(function () {
+        var highlight = document.getSelection();
+        $('#pagecontent').text().replace(highlight, document.execCommand('italic'));
+    });
+    $('.underlines').click(function () {
+        var highlight = document.getSelection();
+        $('#pagecontent').text().replace(highlight, document.execCommand('underline'));
+    });
+  </script>
+</body>
+{% endblock %}
