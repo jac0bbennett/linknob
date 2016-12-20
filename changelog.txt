@@ -1,5 +1,5 @@
 # 11/28/16 bV1.0.4.6
-  - Page refreshes on back button for lasted data
+  - Page refreshes on back button for latest data
 ================================================================================
 # 11/15/16 bV1.0.4.5
   - Shows user's points on profile
