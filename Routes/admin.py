@@ -127,6 +127,7 @@ def editdoc(docurl):
                             page.header = header
                             page.content = content
                             page.active = active
+                            page.time = datetime.now()
 
                             db.session.commit()
 
