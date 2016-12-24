@@ -17,7 +17,6 @@
 <span class="graytext">Clicks:</span> {{ link.clicks }}
   </span> {% endif %}
 <span class="linkoptions">
-  <span class="profilelink sharelink othtip" tip="Get share Link" shareid="{{ link.uuid }}">Share</span> |
  {{ link.time | datetimeformat }} by <a href="/{{ link.pseudo() }}" class="profilelink pseudonym">{{ link.pseudo() }}</a></span>
 <br>
 </div>

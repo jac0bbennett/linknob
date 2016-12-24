@@ -27,7 +27,7 @@
           {% for invite in invites %}
             <tr>
               <td>{{ invite.code }}</td><td>{{ invite.timegen|datetimeformat }}</td><td>{% if invite.activated == 0 %}Active{% else %}Used{% endif %}</td>
-              <td>http://lknb.co/signup?code={{ invite.code }}</td>
+              <td>http://linknob.com/signup?code={{ invite.code }}</td>
             </tr>
           {% endfor %}
         </tbody>
