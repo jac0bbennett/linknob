@@ -50,7 +50,7 @@ class User(db.Model):
     def avatar(self):
         email = str(self.email).encode('utf-8')
         md5hash = md5(email).hexdigest()
-        avatar = 'https://secure.gravatar.com/avatar/' + md5hash
+        avatar = 'https://secure.gravatar.com/avatar/' + md5hash + '?d=identicon'
         return avatar
 
     def postcount(self):
