@@ -42,6 +42,10 @@ $(document).ready(function () {
           }
       });
     });
+    $('.noload').click(function() {
+      $('.loading').hide();
+      $('#searchinput').attr('placeholder', 'Search');
+    });
     $('.graylink').click(function() {
       $('.loading').hide();
       $('#searchinput').attr('placeholder', 'Search');

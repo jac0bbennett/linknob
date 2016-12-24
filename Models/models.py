@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 11/6/16
+# Copyright Jacob Bennett 12/23/16
 
 from config import db
 from flask import session
 from sqlalchemy import Date, cast, func, or_
 from Links.score import score
 from datetime import date
+from hashlib import md5
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -45,6 +46,12 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.pseudo
+
+    def avatar(self):
+        email = str(self.email).encode('utf-8')
+        md5hash = md5(email).hexdigest()
+        avatar = 'https://secure.gravatar.com/avatar/' + md5hash
+        return avatar
 
     def postcount(self):
         count = Link.query.filter_by(userid=self.id).filter(Link.visibility==1).count()
