@@ -28,7 +28,7 @@ class User(db.Model):
 
     pathid = 0
 
-    def __init__(self, pathid, pseudo, key, email, rank, name, bio, points, joindate, verified, confirm, checkint, flair):
+    def __init__(self, pseudo, key, email, rank, name, bio, points, joindate, verified, confirm, checkint, flair, pathid=0):
         self.pseudo = pseudo
         self.key = key
         self.email = email
