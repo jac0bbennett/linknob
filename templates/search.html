@@ -7,6 +7,7 @@
             <h4>Results:</h4>
             {% if accounts %}
             <h3>Accounts:</h3> {% for user in accounts %}
+            <img src="{{ user.avatar() }}" width="32" style="border-radius:80px;vertical-align:middle;">
             <a class="genlink" href="/{{ user.pseudo }}">{{ user.name }} {% if user.verified == 1 %} <span class="tooltip" tip="{{ user.flair }}"><img src="/static/images/verified.png" width="16px" style="vertical-align:middle;"></span>{% endif %}</a> | {{ user.pseudo }}{% if user.bio %}<br>
             <span class="graytext" style="font-size:11pt;">{{ user.bio|truncate(100) }}</span>{% endif %}
             <br><br> {% endfor %}
