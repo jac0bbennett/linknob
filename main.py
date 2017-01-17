@@ -19,6 +19,7 @@ reqstart = None
 
 @app.before_request
 def before_request():
+    abort(404)
     session.permanent = True
     app.permanent_session_lifetime = timedelta(days=5)
     importlib.reload(maintenance)
