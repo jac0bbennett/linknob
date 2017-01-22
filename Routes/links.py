@@ -145,7 +145,7 @@ def singlelink(linkid):
             point = Point.query.filter((Point.link == link.id) & (Point.userid == session['userid'])).first()
         else:
             point = None
-        if not link.title:
+        if not link.title or link.title == 'None':
             linktitle = link.link
         else:
             linktitle = link.title
@@ -250,7 +250,7 @@ def singlelinkinchain(chainuuid, linkuuid):
             point = Point.query.filter((Point.link == link.id) & (Point.userid == session['userid'])).first()
         else:
             point = None
-        if not link.title:
+        if not link.title or link.title == 'None':
             linktitle = link.link
         else:
             linktitle = link.title
