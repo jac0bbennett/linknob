@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 10/4/16
+# Copyright Jacob Bennett 1/28/17
 
 from flask import render_template, request, session, jsonify, abort, flash, redirect, url_for, send_file
 from sqlalchemy import or_, func
 from config import app, db, pepper, bsalt
 from hashlib import md5
-from Models.models import User, Link, ReferenceLink, Point, Invite, Follow, Chain, Chainlink, Monthupdate, Comment, Page
+from Models.models import User, Link, ReferenceLink, Point, Invite, Follow, Chain, Chainlink, Monthupdate, Comment, Page, FreePoint
 from Links.scrape import scrape_link, check_link
 from utils import Pagination, codegen, escapeit, loadmsgs, genuuid
 from datetime import datetime, timedelta
@@ -605,7 +605,16 @@ def checknewint():
         links = Link.query.filter_by(userid=session['userid']).all()
         pointcount = Point.query.join(Link, (Point.link == Link.id)).filter(Link.userid == session['userid']).filter(Point.time > checkinttime).order_by(Point.time.desc()).count()
         commentcount = Comment.query.join(Link, (Comment.link == Link.id)).filter((Link.userid == session['userid']) & (Comment.userid != session['userid'] or Comment.userid != 0) & (Comment.time > checkinttime)).order_by(Comment.time.desc()).count()
-        count = trailcount + pointcount + commentcount
+        lastfreept = FreePoint.query.filter_by(userid=session['userid']).first()
+        if lastfreept:
+            freeptcheck = (datetime.now() - lastfreept.time).total_seconds()
+            if freeptcheck >= 86400:
+                freeptcheck = 0
+            else:
+                freeptcheck = 1
+        else:
+            freeptcheck = 1
+        count = trailcount + pointcount + commentcount + freeptcheck
         return jsonify({'intcount': count})
     else:
         return jsonify({'intcount': 0})

@@ -810,6 +810,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80ef9300', e
 .intcount,
 .orngtext {
   color: #FB8C00;
+  font-family: Roboto;
 }
 
 .loading {

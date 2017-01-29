@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 12/23/16
+# Copyright Jacob Bennett 1/28/17
 
 from config import db
 from flask import session
@@ -289,6 +289,22 @@ class Monthupdate(db.Model):
 
     def __repr__(self):
         return '<Update %r>' % self.time
+
+class FreePoint(db.Model):
+    __tablename__ = 'freepoints'
+
+    id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer, nullable=False)
+    points = db.Column(db.Integer, nullable=False)
+    time = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, users, links, time):
+        self.userid = userid
+        self.points = points
+        self.time = time
+
+    def __repr__(self):
+        return '<FP %r>' % self.points
 
 # DB model for trails
 class Follow(db.Model):

@@ -5,7 +5,7 @@
 from flask import render_template, request, session, flash, abort, redirect, url_for
 from sqlalchemy import or_, func
 from config import app, db, PER_PAGE, pepper, bsalt
-from Models.models import User, Link, Follow, Invite, Point, Chain, Comment
+from Models.models import User, Link, Follow, Invite, Point, Chain, Comment, FreePoint
 from utils import Pagination, escapeit
 from datetime import datetime
 from hashlib import md5
@@ -196,6 +196,15 @@ def viewinteractions():
         trailcount = Follow.query.filter_by(followed=session['userid']).filter(Follow.time > checkinttime).count()
         pointcount = Point.query.join(Link, (Point.link == Link.id)).filter(Link.userid == session['userid']).filter(Point.time > checkinttime).order_by(Point.time.desc()).count()
         commentcount = Comment.query.join(Link, (Comment.link == Link.id)).filter((Link.userid == session['userid']) & (Comment.userid != session['userid'] or Comment.userid != 0) & (Comment.time > checkinttime)).order_by(Comment.time.desc()).count()
+        lastfreept = FreePoint.query.filter_by(userid=session['userid']).first()
+        if lastfreept:
+            freeptcheck = (datetime.now() - lastfreept.time).total_seconds()
+            if freeptcheck >= 86400:
+                freepts = False
+            else:
+                freepts = True
+        else:
+            freepts = True
 
         user.checkint = datetime.now()
         db.session.commit()
@@ -214,7 +223,7 @@ def viewinteractions():
             trails = None
             points = None
             comments = Comment.query.join(Link, (Comment.link == Link.id)).filter((Link.userid == session['userid']) & (Comment.userid != session['userid'] or Comment.userid != 0)).order_by(Comment.time.desc()).limit(40).all()
-        return render_template('interactions.html', title='Linknob | Interactions', catg=catg, catgpage='interactions', trails=trails, points=points, comments=comments, pointcount=pointcount, trailcount=trailcount, commentcount=commentcount)
+        return render_template('interactions.html', title='Linknob | Interactions', catg=catg, catgpage='interactions', trails=trails, points=points, comments=comments, pointcount=pointcount, trailcount=trailcount, commentcount=commentcount, freepts=freepts)
     return redirect(url_for('signin'))
 
 
