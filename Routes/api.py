@@ -638,7 +638,7 @@ def collectfreepts():
         else:
             points = 0
 
-        #user.points += points
+        user.points += points
         freepts = FreePoint(user.id, points, datetime.now())
         db.session.add(freepts)
         db.session.commit()
