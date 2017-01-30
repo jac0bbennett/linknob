@@ -1,3 +1,6 @@
+# 1/29/17 bV1.0.6
+  - Removed 30 day point bump
+  - Added 24hr point faucet in interaction tab
 # 12/23/16 bV1.0.5
   - Gravatar Profile Images
 ================================================================================

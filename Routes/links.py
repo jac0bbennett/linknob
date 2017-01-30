@@ -33,6 +33,7 @@ def new(catg):
 
     if catg == 'new':
         title = 'Linknob'
+        '''
         # Check if time for monthly point bump
         lastupdate = Monthupdate.query.order_by(Monthupdate.time.desc()).first()
         timenow = datetime.now()
@@ -47,6 +48,7 @@ def new(catg):
                 # Give all the users 10 more points
                 user.points += 10
             db.session.commit()
+        '''
     elif catg == 'top':
         title = 'Linknob | Top'
     elif catg == 'scored':
