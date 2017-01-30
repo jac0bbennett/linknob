@@ -41,6 +41,7 @@ $('.freeptsbtn').click(function() {
       dataType: 'json',
       success: function (data) {
           $('.freepts').html('<span class="orngtext">Collected ' + data.points + '!</span>');
+          $('.selfcool').text(parseInt($('.selfcool').text()) + data.points);
       },
       error: function (data) {
           $('.freepts').html('<span class="orngtext">Try again later.</span>');

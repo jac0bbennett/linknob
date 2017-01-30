@@ -636,10 +636,12 @@ def collectfreepts():
         if freeptcheck:
             points = randLowNum(1,50,9)
 
-        #user.points += points
+        user.points += points
         freepts = FreePoint(user.id, points, datetime.now())
         db.session.add(freepts)
         db.session.commit()
+
+        session['points'] += points
 
         return jsonify({'points':points})
 

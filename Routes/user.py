@@ -192,7 +192,7 @@ def viewinteractions():
     if 'user' in session:
         user = User.query.filter_by(id=session['userid']).first()
         checkinttime = user.checkint
-
+        print(user.checkint)
         trailcount = Follow.query.filter_by(followed=session['userid']).filter(Follow.time > checkinttime).count()
         pointcount = Point.query.join(Link, (Point.link == Link.id)).filter(Link.userid == session['userid']).filter(Point.time > checkinttime).order_by(Point.time.desc()).count()
         commentcount = Comment.query.join(Link, (Comment.link == Link.id)).filter((Link.userid == session['userid']) & (Comment.userid != session['userid'] or Comment.userid != 0) & (Comment.time > checkinttime)).order_by(Comment.time.desc()).count()
