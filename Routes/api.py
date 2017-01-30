@@ -623,7 +623,7 @@ def checknewint():
 def collectfreepts():
     if 'user' in session:
         user = User.query.filter_by(id=session['userid']).first()
-        lastfreept = FreePoint.query.filter_by(userid=session['userid']).first()
+        lastfreept = FreePoint.query.filter_by(userid=session['userid']).order_by(FreePoint.time.desc()).first()
         if lastfreept:
             freeptcheck = (datetime.now() - lastfreept.time).total_seconds()
             if freeptcheck >= 86400:
@@ -635,8 +635,10 @@ def collectfreepts():
 
         if freeptcheck:
             points = randLowNum(1,50,9)
+        else:
+            points = 0
 
-        user.points += points
+        #user.points += points
         freepts = FreePoint(user.id, points, datetime.now())
         db.session.add(freepts)
         db.session.commit()
