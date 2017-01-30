@@ -200,9 +200,9 @@ def viewinteractions():
         if lastfreept:
             freeptcheck = (datetime.now() - lastfreept.time).total_seconds()
             if freeptcheck >= 86400:
-                freepts = False
-            else:
                 freepts = True
+            else:
+                freepts = False
         else:
             freepts = True
 

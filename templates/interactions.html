@@ -1,6 +1,6 @@
 {% extends 'base.html' %}{% block content %}
 <div id="links">
-{% if freepts %}<span class="orngtext freepts" style="cursor:pointer;">Collect Free Points (1-100)</span>{% endif %}
+{% if freepts %}<span class="freepts"><button class="greenbutton freeptsbtn" style="color:#fff;background:#FB8C00;">Collect Free Points (1-50)</button></span>{% endif %}
 <center><h4>Interactions Beta</h4></center>
 <b>Latest:</b> <a class="genlink" {% if catg=='points' %}style="border-bottom: 2px solid #303F9F;"{% endif %} href="/i/interactions">Points <span class="orngtext">{{ pointcount }}</span></a> |
 <a class="genlink" {% if catg=='trails' %}style="border-bottom: 2px solid #303F9F;"{% endif %} href="/i/interactions?catg=trails">Trails <span class="orngtext">{{ trailcount }}</span></a>
@@ -29,5 +29,24 @@
   <h3>This is where you can view recent comments</h3>
 {% endfor %}
 {% endif %}
+<script>
+$('.freeptsbtn').click(function() {
+  $(this).text('Collecting...');
+  $.ajax({
+      type: 'GET',
+      contentType: 'application/json; charset=utf-8',
+      url: '/api/collectfreepts',
+      async: true,
+      data: JSON.stringify({}),
+      dataType: 'json',
+      success: function (data) {
+          $('.freepts').html('<span class="orngtext">Collected ' + data.points + '!</span>');
+      },
+      error: function (data) {
+          $('.freepts').html('<span class="orngtext">Try again later.</span>');
+      }
+  });
+});
+</script>
 </div>
 {% endblock %}

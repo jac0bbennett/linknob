@@ -8,7 +8,7 @@ from config import app, db, pepper, bsalt
 from hashlib import md5
 from Models.models import User, Link, ReferenceLink, Point, Invite, Follow, Chain, Chainlink, Monthupdate, Comment, Page, FreePoint
 from Links.scrape import scrape_link, check_link
-from utils import Pagination, codegen, escapeit, loadmsgs, genuuid
+from utils import Pagination, codegen, escapeit, loadmsgs, genuuid, randLowNum
 from datetime import datetime, timedelta
 import lxml.html, requests, re, random, bcrypt, json
 
@@ -609,15 +609,39 @@ def checknewint():
         if lastfreept:
             freeptcheck = (datetime.now() - lastfreept.time).total_seconds()
             if freeptcheck >= 86400:
-                freeptcheck = 0
-            else:
                 freeptcheck = 1
+            else:
+                freeptcheck = 0
         else:
             freeptcheck = 1
         count = trailcount + pointcount + commentcount + freeptcheck
         return jsonify({'intcount': count})
     else:
         return jsonify({'intcount': 0})
+
+@app.route('/api/collectfreepts')
+def collectfreepts():
+    if 'user' in session:
+        user = User.query.filter_by(id=session['userid']).first()
+        lastfreept = FreePoint.query.filter_by(userid=session['userid']).first()
+        if lastfreept:
+            freeptcheck = (datetime.now() - lastfreept.time).total_seconds()
+            if freeptcheck >= 86400:
+                freeptcheck = 1
+            else:
+                freeptcheck = 0
+        else:
+            freeptcheck = 1
+
+        if freeptcheck:
+            points = randLowNum(1,50,9)
+
+        #user.points += points
+        freepts = FreePoint(user.id, points, datetime.now())
+        db.session.add(freepts)
+        db.session.commit()
+
+        return jsonify({'points':points})
 
 @app.route('/api/getcustomdash/donald/<count>')
 def getcustomdash(count):

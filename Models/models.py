@@ -298,7 +298,7 @@ class FreePoint(db.Model):
     points = db.Column(db.Integer, nullable=False)
     time = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, users, links, time):
+    def __init__(self, userid, points, time):
         self.userid = userid
         self.points = points
         self.time = time

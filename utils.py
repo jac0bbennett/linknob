@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 8/17/16
+# Copyright Jacob Bennett 1/29/17
 # Status: Stable
 
 from math import ceil
@@ -20,7 +20,11 @@ def escapeit(it):
     replaced = cgi.escape(it)
     return replaced
 
-# NOTE: Check to see if uuid has been used
+def randLowNum(min, max, exp):
+    num = min + (max - min) * pow(random.random(), exp)
+    num = int(num)
+    return num
+
 def genuuid():
     uuid = shortuuid.ShortUUID().random(length=11)
     checklink = Link.query.filter_by(uuid=uuid).first()
