@@ -142,3 +142,7 @@ def editdoc(docurl):
             abort(404)
     else:
         abort(404)
+
+@app.route('/loaderio-6c4b182450998bf144d03acda53ce019')
+def loaderverify():
+    return 'loaderio-6c4b182450998bf144d03acda53ce019'
