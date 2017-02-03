@@ -608,7 +608,7 @@ def checknewint():
         lastfreept = FreePoint.query.filter_by(userid=session['userid']).order_by(FreePoint.time.desc()).first()
         if lastfreept:
             freeptcheck = (datetime.now() - lastfreept.time).total_seconds()
-            if freeptcheck >= 86400:
+            if freeptcheck >= 72000:
                 freeptcheck = 1
             else:
                 freeptcheck = 0
