@@ -42,7 +42,6 @@
           <span class="graytext">Clicks:</span> {{ link.clicks }}
           </span> {% endif %}
           <span class="linkoptions">
-            <span class="profilelink sharelink" shareid="{{ link.uuid }}">Share</span>
             {% if 'user' in session %}&#183; <span class="profilelink moreoptions">Options</span>{% endif %} |
            {{ link.time | datetimeformat }} by <a href="/{{ user.pseudo }}" class="profilelink pseudonym">{{ user.pseudo }}</a></span>
            {% if 'user' in session %}
