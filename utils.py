@@ -21,7 +21,7 @@ def escapeit(it):
     return replaced
 
 def randLowNum(min, max, exp):
-    num = min + (max - min) * pow(random.random(), exp)
+    num = min + (1 + max - min) * pow(random.random(), exp)
     num = int(num)
     return num
 
