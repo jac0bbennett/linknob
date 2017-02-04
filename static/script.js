@@ -630,7 +630,7 @@ $(document).ready(function () {
           url: '/api/geninvite',
           dataType: 'json',
           success: function (data) {
-              $('<tr><td>' + data.code + '</td><td>Now</td><td>Active</td><td style="font-size:12pt;">http://lknb.co/signup?code=' + data.code + '</td></tr>').prependTo("table > tbody");
+              $('<tr><td>' + data.code + '</td><td>Now</td><td>Active</td><td style="font-size:12pt;">http://linknob.com/signup?code=' + data.code + '</td></tr>').prependTo("table > tbody");
               var remains = $('#inviteremain').text();
               $('#inviteremain').text(parseInt(remains) - 1);
           },
