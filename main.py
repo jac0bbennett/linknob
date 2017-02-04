@@ -15,6 +15,8 @@ from Models.models import User, Page
 from config import app, db
 from Routes import maintenance
 
+#from Classify import api
+
 reqstart = None
 
 @app.before_request
@@ -31,7 +33,7 @@ def before_request():
             try:
                 session['points'] = int(User.query.filter_by(id=session['userid']).first().points)
             except AttributeError:
-                session['points'] = '50'
+                session['points'] = '10'
             alert = Page.query.filter_by(active=1).first()
             if alert and ('alertclosed' not in session or session['alertclosed'] != alert.header):
                 session['alert'] = alert.header
