@@ -19,7 +19,7 @@ class User(db.Model):
     rank = db.Column(db.Integer, default=1)
     name = db.Column(db.String)
     bio = db.Column(db.String, default='')
-    points = db.Column(db.Float, default=50)
+    points = db.Column(db.Float, default=10)
     joindate = db.Column(db.DateTime)
     verified = db.Column(db.Integer, default=0)
     confirm = db.Column(db.String)
