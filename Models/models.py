@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 1/28/17
+# Copyright Jacob Bennett 2/4/17
 
 from config import db
 from flask import session
@@ -430,3 +430,30 @@ class Chainlink(db.Model):
             return user.pseudo
         else:
             return '[Deleted]'
+
+#Classifier api
+
+class ClassifyKey(db.Model):
+    __bind_key__ = 'classify'
+    __tablename__ = 'keys'
+
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String, nullable=False)
+    email = db.Column(db.String)
+    queries = db.Column(db.Integer, default=0)
+    created = db.Column(db.DateTime)
+    active = db.Column(db.Integer, default=1)
+    querylimit = db.Column(db.Integer, default=100)
+    lastquery = db.Column(db.DateTime)
+
+    def __init__(self, key, email, queries, created, active, querylimit, lastquery):
+        self.key = key
+        self.email = email
+        self.queries = queries
+        self.created = created
+        self.active = active
+        self.querylimit = querylimit
+        self.lastquery = lastquery
+
+    def __repr__(self):
+        return '<Email %r>' % self.email

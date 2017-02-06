@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type=text/javascript src="{{url_for('static', filename='classify/upload.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+  </head>
+  <body>
+    <div id="links">
+      <h1>Topic Classification</h1>
+      <span class="graytext">Upload a file with a single website URL on a separate line. It will then
+        be processed and classified into topics. After hitting upload, the file will be sent to the server to be processed.
+        When processing is finished, the results will be downloaded on your machine.</span>
+      <hr>
+      <a class="genlink allres" href="/api/classify/temp/list/topics">All Results</a>
+      <span style="float:right;" class="graytext msg"></span><br><br>
+      <form id="fileupload">
+        <b>Key:</b><br>
+        <input type="text" name="apikey" class="geninput apikey" {% if 'classifykey' in session %}value="{{ session['classifykey'] }}"{% endif %}
+         placeholder="API Key" style="width:200px;">
+        <input type="file" name="file" class="choose" style="margin-left:150px;"></form>
+        <span style="float:right;margin-top:-45px;">
+        <button class="greenbutton" id="upload">Upload</button>
+      </span>
+    </div>
+  </body>
+</html>

@@ -15,7 +15,7 @@ from Models.models import User, Page
 from config import app, db
 from Routes import maintenance
 
-#from Classify import api
+from Classify import api
 
 reqstart = None
 
