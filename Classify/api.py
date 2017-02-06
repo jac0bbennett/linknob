@@ -56,6 +56,7 @@ def classifytopics():
                 +str(data['Games'])+','+str(data['Health'])+','+str(data['Home'])+','+str(data['Recreation'])+','
                     +str(data['Science'])+','+str(data['Society'])+','+str(data['Sports'])+'\n')
                 keycheck.queries += 1
+				keycheck.lastquery = datetime.now()
 
         db.session.commit()
         os.remove(os.path.join('Classify/temp/uploads', uploadname))
