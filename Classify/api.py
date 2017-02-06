@@ -48,17 +48,24 @@ def classifytopics():
         with open('Classify/temp/'+key+'/'+savename, 'w') as f, open('Classify/temp/uploads/'+uploadname, 'r') as r:
             f.write('Url,Arts,Business,Computers,Games,Health,Home,Recreation,Science,Society,Sports\n')
             for url in r.read().split('\n'):
-                if not url.startswith('http'):
-                    url = 'http://' + url
-                url = urlparse.quote_plus(url)
-                req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
-                data = req.json()
-                data = data['cls1']
-                f.write(urlparse.unquote(url)+','+str(data['Arts'])+','+str(data['Business'])+','+str(data['Computers'])+','
-                +str(data['Games'])+','+str(data['Health'])+','+str(data['Home'])+','+str(data['Recreation'])+','
-                    +str(data['Science'])+','+str(data['Society'])+','+str(data['Sports'])+'\n')
-                keycheck.queries += 1
-                keycheck.lastquery = datetime.now()
+                if keycheck.queries < keycheck.querylimit:
+                    if not url.startswith('http'):
+                        url = 'http://' + url
+                    url = urlparse.quote_plus(url)
+                    req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
+                    data = req.json()
+                    try:
+                        data = data['cls1']
+                    except KeyError:
+                        data = None
+                    if data:
+                        f.write(urlparse.unquote(url)+','+str(data['Arts'])+','+str(data['Business'])+','+str(data['Computers'])+','
+                        +str(data['Games'])+','+str(data['Health'])+','+str(data['Home'])+','+str(data['Recreation'])+','
+                            +str(data['Science'])+','+str(data['Society'])+','+str(data['Sports'])+'\n')
+                    else:
+                        f.write(urlparse.unquote(url)+'\n')
+                    keycheck.queries += 1
+                    keycheck.lastquery = datetime.now()
 
         db.session.commit()
         os.remove(os.path.join('Classify/temp/uploads', uploadname))
