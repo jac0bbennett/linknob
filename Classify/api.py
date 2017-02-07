@@ -51,9 +51,11 @@ def classifytopics():
                 if keycheck.queries < keycheck.querylimit:
                     if not url.startswith('http'):
                         url = 'http://' + url
-                    url = urlparse.quote_plus(url)
-                    req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
-                    data = req.json()
+                    #url = urlparse.quote_plus(url)
+                    req = requests.get(url)
+                    #req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
+                    #data = req.json()
+                    data = {}
                     try:
                         data = data['cls1']
                     except KeyError:
@@ -64,9 +66,9 @@ def classifytopics():
                             +str(data['Science'])+','+str(data['Society'])+','+str(data['Sports'])+'\n')
                     else:
                         f.write(urlparse.unquote(url)+'\n')
-                    keycheck.queries += 1
-                    keycheck.lastquery = datetime.now()
-                    db.session.commit()
+                    #keycheck.queries += 1
+                    #keycheck.lastquery = datetime.now()
+                    #db.session.commit()
         os.remove(os.path.join('Classify/temp/uploads', uploadname))
         return jsonify({'url': '/api/classify/temp/'+savename+'?key='+key, 'queries': keycheck.queries, 'limit': keycheck.querylimit})
 
