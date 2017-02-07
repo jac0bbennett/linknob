@@ -66,8 +66,7 @@ def classifytopics():
                         f.write(urlparse.unquote(url)+'\n')
                     keycheck.queries += 1
                     keycheck.lastquery = datetime.now()
-
-        db.session.commit()
+                    db.session.commit()
         os.remove(os.path.join('Classify/temp/uploads', uploadname))
         return jsonify({'url': '/api/classify/temp/'+savename+'?key='+key, 'queries': keycheck.queries, 'limit': keycheck.querylimit})
 
@@ -76,6 +75,8 @@ def listclassifyfiles(classifier):
     key = request.args.get('key')
     if key and os.path.exists(os.path.join('Classify/temp/'+key)):
         files = [f for f in os.listdir(os.path.join('Classify/temp/'+key)) if '-'+classifier+'-' in f]
+        files.sort(key=lambda x: os.stat(os.path.join('Classify/temp/'+key, x)).st_mtime)
+        files = files[::-1]
         return render_template('classify/listfiles.html', files=files, classifier=classifier, key=key)
     else:
         abort(404)
