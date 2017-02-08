@@ -52,7 +52,7 @@ def classifytopics():
                     if not url.startswith('http'):
                         url = 'http://' + url
                     #url = urlparse.quote_plus(url)
-                    req = requests.get(url)
+                    #req = requests.get(url)
                     req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
                     data = req.json()
                     #data = {}
