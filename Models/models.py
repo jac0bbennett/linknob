@@ -457,3 +457,28 @@ class ClassifyKey(db.Model):
 
     def __repr__(self):
         return '<Email %r>' % self.email
+
+class FileQueue(db.Model):
+    __bind_key__ = 'classify'
+    __tablename__ = 'filequeue'
+
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String)
+    upload = db.Column(db.String)
+    save = db.Column(db.String)
+    status = db.Column(db.String)
+    complete = db.Column(db.Integer, default=0)
+    total = db.Column(db.Integer)
+    added = db.Column(db.DateTime)
+
+    def __init__(self, key, upload, save, status, complete, total, added):
+        self.key = key
+        self.upload = upload
+        self.save = save
+        self.status = status
+        self.complete = complete
+        self.total = total
+        self.added = added
+
+    def __repr__(self):
+        return '<Save Filename %r>' % self.save

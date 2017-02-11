@@ -9,29 +9,87 @@ $(document).ready(function () {
     }
   });
 
-  $('#upload').click(function() {
-    var formData = new FormData($('#fileupload')[0]);
-    $('.msg').text('Processing...');
-    $.ajax({
-        type: 'POST',
-        contentType: 'application/json; charset=utf-8',
-        url: '/api/classify/topics',
-        data: formData,
-        contentType: false,
-        processData: false,
-        timeout: 0,
-        success: function (data) {
-          if (data.error) {
-            $('.msg').text(data.error);
-          } else {
-            $('.msg').text('Done! ('+data.queries+'/'+data.limit+')');
-            window.location.href = data.url;
+  function checkqueue() {
+    var key = $('.apikey').val();
+    if (key != '') {
+      $.ajax({
+          type: 'GET',
+          url: '/api/classify/check/'+key,
+          success: function (data) {
+            if (data.error) {
+              $('.msg').text(data.error);
+            } else {
+              if ((data.complete != data.total) && (data.status != 'cancelled')) {
+                $('.msg').text('Processing... '+data.complete+'/'+data.total);
+                $('.apicalls').text('Used Today: '+data.apiused+' / '+data.apilimit);
+              } else if (data.status == 'cancelled') {
+                $('.msg').html('Cancelled last <a class="genlink" href="'+data.url+'">File</a> ('+data.complete+')')
+              }
+              else {
+                $('.msg').html('Finished last <a class="genlink" href="'+data.url+'">File</a> ('+data.total+')');
+                $('#upload').text('Upload');
+                $('#upload').css({'background': '#2E7D32'});
+              }
+            }
+          },
+          error: function (data) {
+              $('.msg').text('Error getting progress!');
           }
-        },
-        error: function (data) {
-            alert('An error occured while uploading/processing!');
-            $('.msg').text('');
-        }
-    });
+      });
+    }
+    setTimeout(checkqueue, 5000);
+  }
+  checkqueue();
+
+  $('#upload').click(function() {
+    if ($(this).text() == 'Upload') {
+      var formData = new FormData($('#fileupload')[0]);
+      $('.msg').text('Uploading...');
+      $.ajax({
+          type: 'POST',
+          contentType: 'application/json; charset=utf-8',
+          url: '/api/classify/topics',
+          data: formData,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+            if (data.error) {
+              $('.msg').text(data.error);
+            } else {
+              if (data.status == 'processing') {
+                $('.msg').text('Processing...');
+                $('#upload').text('Cancel');
+                $('#upload').css({'background': '#981e1e'});
+              } else if (data.status == 'unavailable') {
+                $('.msg').text('All workers are busy. Try again in a minute.');
+              } else if (data.status == 'running') {
+                $('.msg').text('Please wait for the other process to finsh.');
+              }
+            }
+          },
+          error: function (data) {
+              alert('An error occured while uploading/processing!');
+              $('.msg').text('');
+          }
+      });
+    } else {
+      var key = $('.apikey').val();
+      if (key != '') {
+        $.ajax({
+            type: 'GET',
+            url: '/api/classify/cancel/'+key,
+            success: function (data) {
+              if (data.error) {
+                $('.msg').text(data.error);
+              } else {
+                  $('.msg').text('Remaining rows cancelled.');
+              }
+            },
+            error: function (data) {
+                $('.msg').text('Error cancelling!');
+            }
+        });
+    }
+  }
   });
 });

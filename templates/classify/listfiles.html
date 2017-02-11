@@ -6,11 +6,20 @@
     <link rel="stylesheet" type="text/css" href="/static/css/main.css">
   </head>
   <body>
-    <div id="links">
+    <div id="links" style="margin-top:50px;">
       <a style="float:right;" class="genlink" href="/api/classify/topics">Upload</a>
       <h1>{{ classifier.capitalize() }} Files</h1><hr>
       {% for file in files %}
-        <a class="genlink" href="/api/classify/temp/{{ file }}?key={{ key }}">{{ file }}</a><hr>
+        <a class="genlink" {% if file.status == 'complete' or file.status == 'cancelled' %}href="/api/classify/temp/{{ file.save }}?key={{ key }}"
+        {% else %}
+        style="color:gray;cursor:wait;"
+        {% endif %}>{{ file.save }}</a><span style="float:right;font-family:Roboto;color:gray;">
+          {% if file.status == 'complete' %}Done! ({{ file.total }})
+          {% elif file.status == 'cancelled' %}
+          Cancelled ({{ file.complete }} / {{ file.total }})
+          {% else %}
+          {{ file.complete }} / {{ file.total }}{% endif %}
+        </span><br><span class="graytext" style="font-size:9pt">Added {{ file.added|datetimeformat }}</span><hr>
       {% endfor %}
     </div>
   </body>
