@@ -26,7 +26,11 @@ $(document).ready(function () {
                 $('.msg').html('Cancelled last <a class="genlink" href="'+data.url+'">File</a> ('+data.complete+')')
               }
               else {
+				if (data.total) {
                 $('.msg').html('Finished last <a class="genlink" href="'+data.url+'">File</a> ('+data.total+')');
+				} else {
+					$('.msg').text('');
+				}
                 $('#upload').text('Upload');
                 $('#upload').css({'background': '#2E7D32'});
               }
