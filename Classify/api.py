@@ -84,6 +84,9 @@ def queuefile(uploadname, savename, keycheck):
 def checkqueueid(key):
     check = FileQueue.query.filter_by(key=key).order_by(FileQueue.added.desc()).first()
     apikey = ClassifyKey.query.filter_by(key=key).first()
+    if datetime.date(apikey.lastquery) != datetime.date(datetime.now()):
+        apikey.queries = 0
+        db.session.commit()
     if check:
         return jsonify({
         'id': check.id,
