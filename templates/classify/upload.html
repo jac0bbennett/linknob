@@ -22,7 +22,7 @@
          placeholder="API Key" style="width:200px;">
         <input type="file" name="file" class="choose" style="margin-left:150px;"></form>
         <span style="float:right;margin-top:-45px;">
-        <button class="greenbutton" id="upload">Upload</button>
+        <button class="greenbutton" id="upload" {% if queuedfile %}style="background:#981e1e;"{% endif %}>{% if queuedfile %}Cancel{% else %}Upload{% endif %}</button>
       </span>
     </div>
   </body>

@@ -24,7 +24,6 @@ def processfile(uploadname, savename, key):
         f.write('Url,Arts,Business,Computers,Games,Health,Home,Recreation,Science,Society,Sports\n')
         for url in r.read().split('\n'):
             if fileq.status == 'cancelled':
-                os.remove(os.path.join('Classify/temp/uploads', uploadname))
                 break
             elif keycheck.queries < keycheck.querylimit:
                 if not url.startswith('http'):
@@ -49,9 +48,10 @@ def processfile(uploadname, savename, key):
                 fileq.complete += 1
                 db.session.commit()
     if fileq.status != 'cancelled':
-        os.remove(os.path.join('Classify/temp/uploads', uploadname))
         fileq.status = 'complete'
         db.session.commit()
+    os.remove(os.path.join('Classify/temp/uploads', uploadname))
+
 
 def queuefile(uploadname, savename, keycheck):
     checkqueue = FileQueue.query.filter_by(status='processing').count()
