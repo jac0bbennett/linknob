@@ -109,10 +109,12 @@ def checkqueueid(key):
 @app.route('/api/classify/cancel/<key>')
 def cancelqueue(key):
     check = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').order_by(FileQueue.added.desc()).first()
-    if check:
+    if check and ('-assoc-' not in check.save):
         check.status = 'cancelled'
         db.session.commit()
         return jsonify()
+    elif check and ('-assoc-' in check.save):
+        return jsonify({'error': 'Cancellation unavailable!'})
     else:
         abort(404)
 
