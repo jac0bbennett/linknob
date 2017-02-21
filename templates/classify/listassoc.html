@@ -7,8 +7,8 @@
   </head>
   <body>
     <div id="links" style="margin-top:50px;">
-      <a style="float:right;" class="genlink" href="/api/classify?catg=topics">Upload</a>
-      <h1>{{ classifier.capitalize() }} Files</h1><hr>
+      <a style="float:right;" class="genlink" href="/api/classify/assoc">Upload</a>
+      <h1>Association Result Files</h1><hr>
       {% for file in files %}
         <a class="genlink" {% if file.status == 'complete' or file.status == 'cancelled' %}href="/api/classify/temp/{{ file.save }}?key={{ key }}"
         {% else %}
@@ -16,10 +16,15 @@
         {% endif %}>{{ file.save }}</a><span style="float:right;font-family:Roboto;color:gray;">
           {% if file.status == 'complete' %}Done! ({{ file.total }})
           {% elif file.status == 'cancelled' %}
-          Cancelled ({{ file.complete }} / {{ file.total }})
+          Cancelled {{ file.total }})
           {% else %}
           {{ file.complete }} / {{ file.total }}{% endif %}
-        </span><br><span class="graytext" style="font-size:9pt">Added {{ file.added|datetimeformat }}</span><hr>
+        </span><br>
+        <a class="genlink" style="font-size: 10pt;" {% if file.status == 'complete' or file.status == 'cancelled' %}href="/api/classify/temp/{{ file.save.split('.csv')[0]+'.json' }}?key={{ key }}"
+        {% else %}
+        style="color:gray;cursor:wait;"
+        {% endif %}>{{ file.save.split('.csv')[0]+'.json' }}</a>
+        <br><span class="graytext" style="font-size:9pt">Added {{ file.added|datetimeformat }}</span><hr>
       {% endfor %}
     </div>
   </body>

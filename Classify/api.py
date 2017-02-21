@@ -5,6 +5,7 @@ from datetime import datetime
 from config import app, db
 from utils import codegen
 from Models.models import ClassifyKey, FileQueue
+from Classify import mbasket
 import requests, json, os, string, threading, time
 import urllib.parse as urlparse
 
@@ -53,7 +54,7 @@ def processfile(uploadname, savename, key):
     os.remove(os.path.join('Classify/temp/uploads', uploadname))
 
 
-def queuefile(uploadname, savename, keycheck):
+def queuefile(uploadname, savename, keycheck, type='topics', support=0, confidence=0):
     checkqueue = FileQueue.query.filter_by(status='processing').count()
     checkkeyqueue = FileQueue.query.filter_by(key=keycheck.key).filter(FileQueue.status=='processing').first()
     with open('Classify/temp/uploads/'+uploadname, 'r') as r:
@@ -63,7 +64,10 @@ def queuefile(uploadname, savename, keycheck):
         filestatus = 'running'
     elif checkqueue < 2:
         newqueue = FileQueue(keycheck.key, uploadname, savename, 'processing', 0, rowcount, datetime.now())
-        process = threading.Thread(target=processfile, kwargs={'uploadname': uploadname, 'savename': savename, 'key': keycheck.key})
+        if type == 'topics':
+            process = threading.Thread(target=processfile, kwargs={'uploadname': uploadname, 'savename': savename, 'key': keycheck.key})
+        elif type == 'assoc':
+            process = threading.Thread(target=mbasket.calc, kwargs={'support_threshold': support, 'confidence_threshold': confidence, 'uploadname': uploadname, 'savename': savename, 'key': keycheck.key})
         process.daemon = True
         process.start()
         filestatus = 'processing'
@@ -112,8 +116,13 @@ def cancelqueue(key):
     else:
         abort(404)
 
-@app.route('/api/classify/topics', methods=['GET', 'POST'])
+@app.route('/api/classify', methods=['GET', 'POST'])
 def classifytopics():
+    catg = request.args.get('catg')
+    if not catg:
+        catg = 'topics'
+    elif catg != 'topics':
+        abort(404)
     if request.method == 'GET':
         title = 'Upload'
         if 'classifykey' in session:
@@ -125,7 +134,7 @@ def classifytopics():
             apikey = ClassifyKey.query.filter_by(key=session['classifykey']).first()
         else:
             apikey = None
-        return render_template('classify/upload.html', title=title, queuedfile=queuedfile, apikey=apikey)
+        return render_template('classify/upload.html', title=title, queuedfile=queuedfile, apikey=apikey, catg=catg)
     elif request.method == 'POST':
         key = request.form['apikey']
         keycheck = ClassifyKey.query.filter_by(key=key).first()
@@ -146,10 +155,50 @@ def classifytopics():
             return jsonify({'error': 'File extension not supported'})
         uploadname = secure_filename(file.filename.split('.')[0]+'---'+codegen(5)+'.'+file.filename.split('.')[1])
         file.save(os.path.join('Classify/temp/uploads', uploadname))
-        savename = uploadname.split('.')[0].split('---')[0]+'-topics-'+str(datetime.now()).split('.')[0].replace(':', '-')+'.csv'
+        savename = uploadname.split('.')[0].split('---')[0]+'-'+catg+'-'+str(datetime.now()).split('.')[0].replace(':', '-')+'.csv'
         if not os.path.exists(os.path.join('Classify/temp/'+key)):
             os.makedirs(os.path.join('Classify/temp/'+key))
         queue = queuefile(uploadname, savename, keycheck)
+        return jsonify({'status': queue, 'savename': savename})
+
+@app.route('/api/classify/assoc', methods=['GET', 'POST'])
+def classifyassoc():
+    if request.method == 'GET':
+        title = 'Upload Association'
+        if 'classifykey' in session:
+            queuedfile = FileQueue.query.filter_by(key=session['classifykey']).filter(FileQueue.status=='processing').order_by(FileQueue.added.asc()).first()
+        else:
+            queuedfile = None
+
+        if 'classifykey' in session:
+            apikey = ClassifyKey.query.filter_by(key=session['classifykey']).first()
+        else:
+            apikey = None
+        return render_template('classify/uploadassoc.html', title=title, queuedfile=queuedfile, apikey=apikey, catg='assoc')
+    elif request.method == 'POST':
+        key = request.form['apikey']
+        keycheck = ClassifyKey.query.filter_by(key=key).first()
+        if not keycheck:
+            return jsonify({'error': 'Invalid API key'})
+        session['classifykey'] = key
+        support = request.form['support']
+        confidence = request.form['confidence']
+        if not support or not confidence:
+            return jsonify({'error': 'Support and Confidence required'})
+        if 'file' not in request.files:
+            return jsonify({'error': 'Missing file'})
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'error': 'Missing file'})
+        fileext = file.filename.split('.')[1]
+        if fileext != 'csv' and fileext != 'txt':
+            return jsonify({'error': 'File extension not supported'})
+        uploadname = secure_filename(file.filename.split('.')[0]+'---'+codegen(5)+'.'+file.filename.split('.')[1])
+        file.save(os.path.join('Classify/temp/uploads', uploadname))
+        savename = uploadname.split('.')[0].split('---')[0]+'-assoc-'+str(datetime.now()).split('.')[0].replace(':', '-')+'.csv'
+        if not os.path.exists(os.path.join('Classify/temp/'+key)):
+            os.makedirs(os.path.join('Classify/temp/'+key))
+        queue = queuefile(uploadname, savename, keycheck, type='assoc', support=float(support), confidence=float(confidence))
         return jsonify({'status': queue, 'savename': savename})
 
 @app.route('/api/classify/temp/list/<classifier>')
@@ -157,14 +206,17 @@ def listclassifyfiles(classifier):
     key = request.args.get('key')
     if key and ClassifyKey.query.filter_by(key=key).first():
         session['classifykey'] = key
-        files = FileQueue.query.filter_by(key=key).order_by(FileQueue.added.desc()).all()
+        files = FileQueue.query.filter_by(key=key).filter(FileQueue.save.contains(classifier)).order_by(FileQueue.added.desc()).all()
         '''
         #View files in file system
         files = [f for f in os.listdir(os.path.join('Classify/temp/'+key)) if '-'+classifier+'-' in f]
         files.sort(key=lambda x: os.stat(os.path.join('Classify/temp/'+key, x)).st_mtime)
         files = files[::-1]
         '''
-        return render_template('classify/listfiles.html', files=files, classifier=classifier, key=key)
+        if classifier != 'assoc':
+            return render_template('classify/listfiles.html', files=files, classifier=classifier, key=key)
+        else:
+            return render_template('classify/listassoc.html', files=files, classifier=classifier, key=key)
     else:
         abort(404)
 

@@ -574,6 +574,38 @@ hr {
     z-index: 99;
 }
 
+.tooltiplong {
+    display: inline;
+    position: relative;
+}
+
+.tooltiplong:hover:after {
+    background: rgba(0, 0, 0, .8);
+    border-radius: 1px;
+    top: 22px;
+    color: #fff;
+    content: attr(tip);
+    left: -80%;
+    padding: 15px 15px;
+    position: absolute;
+    z-index: 98;
+    width: 100px;
+    font-size: 12pt;
+    font-family: Roboto;
+    text-align: center;
+}
+
+.tooltiplong:hover:before {
+    border: solid;
+    border-color: #333 transparent;
+    border-width: 0px 6px 6px 6px;
+    top: 16px;
+    content: "";
+    left: 30%;
+    position: absolute;
+    z-index: 99;
+}
+
 .othtip {
     display: inline;
     position: relative;

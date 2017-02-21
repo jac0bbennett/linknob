@@ -20,22 +20,26 @@ $(document).ready(function () {
               $('.msg').text(data.error);
             } else {
               if ((data.complete != data.total) && (data.status != 'cancelled')) {
-                $('.msg').text('Processing... '+data.complete+'/'+data.total);
+                if (data.result.toLowerCase().indexOf('-assoc-') >= 0) {
+                  $('.msg').text('Processing Association...');
+                } else {
+                  $('.msg').text('Processing... '+data.complete+'/'+data.total);
+                }
                 $('.apicalls').text('Used Today: '+data.apiused+' / '+data.apilimit);
               } else if (data.status == 'cancelled') {
-                $('.msg').html('Cancelled last <a class="genlink" href="'+data.url+'">File</a> ('+data.complete+')')
+                $('.msg').html('Cancelled last <a class="genlink tooltiplong" tip="'+data.result+'" href="'+data.url+'">File</a> ('+data.complete+')')
               }
               else {
                 if (data.apiused) {
                   $('.apicalls').text('Used Today: '+data.apiused+' / '+data.apilimit);
                 }
         				if (data.total) {
-                        $('.msg').html('Finished last <a class="genlink" href="'+data.url+'">File</a> ('+data.total+')');
+                        $('.msg').html('Finished last <a class="genlink tooltiplong" tip="'+data.result+'" href="'+data.url+'">File</a> ('+data.total+')');
         				} else {
         					$('.msg').text('');
         				}
-                        $('#upload').text('Upload');
-                        $('#upload').css({'background': '#2E7D32'});
+                        $('.upload').text('Upload');
+                        $('.upload').css({'background': '#2E7D32'});
               }
             }
           },
@@ -55,7 +59,7 @@ $(document).ready(function () {
       $.ajax({
           type: 'POST',
           contentType: 'application/json; charset=utf-8',
-          url: '/api/classify/topics',
+          url: '/api/classify?catg=topics',
           data: formData,
           contentType: false,
           processData: false,
@@ -65,8 +69,8 @@ $(document).ready(function () {
             } else {
               if (data.status == 'processing') {
                 $('.msg').text('Processing...');
-                $('#upload').text('Cancel');
-                $('#upload').css({'background': '#981e1e'});
+                $('.upload').text('Cancel');
+                $('.upload').css({'background': '#981e1e'});
               } else if (data.status == 'unavailable') {
                 $('.msg').text('All workers are busy. Try again in a minute.');
               } else if (data.status == 'running') {
@@ -90,8 +94,8 @@ $(document).ready(function () {
                 $('.msg').text(data.error);
               } else {
                   $('.msg').text('Remaining rows cancelled.');
-                  $('#upload').text('Upload');
-                  $('#upload').css({'background': '#2E7D32'});
+                  $('.upload').text('Upload');
+                  $('.upload').css({'background': '#2E7D32'});
               }
             },
             error: function (data) {

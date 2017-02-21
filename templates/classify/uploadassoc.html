@@ -3,27 +3,28 @@
     <title>{{ title }}</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script type=text/javascript src="{{url_for('static', filename='classify/upload.js') }}"></script>
+    <script type=text/javascript src="{{url_for('static', filename='classify/assoc.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/main.css">
   </head>
   <body>
     <span style="display:none" class="classifycatg">{{ catg }}</span>
     <div id="links" style="margin-top:100px;">
-      <span class="graytext apicalls" style="float:right;">{% if apikey %}Used Today: {{ apikey.queries }} / {{ apikey.querylimit }}{% endif %}</span>
-      <h1>{{ catg.capitalize() }} Classification</h1>
-      <span class="graytext">1. Choose a file with web URLs on separate lines. <br>2. Click upload. <br>3. Your upload will be processed by our server.
-        <br>4. The file containing results will be available
-        in results page for download at any time.
+      <h1>Association Analysis</h1>
+      <span class="graytext">1. Choose a csv containing associations. <br>2. Click upload. <br>3. Your upload will be processed by our server.
+        <br>4. The csv and json version of results will be available in all results page at any time
       </span>
       <hr>
-      <a class="genlink allres" href="/api/classify/temp/list/{{ catg }}">All Results</a>
+      <a class="genlink allres" href="/api/classify/temp/list/assoc">All Results</a>
       <span style="float:right;" class="graytext msg">{% if queuedfile %}Processing... ({{ queuedfile.complete }} / {{ queuedfile.total }}){% endif %}</span><br><br>
       <form id="fileupload">
+        <b>Support: </b><input type="number" step="0.01" min="0" max="1" name="support" placeholder="0.1" style="width:50px;">
+        <b>Confidence: </b><input type="number" step="0.01" min="0" max="1" name="confidence" placeholder="0.1" style="width:50px;"><br><br>
         <b>Key:</b><br>
         <input type="text" name="apikey" class="geninput apikey" {% if 'classifykey' in session %}value="{{ session['classifykey'] }}"{% endif %}
          placeholder="API Key" style="width:200px;">
         <input type="file" name="file" class="choose" style="margin-left:150px;"></form>
         <span style="float:right;margin-top:-45px;">
-        <button class="greenbutton upload" id="upload" {% if queuedfile %}style="background:#981e1e;"{% endif %}>{% if queuedfile %}Cancel{% else %}Upload{% endif %}</button>
+        <button class="greenbutton upload" id="uploadassoc" {% if queuedfile %}style="background:#981e1e;"{% endif %}>{% if queuedfile %}Cancel{% else %}Upload{% endif %}</button>
       </span>
     </div>
   </body>
