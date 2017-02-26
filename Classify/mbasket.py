@@ -3,7 +3,7 @@
 """
 Market basket python program
 v1.0.1
-1/26/17
+2/25/17
 """
 
 import sys, csv, os
@@ -51,12 +51,6 @@ def support_frequency(orders, item_set):
     #print('\nProcessing Support Frequency')
     N = len(orders)
     return support_count(orders, item_set)/float(N)
-
-def support_y(orders, right):
-    """Calculate support frequency of item set from orders 2D list"""
-    #print('\nProcessing Support Frequency')
-    N = len(orders)
-    return support_count(orders, right)/float(N)
 
 def confidence(orders, left, right):
     """Calculate confidence of item set from orders 2D list"""
@@ -137,15 +131,14 @@ def calc(support_threshold, confidence_threshold, uploadname, savename, key, fil
 
     #CSV
     if 'csv' in file_types or 'both' in file_types:
-        final_results = ["{},{}, {:0.3f}, {:0.3f},{:0.3f}".format(
+        final_results = ["{},{}, {:0.3f}, {:0.3f},{:0.3f},{:0.3f}".format(
             item_set, item, support_frequency(data[1:], item_set.union({item})),
-            confidence(data[1:], item_set, {item}), (1 - support_y(data[1:], {item})) / (1 - min(confidence(data[1:], item_set, {item}),0.99))) for item_set, item in apriori(
-            data[1:], support_threshold, confidence_threshold)] #if confidence(data[1:], item_set, {item}) != 1]
+            confidence(data[1:], item_set, {item}), (1 - support_frequency(data[1:], {item})) / (1 - min(confidence(data[1:], item_set, {item}),0.99)), support_frequency(data[1:], item_set.union({item}))/(support_frequency(data[1:], {item})*support_frequency(data[1:], item_set))) for item_set, item in apriori(data[1:], support_threshold, confidence_threshold)]
 
         written = []
 
         with open('Classify/temp/'+key+'/'+savename, 'w') as f:
-            f.write('Antecedent,Consequent,Support,Confidence,Conviction\n')
+            f.write('Antecedent,Consequent,Support,Confidence,Conviction,Lift\n')
             for result in final_results:
                 result = result.replace('{', '"')
                 result = result.replace('}', '"')
