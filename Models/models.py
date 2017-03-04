@@ -470,8 +470,9 @@ class FileQueue(db.Model):
     complete = db.Column(db.Integer, default=0)
     total = db.Column(db.Integer)
     added = db.Column(db.DateTime)
+    category = db.Column(db.String, default='topics')
 
-    def __init__(self, key, upload, save, status, complete, total, added):
+    def __init__(self, key, upload, save, status, complete, total, added, category):
         self.key = key
         self.upload = upload
         self.save = save
@@ -479,6 +480,7 @@ class FileQueue(db.Model):
         self.complete = complete
         self.total = total
         self.added = added
+        self.category = category
 
     def __repr__(self):
         return '<Save Filename %r>' % self.save

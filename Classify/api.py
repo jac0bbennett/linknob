@@ -54,7 +54,7 @@ def processfile(uploadname, savename, key):
     os.remove(os.path.join('Classify/temp/uploads', uploadname))
 
 
-def queuefile(uploadname, savename, keycheck, type='topics', support=0, confidence=0):
+def queuefile(uploadname, savename, keycheck, type='topics', support=0, confidence=0, antqnt='one'):
     checkqueue = FileQueue.query.filter_by(status='processing').count()
     checkkeyqueue = FileQueue.query.filter_by(key=keycheck.key).filter(FileQueue.status=='processing').first()
     with open('Classify/temp/uploads/'+uploadname, 'r') as r:
@@ -63,11 +63,11 @@ def queuefile(uploadname, savename, keycheck, type='topics', support=0, confiden
         newqueue = None
         filestatus = 'running'
     elif checkqueue < 2:
-        newqueue = FileQueue(keycheck.key, uploadname, savename, 'processing', 0, rowcount, datetime.now())
+        newqueue = FileQueue(keycheck.key, uploadname, savename, 'processing', 0, rowcount, datetime.now(), type)
         if type == 'topics':
             process = threading.Thread(target=processfile, kwargs={'uploadname': uploadname, 'savename': savename, 'key': keycheck.key})
         elif type == 'assoc':
-            process = threading.Thread(target=mbasket.calc, kwargs={'support_threshold': support, 'confidence_threshold': confidence, 'uploadname': uploadname, 'savename': savename, 'key': keycheck.key})
+            process = threading.Thread(target=mbasket.calc, kwargs={'support_threshold': support, 'confidence_threshold': confidence, 'uploadname': uploadname, 'savename': savename, 'key': keycheck.key, 'antqnt': antqnt})
         process.daemon = True
         process.start()
         filestatus = 'processing'
@@ -98,6 +98,7 @@ def checkqueueid(key):
         'status': check.status,
         'complete': check.complete,
         'total': check.total,
+        'catg': check.category,
         'added': check.added,
         'apiused': apikey.queries,
         'apilimit': apikey.querylimit,
@@ -189,6 +190,9 @@ def classifyassoc():
             return jsonify({'error': 'Support and Confidence required'})
         if 'file' not in request.files:
             return jsonify({'error': 'Missing file'})
+        antqnt = request.form['antqnt']
+        if antqnt != 'one' and antqnt != 'many':
+            return jsonify({'error': 'Invalid Antecedent Quantity'})
         file = request.files['file']
         if file.filename == '':
             return jsonify({'error': 'Missing file'})
@@ -200,7 +204,7 @@ def classifyassoc():
         savename = uploadname.split('.')[0].split('---')[0]+'-assoc-'+str(datetime.now()).split('.')[0].replace(':', '-')+'.csv'
         if not os.path.exists(os.path.join('Classify/temp/'+key)):
             os.makedirs(os.path.join('Classify/temp/'+key))
-        queue = queuefile(uploadname, savename, keycheck, type='assoc', support=float(support), confidence=float(confidence))
+        queue = queuefile(uploadname, savename, keycheck, type='assoc', support=float(support), confidence=float(confidence), antqnt=antqnt)
         return jsonify({'status': queue, 'savename': savename})
 
 @app.route('/api/classify/temp/list/<classifier>')

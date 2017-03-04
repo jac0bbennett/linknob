@@ -63,7 +63,7 @@ def confidence(orders, left, right):
     #print('\n')
 # Calculate Conviction (1- support_frequency)/(1-confidence )
 
-def apriori(orders, support_threshold, confidence_threshold):
+def apriori(orders, support_threshold, confidence_threshold, antqnt):
     """Accepts a list of item sets (i.e. orders) and returns a list of
     association rules matching support and confidence thresholds. """
     candidate_items = set()
@@ -112,7 +112,8 @@ def apriori(orders, support_threshold, confidence_threshold):
                             support_threshold:
                        #print("\nItem set {} crosses support threshold at {}".format(item_set.union({item}), support_frequency(orders, item_set.union({item}))))
                         result.append((item_set, item))
-                        result.extend(apriori_next(item_set.union({item})))
+                        if antqnt == 'many':
+                            result.extend(apriori_next(item_set.union({item})))
                     else:
                         pass
                 else:
@@ -123,7 +124,7 @@ def apriori(orders, support_threshold, confidence_threshold):
     return apriori_next()
 
 
-def calc(support_threshold, confidence_threshold, uploadname, savename, key, file_types='both'):
+def calc(support_threshold, confidence_threshold, uploadname, savename, key, antqnt, file_types='both'):
 
     fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
 
@@ -133,7 +134,7 @@ def calc(support_threshold, confidence_threshold, uploadname, savename, key, fil
     if 'csv' in file_types or 'both' in file_types:
         final_results = ["{},{}, {:0.3f}, {:0.3f},{:0.3f},{:0.3f}".format(
             item_set, item, support_frequency(data[1:], item_set.union({item})),
-            confidence(data[1:], item_set, {item}), (1 - support_frequency(data[1:], {item})) / (1 - min(confidence(data[1:], item_set, {item}),0.99)), support_frequency(data[1:], item_set.union({item}))/(support_frequency(data[1:], {item})*support_frequency(data[1:], item_set))) for item_set, item in apriori(data[1:], support_threshold, confidence_threshold)]
+            confidence(data[1:], item_set, {item}), (1 - support_frequency(data[1:], {item})) / (1 - min(confidence(data[1:], item_set, {item}),0.99)), support_frequency(data[1:], item_set.union({item}))/(support_frequency(data[1:], {item})*support_frequency(data[1:], item_set))) for item_set, item in apriori(data[1:], support_threshold, confidence_threshold, antqnt)]
 
         written = []
 

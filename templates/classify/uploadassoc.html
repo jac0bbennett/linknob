@@ -19,6 +19,10 @@
       <form id="fileupload">
         <b>Support: </b><input type="number" step="0.01" min="0" max="1" name="support" placeholder="0.1" style="width:50px;">
         <b>Confidence: </b><input type="number" step="0.01" min="0" max="1" name="confidence" placeholder="0.1" style="width:50px;"><br><br>
+        <b>Antecedent Quantity:</b>
+        <input type="radio" name="antqnt" value="one" id="antone" checked="checked"><label for="antone">One</label>
+        <input type="radio" name="antqnt" value="many" id="antmany"><label for="antmany">Many</label>
+        <br><br>
         <b>Key:</b><br>
         <input type="text" name="apikey" class="geninput apikey" {% if 'classifykey' in session %}value="{{ session['classifykey'] }}"{% endif %}
          placeholder="API Key" style="width:200px;">
