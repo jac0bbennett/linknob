@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 1/29/17 bV1.0.6
+# Copyright Jacob Bennett 3/4/17 bV1.0.7
 # Status: Pre-Beta Stable
 
 # Import all the things

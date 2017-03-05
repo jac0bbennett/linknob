@@ -73,6 +73,19 @@ def apipost():
     ptname = request.json['ptname']
     userid = request.json['userid']
     formkey = request.json['userkey']
+    if 'chain' in request.json and 'vis' in request.json:
+        chain = request.json['chain']
+        vis = request.json['vis']
+    else:
+        chain = None
+        vis = 1
+
+    if chain != None:
+        print(chain)
+        chain = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == userid)) & (Chain.title==chain)).first()
+        if chain == None:
+            return jsonify({ 'errors': ' Chain not found!'})
+
     user = User.query.filter_by(id=userid).first()
 
     # Check for user's key saved in extension
@@ -107,15 +120,34 @@ def apipost():
             flash('Please enter a link!')
         else:
             time = datetime.now().strftime('%m-%d-%y %I:%M:%S %p')
+            uuid = genuuid()
             if comment == None:
-                newlnc = Link(genuuid(), userid, link, None, time, 0, None, escapeit(title), escapeit(ptname), favicon, image, escapeit(description), 1)
+                newlnc = Link(uuid, userid, link, None, time, 0, None, escapeit(title), escapeit(ptname), favicon, image, escapeit(description), vis)
             else:
-                newlnc = Link(genuuid(), userid, link, escapeit(comment), time, 0, None, escapeit(title), escapeit(ptname), favicon, image, escapeit(description), 1)
+                newlnc = Link(uuid, userid, link, escapeit(comment), time, 0, None, escapeit(title), escapeit(ptname), favicon, image, escapeit(description), vis)
             db.session.add(newlnc)
             db.session.commit()
+            if chain:
+                postedlnc = Link.query.filter_by(uuid=uuid).first()
+                addlnc = Chainlink(userid, postedlnc.id, chain.id, datetime.now())
+                db.session.add(addlnc)
+                db.session.commit()
             return jsonify()
     else:
         return jsonify({ 'errors': 'Invalid Key'})
+
+@app.route('/api/getunlistedchains', methods=['POST'])
+def getunlistedchains():
+    formid = request.json['userid']
+    formkey = request.json['userkey']
+    user = User.query.filter_by(id=formid).first()
+    if user is not None and formkey == user.key:
+        unlchains = Chain.query.filter_by(userid=user.id).filter(Chain.visibility==2).all()
+        chains = {}
+        for chain in unlchains:
+            chains[chain.id] = chain.title
+        print(chains)
+        return jsonify(chains)
 
 @app.route('/api/crawl', methods=['POST'])
 def crawllink():
@@ -293,7 +325,7 @@ def addnewlinktochain():
         ptname = request.json['ptname'].strip()
         linkvis = request.json['linkvis']
 
-        chain = Chain.query.filter_by(id=chainid).first()
+        chain = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == session['userid'])) & (func.lower(Chain.title)==chaintitle)).first()
 
         # Validate URL
         if check_link(link):

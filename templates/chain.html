@@ -4,7 +4,7 @@
     <div id="links">
         <button posit='+' class="add toggle">+</button>
         <div class="addlnc">
-            {% if 'user' in session %}
+            {% if 'user' in session and chain.userid == session['userid']%}
             <div>
                 <h3>Post a link to this Chain:</h3>
                 <center>
@@ -26,7 +26,7 @@
                 </center>
             </div>
             {% else %}
-            <h3>Please Sign in to add a Link</h3> {% endif %}
+            <h3>Please Sign in to add a Link or get permission to post here.</h3> {% endif %}
             <br>
             <hr>
         </div>

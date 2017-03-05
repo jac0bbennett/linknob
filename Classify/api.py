@@ -207,6 +207,7 @@ def classifyassoc():
         queue = queuefile(uploadname, savename, keycheck, type='assoc', support=float(support), confidence=float(confidence), antqnt=antqnt)
         return jsonify({'status': queue, 'savename': savename})
 
+#TODO Display files based on DB catg
 @app.route('/api/classify/temp/list/<classifier>')
 def listclassifyfiles(classifier):
     key = request.args.get('key')
