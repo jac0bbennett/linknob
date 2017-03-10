@@ -54,7 +54,7 @@ def processfile(uploadname, savename, key):
     os.remove(os.path.join('Classify/temp/uploads', uploadname))
 
 
-def queuefile(uploadname, savename, keycheck, type='topics', support=0, confidence=0, antqnt='one'):
+def queuefile(uploadname, savename, keycheck, type='topics', support=0, confidence=0, antqnt='one', upformat=2):
     checkqueue = FileQueue.query.filter_by(status='processing').count()
     checkkeyqueue = FileQueue.query.filter_by(key=keycheck.key).filter(FileQueue.status=='processing').first()
     with open('Classify/temp/uploads/'+uploadname, 'r') as r:
@@ -67,7 +67,7 @@ def queuefile(uploadname, savename, keycheck, type='topics', support=0, confiden
         if type == 'topics':
             process = threading.Thread(target=processfile, kwargs={'uploadname': uploadname, 'savename': savename, 'key': keycheck.key})
         elif type == 'assoc':
-            process = threading.Thread(target=mbasket.calc, kwargs={'support_threshold': support, 'confidence_threshold': confidence, 'uploadname': uploadname, 'savename': savename, 'key': keycheck.key, 'antqnt': antqnt})
+            process = threading.Thread(target=mbasket.calc, kwargs={'support_threshold': support, 'confidence_threshold': confidence, 'uploadname': uploadname, 'savename': savename, 'key': keycheck.key, 'antqnt': antqnt, 'upformat': upformat})
         process.daemon = True
         process.start()
         filestatus = 'processing'
@@ -193,6 +193,10 @@ def classifyassoc():
         antqnt = request.form['antqnt']
         if antqnt != 'one' and antqnt != 'many':
             return jsonify({'error': 'Invalid Antecedent Quantity'})
+        if 'upformat' in request.form and int(request.form['upformat']) == 1:
+            upformat = 1
+        else:
+            upformat = 2
         file = request.files['file']
         if file.filename == '':
             return jsonify({'error': 'Missing file'})
@@ -204,7 +208,7 @@ def classifyassoc():
         savename = uploadname.split('.')[0].split('---')[0]+'-assoc-'+str(datetime.now()).split('.')[0].replace(':', '-')+'.csv'
         if not os.path.exists(os.path.join('Classify/temp/'+key)):
             os.makedirs(os.path.join('Classify/temp/'+key))
-        queue = queuefile(uploadname, savename, keycheck, type='assoc', support=float(support), confidence=float(confidence), antqnt=antqnt)
+        queue = queuefile(uploadname, savename, keycheck, type='assoc', support=float(support), confidence=float(confidence), antqnt=antqnt, upformat=upformat)
         return jsonify({'status': queue, 'savename': savename})
 
 #TODO Display files based on DB catg

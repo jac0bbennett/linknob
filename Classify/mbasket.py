@@ -2,8 +2,8 @@
 
 """
 Market basket python program
-v1.0.1
-2/25/17
+v1.2
+3/9/17
 """
 
 import sys, csv, os
@@ -11,16 +11,42 @@ from Models.models import FileQueue, db
 
 totalsupcount = 0
 
-def read_data(file_name):
+def get_named_set_from_numbered_csv_row(csv_row, field_names):
+    """When provided the csv_row and the csv field_names, this will
+    build a set of the fields populated with a value > 0.
+    """
+    result = []
+    for field in field_names:
+        value = str(csv_row[field]).strip()
+        try:
+            if float(value) > 0:
+                result.append(field)
+        except ValueError:
+            continue
+    return set(result)
+
+def read_data(file_name, upformat=2):
     """Read a csv file that lists possible transactions"""
     result = list()
-    with open(file_name, 'r') as file_reader:
-        lineNum = 0
-        for line in file_reader:
-            lineNum += 1
-            #print('Reading Line: ' + str(lineNum))
-            order_set = set(line.strip().split(','))
-            result.append(order_set)
+    if upformat == 1:
+        with open(file_name, 'r') as file_reader:
+            lineNum = 0
+            for line in file_reader:
+                lineNum += 1
+                #print('Reading Line: ' + str(lineNum))
+                order_set = set(line.strip().split(','))
+                result.append(order_set)
+    elif upformat == 2:
+        with open(file_name, 'r') as file_reader:
+            the_csv = csv.DictReader(file_reader)
+            field_names = the_csv.fieldnames
+            for line in the_csv:
+                clean_row = get_named_set_from_numbered_csv_row(line,field_names)
+                if len(clean_row) > 0:
+                    result.append(list(clean_row))
+                else:
+                    continue
+        #print("Number of rows in result: "+str(len(result)))
     return result
 
 
@@ -124,11 +150,11 @@ def apriori(orders, support_threshold, confidence_threshold, antqnt):
     return apriori_next()
 
 
-def calc(support_threshold, confidence_threshold, uploadname, savename, key, antqnt, file_types='both'):
+def calc(support_threshold, confidence_threshold, uploadname, savename, key, antqnt, file_types='both', upformat=2):
 
     fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
 
-    data = read_data('Classify/temp/uploads/'+uploadname)
+    data = read_data('Classify/temp/uploads/'+uploadname, upformat)
 
     #CSV
     if 'csv' in file_types or 'both' in file_types:

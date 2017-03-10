@@ -23,6 +23,9 @@
         <input type="radio" name="antqnt" value="one" id="antone" checked="checked"><label for="antone">One</label>
         <input type="radio" name="antqnt" value="many" id="antmany"><label for="antmany">Many</label>
         <br><br>
+        <b>Upload Format:</b>
+        <input type="checkbox" name="upformat" id="upformat" value="1"><label for="upformat">Formatted</label>
+        <br><br>
         <b>Key:</b><br>
         <input type="text" name="apikey" class="geninput apikey" {% if 'classifykey' in session %}value="{{ session['classifykey'] }}"{% endif %}
          placeholder="API Key" style="width:200px;">
