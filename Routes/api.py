@@ -666,7 +666,7 @@ def collectfreepts():
             freeptcheck = 1
 
         if freeptcheck:
-            points = randLowNum(1,50,7)
+            points = randLowNum(1,10,8)
         else:
             points = 0
 
