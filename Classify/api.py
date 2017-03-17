@@ -82,6 +82,7 @@ def processfile(uploadname, savename, key, topictypes):
                     if data:
                         for i in data:
                             writedata[i] = data[i]
+                    keycheck.queries += 1
                     keycheck.lastquery = datetime.now()
                     fileq.complete += 1
                     db.session.commit()
