@@ -267,6 +267,10 @@ label {
   font-family: Roboto;
 }
 
+body {
+  font-family: Roboto;
+}
+
 .gencondiv {
   font-family: Roboto;
   overflow-y: scroll;

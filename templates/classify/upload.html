@@ -18,6 +18,9 @@
       <a class="genlink allres" href="/api/classify/temp/list/{{ catg }}">All Results</a>
       <span style="float:right;" class="graytext msg">{% if queuedfile %}Processing... ({{ queuedfile.complete }} / {{ queuedfile.total }}){% endif %}</span><br><br>
       <form id="fileupload">
+        <b>Topic Categories:</b><br>
+        <input type="checkbox" name="topictypes" value="general" id="topictypegen" checked> <label for="topictypegen">General</label><br>
+        <input type="checkbox" name="topictypes" value="computer" id="topictypecomp"> <label for="topictypecomp">Computer</label><br><br>
         <b>Key:</b><br>
         <input type="text" name="apikey" class="geninput apikey" {% if 'classifykey' in session %}value="{{ session['classifykey'] }}"{% endif %}
          placeholder="API Key" style="width:200px;">

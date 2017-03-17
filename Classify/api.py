@@ -6,7 +6,7 @@ from config import app, db
 from utils import codegen
 from Models.models import ClassifyKey, FileQueue
 from Classify import mbasket
-import requests, json, os, string, threading, time
+import requests, json, os, string, threading, time, csv
 import urllib.parse as urlparse
 
 def genkey(email, limit):
@@ -18,43 +18,81 @@ def genkey(email, limit):
     db.session.add(newkey)
     db.session.commit()
 
-def processfile(uploadname, savename, key):
+def processfile(uploadname, savename, key, topictypes):
     keycheck = ClassifyKey.query.filter_by(key=key).first()
     fileq = FileQueue.query.filter_by(save=savename).first()
-    with open('Classify/temp/'+key+'/'+savename, 'w') as f, open('Classify/temp/uploads/'+uploadname, 'r') as r:
-        f.write('Url,Arts,Business,Computers,Games,Health,Home,Recreation,Science,Society,Sports\n')
+    gentopics = ['Arts', 'Business', 'Computers', 'Games', 'Health', 'Home',
+        'Recreation', 'Science', 'Society', 'Sports']
+    comptopics = ['News_and_Media', 'Internet', 'Virtual_Reality', 'Systems', 'Education',
+        'Data_Communications', 'Hardware', 'Security', 'E-Books', 'Human-Computer_Interaction',
+        'CAD_and_CAM', 'Robotics', 'History', 'Organizations', 'Software',
+        'Open_Source', 'FAQs,_Help,_and_Tutorials', 'Mobile_Computing', 'Desktop_Publishing', 'Performance_and_Capacity',
+        'Data_Formats', 'Multimedia', 'Speech_Technology', 'Programming', 'Consultants',
+        'Home_Automation', 'Graphics', 'Usenet', 'Ethics', 'Parallel_Computing', 'Hacking',
+        'Algorithms', 'Artificial_Life', 'Artificial_Intelligence', 'Bulletin_Board_Systems', 'Computer_Science',
+        'Supercomputing', 'Emulators']
+    alltopics = [] #Append all selected categories to this list
+    alltopics.append('Url')
+    if 'general' in topictypes:
+        for topic in gentopics:
+            alltopics.append(topic)
+    if 'computer' in topictypes:
+        for topic in comptopics:
+            alltopics.append(topic)
+    fullsize = 0
+    for i in topictypes:
+        fullsize += 1
+    fileq.total = fileq.total * fullsize
+    db.session.commit()
+    with open('Classify/temp/'+key+'/'+savename, 'w', newline="") as destfile, open('Classify/temp/uploads/'+uploadname, 'r') as r:
+        f = csv.DictWriter(destfile, fieldnames=alltopics)
+        f.writeheader()
         for url in r.read().split('\n'):
             if fileq.status == 'cancelled':
                 break
             elif keycheck.queries < keycheck.querylimit:
                 if not url.startswith('http'):
                     url = 'http://' + url
-                #url = urlparse.quote_plus(url)
-                #req = requests.get(url)
-                req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
-                data = req.json()
-                #data = {}
-                try:
-                    data = data['cls1']
-                except KeyError:
-                    data = None
-                if data:
-                    f.write(urlparse.unquote(url)+','+str(data['Arts'])+','+str(data['Business'])+','+str(data['Computers'])+','
-                    +str(data['Games'])+','+str(data['Health'])+','+str(data['Home'])+','+str(data['Recreation'])+','
-                        +str(data['Science'])+','+str(data['Society'])+','+str(data['Sports'])+'\n')
-                else:
-                    f.write(urlparse.unquote(url)+'\n')
-                keycheck.queries += 1
-                keycheck.lastquery = datetime.now()
-                fileq.complete += 1
-                db.session.commit()
+                writedata = {}
+                writedata['Url'] = url
+                if 'general' in topictypes:
+                    #url = urlparse.quote_plus(url)
+                    #req = requests.get(url)
+                    req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
+                    data = req.json()
+                    #data = {}
+                    try:
+                        data = data['cls1']
+                    except KeyError:
+                        data = None
+                    if data:
+                        for i in data:
+                            writedata[i] = data[i]
+                    keycheck.queries += 1
+                    keycheck.lastquery = datetime.now()
+                    fileq.complete += 1
+                    db.session.commit()
+                if 'computer' in topictypes:
+                    req = requests.get('http://uclassify.com/browse/uclassify/computer-topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
+                    data = req.json()
+                    try:
+                        data = data['cls1']
+                    except KeyError:
+                        data = None
+                    if data:
+                        for i in data:
+                            writedata[i] = data[i]
+                    keycheck.lastquery = datetime.now()
+                    fileq.complete += 1
+                    db.session.commit()
+                f.writerow(writedata)
     if fileq.status != 'cancelled':
         fileq.status = 'complete'
         db.session.commit()
     os.remove(os.path.join('Classify/temp/uploads', uploadname))
 
 
-def queuefile(uploadname, savename, keycheck, type='topics', support=0, confidence=0, antqnt='one', upformat=2):
+def queuefile(uploadname, savename, keycheck, type='topics', support=0, confidence=0, antqnt='one', upformat=2, topictypes='general'):
     checkqueue = FileQueue.query.filter_by(status='processing').count()
     checkkeyqueue = FileQueue.query.filter_by(key=keycheck.key).filter(FileQueue.status=='processing').first()
     with open('Classify/temp/uploads/'+uploadname, 'r') as r:
@@ -65,7 +103,7 @@ def queuefile(uploadname, savename, keycheck, type='topics', support=0, confiden
     elif checkqueue < 2:
         newqueue = FileQueue(keycheck.key, uploadname, savename, 'processing', 0, rowcount, datetime.now(), type)
         if type == 'topics':
-            process = threading.Thread(target=processfile, kwargs={'uploadname': uploadname, 'savename': savename, 'key': keycheck.key})
+            process = threading.Thread(target=processfile, kwargs={'uploadname': uploadname, 'savename': savename, 'key': keycheck.key, 'topictypes': topictypes})
         elif type == 'assoc':
             process = threading.Thread(target=mbasket.calc, kwargs={'support_threshold': support, 'confidence_threshold': confidence, 'uploadname': uploadname, 'savename': savename, 'key': keycheck.key, 'antqnt': antqnt, 'upformat': upformat})
         process.daemon = True
@@ -148,6 +186,10 @@ def classifytopics():
             keycheck.queries = 0
         if keycheck.queries >= keycheck.querylimit:
             return jsonify({'error': 'Exceeded daily limit. ('+str(keycheck.querylimit)+')'})
+        if 'topictypes' not in request.form or request.form['topictypes'] == '':
+            return jsonify({'error': 'Topic category must be selected!'})
+        else:
+            topictypes = request.form.getlist('topictypes')
         if 'file' not in request.files:
             return jsonify({'error': 'Missing file'})
         file = request.files['file']
@@ -161,7 +203,7 @@ def classifytopics():
         savename = uploadname.split('.')[0].split('---')[0]+'-'+catg+'-'+str(datetime.now()).split('.')[0].replace(':', '-')+'.csv'
         if not os.path.exists(os.path.join('Classify/temp/'+key)):
             os.makedirs(os.path.join('Classify/temp/'+key))
-        queue = queuefile(uploadname, savename, keycheck)
+        queue = queuefile(uploadname, savename, keycheck, topictypes=topictypes)
         return jsonify({'status': queue, 'savename': savename})
 
 @app.route('/api/classify/assoc', methods=['GET', 'POST'])
