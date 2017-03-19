@@ -158,21 +158,31 @@ def calc(support_threshold, confidence_threshold, uploadname, savename, key, ant
 
     #CSV
     if 'csv' in file_types or 'both' in file_types:
-        final_results = ["{},{}, {:0.3f}, {:0.3f},{:0.3f},{:0.3f}".format(
-            item_set, item, support_frequency(data[1:], item_set.union({item})),
-            confidence(data[1:], item_set, {item}), (1 - support_frequency(data[1:], {item})) / (1 - min(confidence(data[1:], item_set, {item}),0.99)), support_frequency(data[1:], item_set.union({item}))/(support_frequency(data[1:], {item})*support_frequency(data[1:], item_set))) for item_set, item in apriori(data[1:], support_threshold, confidence_threshold, antqnt)]
+        final_results = []
+        for item_set, item in apriori(data[1:], support_threshold, confidence_threshold, antqnt):
+            str_item_set = str(item_set).replace('{', '')
+            str_item_set = str_item_set.replace('}', '')
+            str_item_set = str_item_set.replace("'", '')
+            results = {
+                'Antecedent': str_item_set,
+                'Consequent': item,
+                'Support': "{:0.3f}".format(support_frequency(data[1:], item_set.union({item}))),
+                'Confidence': "{:0.3f}".format(confidence(data[1:], item_set, {item})),
+                'Conviction': "{:0.3f}".format((1 - support_frequency(data[1:], {item})) / (1 - min(confidence(data[1:], item_set, {item}),0.99))),
+                'Lift': "{:0.3f}".format(support_frequency(data[1:], item_set.union({item}))/(support_frequency(data[1:], {item})*support_frequency(data[1:], item_set)))
+            }
+            final_results.append(results)
 
         written = []
+        columns = ['Antecedent','Consequent','Support','Confidence','Conviction','Lift']
 
-        with open('Classify/temp/'+key+'/'+savename, 'w') as f:
-            f.write('Antecedent,Consequent,Support,Confidence,Conviction,Lift\n')
+        with open('Classify/temp/'+key+'/'+savename, 'w', newline="") as destfile:
+            f = csv.DictWriter(destfile, fieldnames=columns)
+            f.writeheader()
             for result in final_results:
-                result = result.replace('{', '"')
-                result = result.replace('}', '"')
-                result = result.replace("'", '')
                 if result not in written:
                     written.append(result)
-                    f.write(result + '\n')
+                    f.writerow(result)
     #JSON
     final_results_json = {}
     final_results_json_cons = {}
