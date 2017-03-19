@@ -2,8 +2,8 @@
 
 """
 Market basket python program
-v1.2
-3/9/17
+v1.3
+3/19/17
 """
 
 import sys, csv, os
