@@ -216,7 +216,3 @@ def calc(support_threshold, confidence_threshold, uploadname, savename, key, ant
             fileq.total = rowcount
         db.session.commit()
     os.remove(os.path.join('Classify/temp/uploads', uploadname))
-
-
-if __name__ == '__main__':
-    main()
