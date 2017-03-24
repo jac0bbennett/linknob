@@ -31,6 +31,18 @@ def processfile(uploadname, savename, key, topictypes):
         'Home_Automation', 'Graphics', 'Usenet', 'Ethics', 'Parallel_Computing', 'Hacking',
         'Algorithms', 'Artificial_Life', 'Artificial_Intelligence', 'Bulletin_Board_Systems', 'Computer_Science',
         'Supercomputing', 'Emulators']
+    biztopics = ["Accounting","Aerospace_and_Defense","Agriculture_and_Forestry",
+		"Arts_and_Entertainment","Automotive","Biotechnology_and_Pharmaceuticals",
+		"Business_Services","Construction_and_Maintenance",
+		"Consumer_Goods_and_Services","Cooperatives","Electronics_and_Electrical",
+		"Energy","Environment","Food_and_Related_Products",
+		"Healthcare","Hospitality","Industrial_Goods_and_Services",
+		"Information_Technology","International_Business_and_Trade",
+		"Investing","Marketing_and_Advertising","Materials",
+		"Mining_and_Drilling","Opportunities",
+		"Publishing_and_Printing","Real_Estate",
+		"Retail_Trade",	"Telecommunications",
+		"Textiles_and_Nonwovens","Transportation_and_Logistics"]
     alltopics = [] #Append all selected categories to this list
     alltopics.append('Url')
     if 'general' in topictypes:
@@ -38,6 +50,9 @@ def processfile(uploadname, savename, key, topictypes):
             alltopics.append(topic)
     if 'computer' in topictypes:
         for topic in comptopics:
+            alltopics.append(topic)
+    if 'business' in topictypes:
+        for topic in biztopics:
             alltopics.append(topic)
     fullsize = 0
     for i in topictypes:
@@ -55,11 +70,8 @@ def processfile(uploadname, savename, key, topictypes):
                     url = 'http://' + url
                 writedata = {}
                 writedata['Url'] = url
-                if 'general' in topictypes:
-                    #url = urlparse.quote_plus(url)
-                    #req = requests.get(url)
-                    req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
-                    data = req.json()
+
+                def appenddata(data):
                     #data = {}
                     try:
                         data = data['cls1']
@@ -72,20 +84,21 @@ def processfile(uploadname, savename, key, topictypes):
                     keycheck.lastquery = datetime.now()
                     fileq.complete += 1
                     db.session.commit()
+
+                if 'general' in topictypes:
+                    #url = urlparse.quote_plus(url)
+                    #req = requests.get(url)
+                    req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
+                    data = req.json()
+                    appenddata(data)
                 if 'computer' in topictypes:
                     req = requests.get('http://uclassify.com/browse/uclassify/computer-topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
                     data = req.json()
-                    try:
-                        data = data['cls1']
-                    except KeyError:
-                        data = None
-                    if data:
-                        for i in data:
-                            writedata[i] = data[i]
-                    keycheck.queries += 1
-                    keycheck.lastquery = datetime.now()
-                    fileq.complete += 1
-                    db.session.commit()
+                    appenddata(data)
+                if 'business' in topictypes:
+                    req = requests.get('http://uclassify.com/browse/uclassify/business-topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
+                    data = req.json()
+                    appenddata(data)
                 f.writerow(writedata)
     if fileq.status != 'cancelled':
         fileq.status = 'complete'
