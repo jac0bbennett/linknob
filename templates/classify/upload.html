@@ -21,7 +21,8 @@
         <b>Topic Categories:</b><br>
         <input type="checkbox" name="topictypes" value="general" id="topictypegen" checked> <label for="topictypegen">General</label><br>
         <input type="checkbox" name="topictypes" value="computer" id="topictypecomp"> <label for="topictypecomp">Computer</label><br>
-        <input type="checkbox" name="topictypes" value="business" id="topictypebiz"> <label for="topictypebiz">Business</label><br><br>
+        <input type="checkbox" name="topictypes" value="business" id="topictypebiz"> <label for="topictypebiz">Business</label><br>
+        <input type="checkbox" name="topictypes" value="society" id="topictypesoc"> <label for="topictypesoc">Society</label><br><br>
         <b>Key:</b><br>
         <input type="text" name="apikey" class="geninput apikey" {% if 'classifykey' in session %}value="{{ session['classifykey'] }}"{% endif %}
          placeholder="API Key" style="width:200px;">

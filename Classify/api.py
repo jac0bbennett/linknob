@@ -43,6 +43,11 @@ def processfile(uploadname, savename, key, topictypes):
 		"Publishing_and_Printing","Real_Estate",
 		"Retail_Trade",	"Telecommunications",
 		"Textiles_and_Nonwovens","Transportation_and_Logistics"]
+    soctopics = ["Crime","Death","Disabled","Ethnicity","Folklore","Future",
+		"Genealogy","Government","History","Holidays","Law","Lifestyle_Choices",
+		"Military","Organizations","Paranormal","Philanthropy","Philosophy",
+		"Politics","Relationships","Religion_and_Spirituality","Sexuality",
+		"Subcultures","Support_Groups","Transgendered","Work"]
     alltopics = [] #Append all selected categories to this list
     alltopics.append('Url')
     if 'general' in topictypes:
@@ -53,6 +58,9 @@ def processfile(uploadname, savename, key, topictypes):
             alltopics.append(topic)
     if 'business' in topictypes:
         for topic in biztopics:
+            alltopics.append(topic)
+    if 'society' in topictypes:
+        for topic in soctopics:
             alltopics.append(topic)
     fullsize = 0
     for i in topictypes:
@@ -99,6 +107,10 @@ def processfile(uploadname, savename, key, topictypes):
                     req = requests.get('http://uclassify.com/browse/uclassify/business-topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
                     data = req.json()
                     appenddata(data)
+                if 'society' in topictypes:
+                    req = requests.get('http://uclassify.com/browse/uclassify/society-topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
+                    data = req.json()
+                    appenddata(data)
                 f.writerow(writedata)
     if fileq.status != 'cancelled':
         fileq.status = 'complete'
@@ -140,7 +152,7 @@ def queuefile(uploadname, savename, keycheck, type='topics', support=0, confiden
 def checkqueueid(key):
     check = FileQueue.query.filter_by(key=key).order_by(FileQueue.added.desc()).first()
     apikey = ClassifyKey.query.filter_by(key=key).first()
-    if datetime.date(apikey.lastquery) != datetime.date(datetime.now()):
+    if apikey and (datetime.date(apikey.lastquery) != datetime.date(datetime.now())):
         apikey.queries = 0
         db.session.commit()
     if check:
