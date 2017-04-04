@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 11/15/16
+# Copyright Jacob Bennett 4/4/16
 
 from flask import render_template, request, session, flash
 from sqlalchemy import or_, func
@@ -8,8 +8,6 @@ from config import app, db, PER_PAGE
 from Models.models import User, Chain
 from Links.search import search_query
 from misc import EasterEgg
-
-eggs = {'askew': EasterEgg.askew()}
 
 @app.route('/search')
 def search():
@@ -22,10 +20,7 @@ def search():
     search = request.args.get('q')
 
     # Check for easter egg
-    if search in eggs:
-        egg = eggs[search]
-    else:
-        egg = None
+    egg = EasterEgg().runEgg(search)
 
     searches = search.split(' ') # Split query up into individual words
     searches = [x.lower() for x in searches] # Make all words lowercase

@@ -1,3 +1,10 @@
+# 4/4/17 bV1.0.7.1
+  - Modified easter egg code
+  - Added easter eggs
+================================================================================
+# 4/3/17 bV1.0.7
+  - Added functionality for easter eggs
+================================================================================
 # 1/29/17 bV1.0.6
   - Removed 30 day point bump
   - Added 24hr point faucet in interaction tab
