@@ -7,6 +7,9 @@ from sqlalchemy import or_, func
 from config import app, db, PER_PAGE
 from Models.models import User, Chain
 from Links.search import search_query
+from misc import EasterEgg
+
+eggs = {'askew': EasterEgg.askew()}
 
 @app.route('/search')
 def search():
@@ -17,6 +20,13 @@ def search():
 
     # Get user's query
     search = request.args.get('q')
+
+    # Check for easter egg
+    if search in eggs:
+        egg = eggs[search]
+    else:
+        egg = None
+
     searches = search.split(' ') # Split query up into individual words
     searches = [x.lower() for x in searches] # Make all words lowercase
     title = 'Linknob | Search | ' + search
@@ -25,4 +35,4 @@ def search():
     chains = search_query.getchains(search, 3)
     links = search_query.getlinks(search, 20)
     count = len(links)
-    return render_template('search.html', title=title, links=links, search=search, accounts=accounts, chains=chains, count=count)
+    return render_template('search.html', title=title, links=links, search=search, accounts=accounts, chains=chains, count=count, egg=egg)

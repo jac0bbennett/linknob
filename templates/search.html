@@ -4,6 +4,9 @@
     <div id="links">
         <br>
         <div id="link_container">
+            {% if egg %}
+            {{ egg }}
+            {% endif %}
             <h4>Results:</h4>
             {% if accounts %}
             <h3>Accounts:</h3> {% for user in accounts %}

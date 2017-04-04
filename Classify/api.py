@@ -190,6 +190,7 @@ def classifytopics():
         catg = 'topics'
     elif catg != 'topics':
         abort(404)
+
     if request.method == 'GET':
         title = 'Upload'
         if 'classifykey' in session:
@@ -292,6 +293,7 @@ def listclassifyfiles(classifier):
         files.sort(key=lambda x: os.stat(os.path.join('Classify/temp/'+key, x)).st_mtime)
         files = files[::-1]
         '''
+
         if classifier != 'assoc':
             return render_template('classify/listfiles.html', files=files, classifier=classifier, key=key)
         else:
@@ -304,9 +306,8 @@ def downloadcsv(csvname):
     key = request.args.get('key')
     if key:
         try:
-            file = send_file('Classify/temp/'+key+'/'+csvname, mimetype='text/csv')
+            return send_file('Classify/temp/'+key+'/'+csvname, mimetype='text/csv')
         except Exception:
             return abort(404)
-        return file
     else:
         abort(404)
