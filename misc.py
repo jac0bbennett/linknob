@@ -17,7 +17,7 @@ class EasterEgg:
         return Markup(css)
 
     def fakenews(self):
-        html = '<span id="fakenews" style="float:right;">CNN</span><script>$("#fakenews").fadeOut(500);</script>'
+        html = '<span id="fakenews" style="float:right;">CNN</span><script>$("#fakenews").fadeOut(1200);</script>'
         return Markup(html)
 
     def getEggs(self):
