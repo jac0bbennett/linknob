@@ -52,16 +52,16 @@ $(document).ready(function () {
   }
   checkqueue();
 
-  $('#upload').click(function() {
+  $('#upload').click(function(e) {
+    e.preventDefault();
     if ($(this).text() == 'Upload') {
       var formData = new FormData($('#fileupload')[0]);
       $('.msg').text('Uploading...');
       $.ajax({
           type: 'POST',
-          contentType: 'application/json; charset=utf-8',
+          contentType: false,
           url: '/api/classify?catg=topics',
           data: formData,
-          contentType: false,
           processData: false,
           success: function (data) {
             if (data.error) {
