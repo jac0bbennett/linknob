@@ -19,6 +19,8 @@ def genkey(email, limit):
     db.session.commit()
 
 def processfile(uploadname, savename, key, topictypes):
+    uclassifyKey = 'z2kePGoGIDrr'
+
     keycheck = ClassifyKey.query.filter_by(key=key).first()
     fileq = FileQueue.query.filter_by(save=savename).first()
     gentopics = ['Arts', 'Business', 'Computers', 'Games', 'Health', 'Home',
@@ -96,19 +98,19 @@ def processfile(uploadname, savename, key, topictypes):
                 if 'general' in topictypes:
                     #url = urlparse.quote_plus(url)
                     #req = requests.get(url)
-                    req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
+                    req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
                     data = req.json()
                     appenddata(data)
                 if 'computer' in topictypes:
-                    req = requests.get('http://uclassify.com/browse/uclassify/computer-topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
+                    req = requests.get('http://uclassify.com/browse/uclassify/computer-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
                     data = req.json()
                     appenddata(data)
                 if 'business' in topictypes:
-                    req = requests.get('http://uclassify.com/browse/uclassify/business-topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
+                    req = requests.get('http://uclassify.com/browse/uclassify/business-topics/ClassifyUrl/?readkey='+uclassifyKey+'output=json&url='+url)
                     data = req.json()
                     appenddata(data)
                 if 'society' in topictypes:
-                    req = requests.get('http://uclassify.com/browse/uclassify/society-topics/ClassifyUrl/?readkey=yWyLHltfbdYQ&output=json&url='+url)
+                    req = requests.get('http://uclassify.com/browse/uclassify/society-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
                     data = req.json()
                     appenddata(data)
                 f.writerow(writedata)
