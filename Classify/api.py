@@ -106,7 +106,7 @@ def processfile(uploadname, savename, key, topictypes):
                     data = req.json()
                     appenddata(data)
                 if 'business' in topictypes:
-                    req = requests.get('http://uclassify.com/browse/uclassify/business-topics/ClassifyUrl/?readkey='+uclassifyKey+'output=json&url='+url)
+                    req = requests.get('http://uclassify.com/browse/uclassify/business-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
                     data = req.json()
                     appenddata(data)
                 if 'society' in topictypes:
