@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 3/4/17 bV1.0.7
+# Copyright Jacob Bennett 4/22/17 bV1.0.7
 # Status: Pre-Beta Stable
 
 # Import all the things
@@ -15,6 +15,7 @@ from Models.models import User, Page
 from config import app, db
 from Routes import maintenance
 
+#Classification api components
 from Classify import api
 
 reqstart = None
