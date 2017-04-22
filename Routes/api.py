@@ -325,7 +325,7 @@ def addnewlinktochain():
         ptname = request.json['ptname'].strip()
         linkvis = request.json['linkvis']
 
-        chain = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == session['userid'])) & (func.lower(Chain.title)==chaintitle)).first()
+        chain = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == session['userid'])) & (Chain.id==chainid)).first()
 
         # Validate URL
         if check_link(link):
