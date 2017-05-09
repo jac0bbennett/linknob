@@ -40,7 +40,7 @@ $(document).ready(function () {
 
   $('#searchtweet').click(function() {
     if ($(this).text() == 'Submit') {
-      $('.msg').text('Uploading...');
+      $('.msg').text('Submitting...');
       $.ajax({
           type: 'POST',
           contentType: 'application/json; charset=utf-8',

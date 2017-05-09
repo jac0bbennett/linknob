@@ -302,10 +302,10 @@ def twitterwords():
             return jsonify({'error': 'Invalid API key'})
         session['classifykey'] = key
 
-        twitcheck = FileQueue.query.filter_by(key=key).filter(FileQueue.save.contains('Twitter')).first()
+        twitcheck = FileQueue.query.filter_by(key=key).filter(FileQueue.save.contains('Twitter')).order_by(FileQueue.added.desc()).first()
         dif = (datetime.now() - twitcheck.added).total_seconds()
-        if dif < 900:
-            return jsonify({'error': 'Please wait '+900-dif+' seconds.'})
+        if dif < 300:
+            return jsonify({'error': 'Please wait '+str(int(300-dif))+' seconds.'})
 
         keywords = []
         keywords.append(request.json['keywords'].split(' ')[0])

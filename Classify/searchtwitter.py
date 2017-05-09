@@ -2,9 +2,6 @@ import csv
 from TwitterSearch import *
 from Models.models import FileQueue, db
 from config import app
-import time
-
-time.sleep(1)
 
 def searchtwitter(keywords, savename, key):
     with app.app_context():
