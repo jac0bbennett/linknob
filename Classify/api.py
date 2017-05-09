@@ -6,6 +6,7 @@ from config import app, db
 from utils import codegen
 from Models.models import ClassifyKey, FileQueue
 from Classify import mbasket
+from Classify.searchtwitter import searchtwitter
 import requests, json, os, string, threading, time, csv
 import urllib.parse as urlparse
 
@@ -19,112 +20,116 @@ def genkey(email, limit):
     db.session.commit()
 
 def processfile(uploadname, savename, key, topictypes):
-    uclassifyKey = 'z2kePGoGIDrr'
+    with app.app_context():
+        uclassifyKey = 'z2kePGoGIDrr'
 
-    keycheck = ClassifyKey.query.filter_by(key=key).first()
-    fileq = FileQueue.query.filter_by(save=savename).first()
-    gentopics = ['Arts', 'Business', 'Computers', 'Games', 'Health', 'Home',
-        'Recreation', 'Science', 'Society', 'Sports']
-    comptopics = ['News_and_Media', 'Internet', 'Virtual_Reality', 'Systems', 'Education',
-        'Data_Communications', 'Hardware', 'Security', 'E-Books', 'Human-Computer_Interaction',
-        'CAD_and_CAM', 'Robotics', 'History', 'Organizations', 'Software',
-        'Open_Source', 'FAQs,_Help,_and_Tutorials', 'Mobile_Computing', 'Desktop_Publishing', 'Performance_and_Capacity',
-        'Data_Formats', 'Multimedia', 'Speech_Technology', 'Programming', 'Consultants',
-        'Home_Automation', 'Graphics', 'Usenet', 'Ethics', 'Parallel_Computing', 'Hacking',
-        'Algorithms', 'Artificial_Life', 'Artificial_Intelligence', 'Bulletin_Board_Systems', 'Computer_Science',
-        'Supercomputing', 'Emulators']
-    biztopics = ["Accounting","Aerospace_and_Defense","Agriculture_and_Forestry",
-		"Arts_and_Entertainment","Automotive","Biotechnology_and_Pharmaceuticals",
-		"Business_Services","Construction_and_Maintenance",
-		"Consumer_Goods_and_Services","Cooperatives","Electronics_and_Electrical",
-		"Energy","Environment","Food_and_Related_Products",
-		"Healthcare","Hospitality","Industrial_Goods_and_Services",
-		"Information_Technology","International_Business_and_Trade",
-		"Investing","Marketing_and_Advertising","Materials",
-		"Mining_and_Drilling","Opportunities",
-		"Publishing_and_Printing","Real_Estate",
-		"Retail_Trade",	"Telecommunications",
-		"Textiles_and_Nonwovens","Transportation_and_Logistics"]
-    soctopics = ["Crime","Death","Disabled","Ethnicity","Folklore","Future",
-		"Genealogy","Government","History","Holidays","Law","Lifestyle_Choices",
-		"Military","Organizations","Paranormal","Philanthropy","Philosophy",
-		"Politics","Relationships","Religion_and_Spirituality","Sexuality",
-		"Subcultures","Support_Groups","Transgendered","Work"]
-    alltopics = [] #Append all selected categories to this list
-    alltopics.append('Url')
-    if 'general' in topictypes:
-        for topic in gentopics:
-            alltopics.append(topic)
-    if 'computer' in topictypes:
-        for topic in comptopics:
-            alltopics.append(topic)
-    if 'business' in topictypes:
-        for topic in biztopics:
-            alltopics.append(topic)
-    if 'society' in topictypes:
-        for topic in soctopics:
-            alltopics.append(topic)
-    fullsize = 0
-    for i in topictypes:
-        fullsize += 1
-    fileq.total = fileq.total * fullsize
-    db.session.commit()
-    with open('Classify/temp/'+key+'/'+savename, 'w', newline="") as destfile, open('Classify/temp/uploads/'+uploadname, 'r') as r:
-        f = csv.DictWriter(destfile, fieldnames=alltopics)
-        f.writeheader()
-        for url in r.read().split('\n'):
-            if fileq.status == 'cancelled':
-                break
-            elif keycheck.queries < keycheck.querylimit:
-                if not url.startswith('http'):
-                    url = 'http://' + url
-                writedata = {}
-                writedata['Url'] = url
-
-                def appenddata(data):
-                    #data = {}
-                    try:
-                        data = data['cls1']
-                    except KeyError:
-                        data = None
-                    if data:
-                        for i in data:
-                            writedata[i] = data[i]
-                    keycheck.queries += 1
-                    keycheck.lastquery = datetime.now()
-                    fileq.complete += 1
-                    db.session.commit()
-
-                if 'general' in topictypes:
-                    #url = urlparse.quote_plus(url)
-                    #req = requests.get(url)
-                    req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
-                    data = req.json()
-                    appenddata(data)
-                if 'computer' in topictypes:
-                    req = requests.get('http://uclassify.com/browse/uclassify/computer-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
-                    data = req.json()
-                    appenddata(data)
-                if 'business' in topictypes:
-                    req = requests.get('http://uclassify.com/browse/uclassify/business-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
-                    data = req.json()
-                    appenddata(data)
-                if 'society' in topictypes:
-                    req = requests.get('http://uclassify.com/browse/uclassify/society-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
-                    data = req.json()
-                    appenddata(data)
-                f.writerow(writedata)
-    if fileq.status != 'cancelled':
-        fileq.status = 'complete'
+        keycheck = ClassifyKey.query.filter_by(key=key).first()
+        fileq = FileQueue.query.filter_by(save=savename).first()
+        gentopics = ['Arts', 'Business', 'Computers', 'Games', 'Health', 'Home',
+            'Recreation', 'Science', 'Society', 'Sports']
+        comptopics = ['News_and_Media', 'Internet', 'Virtual_Reality', 'Systems', 'Education',
+            'Data_Communications', 'Hardware', 'Security', 'E-Books', 'Human-Computer_Interaction',
+            'CAD_and_CAM', 'Robotics', 'History', 'Organizations', 'Software',
+            'Open_Source', 'FAQs,_Help,_and_Tutorials', 'Mobile_Computing', 'Desktop_Publishing', 'Performance_and_Capacity',
+            'Data_Formats', 'Multimedia', 'Speech_Technology', 'Programming', 'Consultants',
+            'Home_Automation', 'Graphics', 'Usenet', 'Ethics', 'Parallel_Computing', 'Hacking',
+            'Algorithms', 'Artificial_Life', 'Artificial_Intelligence', 'Bulletin_Board_Systems', 'Computer_Science',
+            'Supercomputing', 'Emulators']
+        biztopics = ["Accounting","Aerospace_and_Defense","Agriculture_and_Forestry",
+    		"Arts_and_Entertainment","Automotive","Biotechnology_and_Pharmaceuticals",
+    		"Business_Services","Construction_and_Maintenance",
+    		"Consumer_Goods_and_Services","Cooperatives","Electronics_and_Electrical",
+    		"Energy","Environment","Food_and_Related_Products",
+    		"Healthcare","Hospitality","Industrial_Goods_and_Services",
+    		"Information_Technology","International_Business_and_Trade",
+    		"Investing","Marketing_and_Advertising","Materials",
+    		"Mining_and_Drilling","Opportunities",
+    		"Publishing_and_Printing","Real_Estate",
+    		"Retail_Trade",	"Telecommunications",
+    		"Textiles_and_Nonwovens","Transportation_and_Logistics"]
+        soctopics = ["Crime","Death","Disabled","Ethnicity","Folklore","Future",
+    		"Genealogy","Government","History","Holidays","Law","Lifestyle_Choices",
+    		"Military","Organizations","Paranormal","Philanthropy","Philosophy",
+    		"Politics","Relationships","Religion_and_Spirituality","Sexuality",
+    		"Subcultures","Support_Groups","Transgendered","Work"]
+        alltopics = [] #Append all selected categories to this list
+        alltopics.append('Url')
+        if 'general' in topictypes:
+            for topic in gentopics:
+                alltopics.append(topic)
+        if 'computer' in topictypes:
+            for topic in comptopics:
+                alltopics.append(topic)
+        if 'business' in topictypes:
+            for topic in biztopics:
+                alltopics.append(topic)
+        if 'society' in topictypes:
+            for topic in soctopics:
+                alltopics.append(topic)
+        fullsize = 0
+        for i in topictypes:
+            fullsize += 1
+        fileq.total = fileq.total * fullsize
         db.session.commit()
-    os.remove(os.path.join('Classify/temp/uploads', uploadname))
+        with open('Classify/temp/'+key+'/'+savename, 'w', newline="") as destfile, open('Classify/temp/uploads/'+uploadname, 'r') as r:
+            f = csv.DictWriter(destfile, fieldnames=alltopics)
+            f.writeheader()
+            for url in r.read().split('\n'):
+                if fileq.status == 'cancelled':
+                    break
+                elif keycheck.queries < keycheck.querylimit:
+                    if not url.startswith('http'):
+                        url = 'http://' + url
+                    writedata = {}
+                    writedata['Url'] = url
+
+                    def appenddata(data):
+                        #data = {}
+                        try:
+                            data = data['cls1']
+                        except KeyError:
+                            data = None
+                        if data:
+                            for i in data:
+                                writedata[i] = data[i]
+                        keycheck.queries += 1
+                        keycheck.lastquery = datetime.now()
+                        fileq.complete += 1
+                        db.session.commit()
+
+                    if 'general' in topictypes:
+                        #url = urlparse.quote_plus(url)
+                        #req = requests.get(url)
+                        req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
+                        data = req.json()
+                        appenddata(data)
+                    if 'computer' in topictypes:
+                        req = requests.get('http://uclassify.com/browse/uclassify/computer-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
+                        data = req.json()
+                        appenddata(data)
+                    if 'business' in topictypes:
+                        req = requests.get('http://uclassify.com/browse/uclassify/business-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
+                        data = req.json()
+                        appenddata(data)
+                    if 'society' in topictypes:
+                        req = requests.get('http://uclassify.com/browse/uclassify/society-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
+                        data = req.json()
+                        appenddata(data)
+                    f.writerow(writedata)
+        if fileq.status != 'cancelled':
+            fileq.status = 'complete'
+            db.session.commit()
+        os.remove(os.path.join('Classify/temp/uploads', uploadname))
 
 
 def queuefile(uploadname, savename, keycheck, type='topics', support=0, confidence=0, antqnt='one', upformat=2, topictypes='general'):
     checkqueue = FileQueue.query.filter_by(status='processing').count()
     checkkeyqueue = FileQueue.query.filter_by(key=keycheck.key).filter(FileQueue.status=='processing').first()
-    with open('Classify/temp/uploads/'+uploadname, 'r') as r:
-        rowcount = len(r.read().split('\n'))
+    if type != 'twitter':
+        with open('Classify/temp/uploads/'+uploadname, 'r') as r:
+            rowcount = len(r.read().split('\n'))
+    else:
+        rowcount = 0
     if checkkeyqueue:
         newqueue = None
         filestatus = 'running'
@@ -134,6 +139,8 @@ def queuefile(uploadname, savename, keycheck, type='topics', support=0, confiden
             process = threading.Thread(target=processfile, kwargs={'uploadname': uploadname, 'savename': savename, 'key': keycheck.key, 'topictypes': topictypes})
         elif type == 'assoc':
             process = threading.Thread(target=mbasket.calc, kwargs={'support_threshold': support, 'confidence_threshold': confidence, 'uploadname': uploadname, 'savename': savename, 'key': keycheck.key, 'antqnt': antqnt, 'upformat': upformat})
+        elif type == 'twitter':
+            process = threading.Thread(target=searchtwitter, kwargs={'keywords': topictypes, 'savename': savename, 'key': keycheck.key})
         process.daemon = True
         process.start()
         filestatus = 'processing'
@@ -176,10 +183,12 @@ def checkqueueid(key):
 @app.route('/api/classify/cancel/<key>')
 def cancelqueue(key):
     check = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').order_by(FileQueue.added.desc()).first()
-    if check and ('-assoc-' not in check.save):
+    if check and ('-assoc-' not in check.save and 'Twitter-' not in check.save):
         check.status = 'cancelled'
         db.session.commit()
         return jsonify()
+    elif check and 'Twitter-' in check.save:
+        return jsonify({'error': 'Cancellation unavailable!'})
     elif check and ('-assoc-' in check.save):
         return jsonify({'error': 'Cancellation unavailable!'})
     else:
@@ -282,13 +291,39 @@ def classifyassoc():
         queue = queuefile(uploadname, savename, keycheck, type='assoc', support=float(support), confidence=float(confidence), antqnt=antqnt, upformat=upformat)
         return jsonify({'status': queue, 'savename': savename})
 
+@app.route('/api/classify/twitter', methods=['GET', 'POST'])
+def twitterwords():
+    if request.method == 'GET':
+        return render_template('classify/twittercsv.html', title="Twitter")
+    elif request.method == 'POST':
+        key = request.json['key']
+        keycheck = ClassifyKey.query.filter_by(key=key).first()
+        if not keycheck:
+            return jsonify({'error': 'Invalid API key'})
+        session['classifykey'] = key
+
+        twitcheck = FileQueue.query.filter_by(key=key).filter(FileQueue.save.contains('Twitter')).first()
+        dif = (datetime.now() - twitcheck.added).total_seconds()
+        if dif < 900:
+            return jsonify({'error': 'Please wait '+900-dif+' seconds.'})
+
+        keywords = []
+        keywords.append(request.json['keywords'].split(' ')[0])
+
+        if not os.path.exists(os.path.join('Classify/temp/'+key)):
+            os.makedirs(os.path.join('Classify/temp/'+key))
+        savename = 'Twitter-'+keywords[0]+'-'+str(datetime.now()).split('.')[0].replace(':', '-')+'.csv'
+
+        queue = queuefile(None, savename, keycheck, type='twitter', topictypes=keywords)
+        return jsonify({'status': queue, 'savename': savename})
+
 #TODO Display files based on DB catg
 @app.route('/api/classify/temp/list/<classifier>')
 def listclassifyfiles(classifier):
     key = request.args.get('key')
     if key and ClassifyKey.query.filter_by(key=key).first():
         session['classifykey'] = key
-        files = FileQueue.query.filter_by(key=key).filter(FileQueue.save.contains(classifier)).order_by(FileQueue.added.desc()).all()
+        files = FileQueue.query.filter_by(key=key).filter(FileQueue.save.contains(classifier.capitalize())).order_by(FileQueue.added.desc()).all()
         '''
         #View files in file system
         files = [f for f in os.listdir(os.path.join('Classify/temp/'+key)) if '-'+classifier+'-' in f]
@@ -296,8 +331,10 @@ def listclassifyfiles(classifier):
         files = files[::-1]
         '''
 
-        if classifier != 'assoc':
+        if classifier != 'assoc' and classifier != 'twitter':
             return render_template('classify/listfiles.html', files=files, classifier=classifier, key=key)
+        elif classifier == 'twitter':
+            return render_template('classify/listtwitter.html', files=files, classifier=classifier, key=key)
         else:
             return render_template('classify/listassoc.html', files=files, classifier=classifier, key=key)
     else:

@@ -1,3 +1,6 @@
+# 5/8/17 bV1.0.7.1
+  - Added test twitter api
+================================================================================
 # 4/4/17 bV1.0.7.1
   - Modified easter egg code
   - Added easter eggs

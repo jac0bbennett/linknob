@@ -8,6 +8,7 @@ v1.3
 
 import sys, csv, os
 from Models.models import FileQueue, db
+from config import app
 
 totalsupcount = 0
 
@@ -151,68 +152,69 @@ def apriori(orders, support_threshold, confidence_threshold, antqnt):
 
 
 def calc(support_threshold, confidence_threshold, uploadname, savename, key, antqnt, file_types='both', upformat=2):
+    with app.app_context():
 
-    fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
+        fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
 
-    data = read_data('Classify/temp/uploads/'+uploadname, upformat)
+        data = read_data('Classify/temp/uploads/'+uploadname, upformat)
 
-    #CSV
-    if 'csv' in file_types or 'both' in file_types:
-        final_results = []
-        for item_set, item in apriori(data[1:], support_threshold, confidence_threshold, antqnt):
-            str_item_set = str(item_set).replace('{', '')
-            str_item_set = str_item_set.replace('}', '')
-            str_item_set = str_item_set.replace("'", '')
-            results = {
-                'Antecedent': str_item_set,
-                'Consequent': item,
-                'Support': "{:0.3f}".format(support_frequency(data[1:], item_set.union({item}))),
-                'Confidence': "{:0.3f}".format(confidence(data[1:], item_set, {item})),
-                'Conviction': "{:0.3f}".format((1 - support_frequency(data[1:], {item})) / (1 - min(confidence(data[1:], item_set, {item}),0.99))),
-                'Lift': "{:0.3f}".format(support_frequency(data[1:], item_set.union({item}))/(support_frequency(data[1:], {item})*support_frequency(data[1:], item_set)))
-            }
-            final_results.append(results)
+        #CSV
+        if 'csv' in file_types or 'both' in file_types:
+            final_results = []
+            for item_set, item in apriori(data[1:], support_threshold, confidence_threshold, antqnt):
+                str_item_set = str(item_set).replace('{', '')
+                str_item_set = str_item_set.replace('}', '')
+                str_item_set = str_item_set.replace("'", '')
+                results = {
+                    'Antecedent': str_item_set,
+                    'Consequent': item,
+                    'Support': "{:0.3f}".format(support_frequency(data[1:], item_set.union({item}))),
+                    'Confidence': "{:0.3f}".format(confidence(data[1:], item_set, {item})),
+                    'Conviction': "{:0.3f}".format((1 - support_frequency(data[1:], {item})) / (1 - min(confidence(data[1:], item_set, {item}),0.99))),
+                    'Lift': "{:0.3f}".format(support_frequency(data[1:], item_set.union({item}))/(support_frequency(data[1:], {item})*support_frequency(data[1:], item_set)))
+                }
+                final_results.append(results)
 
-        written = []
-        columns = ['Antecedent','Consequent','Support','Confidence','Conviction','Lift']
+            written = []
+            columns = ['Antecedent','Consequent','Support','Confidence','Conviction','Lift']
 
-        with open('Classify/temp/'+key+'/'+savename, 'w', newline="") as destfile:
-            f = csv.DictWriter(destfile, fieldnames=columns)
-            f.writeheader()
-            for result in final_results:
-                if result not in written:
-                    written.append(result)
-                    f.writerow(result)
-    #JSON
-    final_results_json = {}
-    final_results_json_cons = {}
+            with open('Classify/temp/'+key+'/'+savename, 'w', newline="") as destfile:
+                f = csv.DictWriter(destfile, fieldnames=columns)
+                f.writeheader()
+                for result in final_results:
+                    if result not in written:
+                        written.append(result)
+                        f.writerow(result)
+        #JSON
+        final_results_json = {}
+        final_results_json_cons = {}
 
-    if 'json' in file_types or 'both' in file_types:
-        with open('Classify/temp/'+key+'/'+savename, 'r') as f:
-            tempres = csv.DictReader(f)
-            for row in tempres:
-                if len(row["Antecedent"].split(',')) == 1:
-                    try:
-                        final_results_json_cons[row["Consequent"]].append(row["Antecedent"])
-                    except KeyError:
-                        final_results_json_cons[row["Consequent"]] = [row["Antecedent"]]
+        if 'json' in file_types or 'both' in file_types:
+            with open('Classify/temp/'+key+'/'+savename, 'r') as f:
+                tempres = csv.DictReader(f)
+                for row in tempres:
+                    if len(row["Antecedent"].split(',')) == 1:
+                        try:
+                            final_results_json_cons[row["Consequent"]].append(row["Antecedent"])
+                        except KeyError:
+                            final_results_json_cons[row["Consequent"]] = [row["Antecedent"]]
 
-                    try:
-                        final_results_json[row["Consequent"]][row["Antecedent"]] = row["Confidence"]
-                    except KeyError:
-                        final_results_json[row["Consequent"]] = {row["Antecedent"]: row["Confidence"]}
+                        try:
+                            final_results_json[row["Consequent"]][row["Antecedent"]] = row["Confidence"]
+                        except KeyError:
+                            final_results_json[row["Consequent"]] = {row["Antecedent"]: row["Confidence"]}
 
 
-        with open('Classify/temp/'+key+'/'+savename.split('.csv')[0]+'.json', 'w') as f:
-            f.write('var strength = ' + str(final_results_json) + ';\nvar persons = ' + str(final_results_json_cons) + ';')
+            with open('Classify/temp/'+key+'/'+savename.split('.csv')[0]+'.json', 'w') as f:
+                f.write('var strength = ' + str(final_results_json) + ';\nvar persons = ' + str(final_results_json_cons) + ';')
 
-    fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
+        fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
 
-    if fileq.status != 'cancelled':
-        fileq.status = 'complete'
-        with open('Classify/temp/uploads/'+uploadname, 'r') as r:
-            rowcount = len(r.read().split('\n'))
-            fileq.complete = rowcount
-            fileq.total = rowcount
-        db.session.commit()
-    os.remove(os.path.join('Classify/temp/uploads', uploadname))
+        if fileq.status != 'cancelled':
+            fileq.status = 'complete'
+            with open('Classify/temp/uploads/'+uploadname, 'r') as r:
+                rowcount = len(r.read().split('\n'))
+                fileq.complete = rowcount
+                fileq.total = rowcount
+            db.session.commit()
+        os.remove(os.path.join('Classify/temp/uploads', uploadname))
