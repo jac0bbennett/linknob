@@ -23,7 +23,11 @@ $(document).ready(function () {
                         $('.msg').html('Finished last <a class="genlink tooltiplong" tip="'+data.result+'" href="'+data.url+'">File</a> ('+data.total+')');
                         $('.upload').text('Submit');
                         $('.upload').css({'background': '#2E7D32'});
-        				} else {
+        				} else if (data.status == 'error') {
+                        $('.msg').text('An error occurred during last request.');
+                        $('.upload').text('Submit');
+                        $('.upload').css({'background': '#2E7D32'});
+                } else {
           					    $('.msg').text('Processing...');
         				}
 
