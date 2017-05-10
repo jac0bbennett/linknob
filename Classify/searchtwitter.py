@@ -5,7 +5,6 @@ from config import app
 
 def searchtwitter(keywords, savename, key):
     with app.app_context():
-        fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
 
         try:
             tso = TwitterSearchOrder()
@@ -33,6 +32,8 @@ def searchtwitter(keywords, savename, key):
                     writedata['Text'] = tweet['text']
                     writedata['Created At'] = tweet['created_at']
                     f.writerow(writedata)
+
+            fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
 
             fileq.status = 'complete'
             fileq.complete = totalcount

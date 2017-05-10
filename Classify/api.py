@@ -309,11 +309,14 @@ def twitterwords():
                 return jsonify({'error': 'Please wait '+str(int(300-dif))+' seconds.'})
 
         keywords = []
-        keywords.append(request.json['keywords'].split(' ')[0])
+
+        request.json['keywords'] = request.json['keywords'].replace(', ', ',')
+        for word in request.json['keywords'].split(','):
+            keywords.append(word)
 
         if not os.path.exists(os.path.join('Classify/temp/'+key)):
             os.makedirs(os.path.join('Classify/temp/'+key))
-        savename = 'Twitter-'+keywords[0]+'-'+str(datetime.now()).split('.')[0].replace(':', '-')+'.csv'
+        savename = 'Twitter-'+secure_filename(request.json['keywords'].split(',')[0])+'-'+str(datetime.now()).split('.')[0].replace(':', '-')+'.csv'
 
         queue = queuefile(None, savename, keycheck, type='twitter', topictypes=keywords)
         return jsonify({'status': queue, 'savename': savename})
