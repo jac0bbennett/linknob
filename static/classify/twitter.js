@@ -19,7 +19,7 @@ $(document).ready(function () {
             if (data.error) {
               $('.msg').text(data.error);
             } else {
-        				if (data.status == 'complete') {
+        				if (data.status == 'complete' && ~data.status.indexOf('Twitter-')) {
                         $('.msg').html('Finished last <a class="genlink tooltiplong" tip="'+data.result+'" href="'+data.url+'">File</a> ('+data.total+')');
                         $('.upload').text('Submit');
                         $('.upload').css({'background': '#2E7D32'});
@@ -27,7 +27,7 @@ $(document).ready(function () {
                         $('.msg').text('An error occurred during last request.');
                         $('.upload').text('Submit');
                         $('.upload').css({'background': '#2E7D32'});
-                } else {
+                } else if (data.status == 'processing') {
           					    $('.msg').text('Processing...');
         				}
 

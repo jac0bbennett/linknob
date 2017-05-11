@@ -6,7 +6,11 @@
     <link rel="stylesheet" type="text/css" href="/static/css/main.css">
   </head>
   <body>
-    <div id="links" style="margin-top:50px;">
+    <div class="pagealert" style="margin-top:60px;">
+      <a href="/api/classify" class="graytext flatbutton">Topics</a> <a href="/api/classify/assoc" class="graytext flatbutton">Association</a>
+       <a href="/api/classify/twitter" class="graytext flatbutton">Twitter</a>
+    </div>
+    <div id="links">
       <a style="float:right;" class="genlink" href="/api/classify/assoc">Upload</a>
       <h1>Association Result Files</h1><hr>
       {% for file in files %}

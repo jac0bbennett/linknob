@@ -6,7 +6,11 @@
     <link rel="stylesheet" type="text/css" href="/static/css/main.css">
   </head>
   <body>
-    <div id="links" style="margin-top:100px;">
+    <div class="pagealert" style="margin-top:60px;">
+      <a href="/api/classify" class="graytext flatbutton">Topics</a> <a href="/api/classify/assoc" class="graytext flatbutton">Association</a>
+       <a href="/api/classify/twitter" class="graytext flatbutton">Twitter</a>
+    </div>
+    <div id="links">
       <h1>Twitter to CSV</h1>
       <span class="graytext"><ol>
         <li>Enter keywords separated by commas</li>
@@ -21,12 +25,14 @@
         <b>Key:</b><br>
         <input type="text" name="apikey" class="geninput apikey" {% if 'classifykey' in session %}value="{{ session['classifykey'] }}"{% endif %}
          placeholder="API Key" style="width:200px;"><br><br>
-         <b>Keyword in tweets:</b><br>
+         <b>Keywords in tweets:</b><br>
          <input id="keywords" type="text" name="keywords" class="geninput"
           placeholder="Keyword" style="width:200px;"><br>
         <span style="float:right;margin-top:-45px;">
         <button class="greenbutton upload" id="searchtweet" {% if queuedfile %}style="background:#981e1e;"{% endif %}>{% if queuedfile %}Cancel{% else %}Submit{% endif %}</button>
       </span>
+      <br>
+      <center><span class="graytext" style="font-size:10pt;">Powered by <a href="https://twitter.com" class="genlink">Twitter.com</a></span></center>
     </div>
   </body>
 </html>
