@@ -149,7 +149,7 @@ class Link(db.Model):
         if 'user' in session:
             point = Point.query.filter_by(link=self.id).filter(Point.userid == session['userid']).first()
             if point:
-                return 'style=color:#fff;background:#D32F2F;'
+                return 'style=color:#fff;background:#C44437;'
 
     def comcount(self):
         count = Comment.query.filter_by(link=self.id).count()

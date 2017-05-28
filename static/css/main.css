@@ -48,8 +48,8 @@ b {
     padding: 10px;
     margin: -10px;
     top: 10px;
-    height: 50px;
-    background: #26A69A;
+    height: 30px;
+    background: #C44437;
     position: fixed;
     width: 100%;
     z-index: 999;
@@ -58,8 +58,8 @@ b {
 
 #top-right {
     position: absolute;
-    margin-top: -45px;
-    right: 60px;
+    margin-top: -40px;
+    right: 90px;
     font-family: Roboto;
 }
 
@@ -73,14 +73,15 @@ b {
     font-family: Roboto;
     color: #fff;
     text-decoration: none;
-    margin-left: 65px;
+    margin-left: 50px;
 }
 
 .linklogo {
     vertical-align: middle;
-    margin-left: -25px;
-    margin-top: -5px;
-    width: 20px;
+    margin-left: 20px;
+    margin-top: -10px;
+    height:37px;
+    width:36px;
 }
 
 #catgtitle,
@@ -94,7 +95,7 @@ b {
 #secondarybar {
     padding: 10px;
     margin: -10px;
-    top: 70px;
+    top: 50px;
     height: 30px;
     background: #fff;
     position: fixed;
@@ -110,17 +111,17 @@ b {
 .toplink:visited {
     font-family: Roboto;
     text-decoration: none;
-    color: #4DB6AC;
+    color: #464646;
 }
 
 .toplink {
     font-family: Roboto;
     text-decoration: none;
-    color: #4DB6AC;
+    color: #464646;
 }
 
 .catgpage {
-    border-bottom: 2px solid #009688;
+    border-bottom: 2px solid #464646;
 }
 
 .flatbutton {
@@ -147,7 +148,7 @@ b {
     background: #fff;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 130px;
+    margin-top: 80px;
     border-radius: 3px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
@@ -200,7 +201,7 @@ b {
 
 .add {
     float: right;
-    background: #EF6C00;
+    background: #E6B730;
     border: none;
     color: #fff;
     font-family: Roboto;
@@ -221,7 +222,7 @@ b {
 }
 
 .add:hover {
-    background: #E65100;
+    background: #daa60f;
 }
 
 .toggle {
@@ -329,7 +330,7 @@ body {
 }
 
 .follow-button {
-    background: #F44336;
+    background: #E6B730;
     border: none;
     color: #fff;
     font-family: Roboto;
@@ -365,7 +366,7 @@ body {
 }
 
 .unfollow-button:hover {
-    background: #F44336;
+    background: #C44437;
 }
 
 #profilestats {
@@ -496,7 +497,7 @@ body {
     font-family: Roboto;
     font-weight: 400;
     color: #fff;
-    background: #D32F2F;
+    background: #464646;
     padding: 5px;
     border-radius: 2px;
     cursor: pointer;
@@ -506,7 +507,7 @@ body {
 }
 
 .name:hover {
-    background: #B71C1C;
+    background: #292929;
 }
 
 h1,
@@ -543,7 +544,7 @@ h4 {
 
 hr {
     border: 0;
-    border-top: 1px solid #ffd9a1;
+    border-top: 1px solid #E6B730;
 }
 
 .tooltip {
@@ -691,16 +692,16 @@ hr {
 }
 
 #searchbar {
-    margin-top: -47px;
+    margin-top: -35px;
 }
 
 #searchinput {
-    border-radius: 5px;
-    height: 40px;
+    border-radius: 3px;
+    height: 30px;
     width: 400px;
     padding-left: 10px;
     padding-right: 10px;
-    background: #4DB6AC;
+    background: #e25547;
     opacity: 0.8;
     outline: none;
     color: #fff;
@@ -713,7 +714,7 @@ hr {
 }
 
 #searchinput:hover {
-    background: #a5e4de;
+    background: #e97165;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
@@ -844,16 +845,22 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80ef9300', e
 }
 
 .intcount,
+.yelltext {
+  color: #E6B730;
+  font-family: Roboto;
+}
+
 .orngtext {
   color: #FB8C00;
   font-family: Roboto;
 }
 
+
 .loading {
   width: 20px;
   height: 20px;
   margin-left: 90px;
-  background-color: #ff8e00;
+  background-color: #C44437;
   position: absolute;
   opacity: 0.7;
   border-radius: 100%;
@@ -911,7 +918,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80ef9300', e
 
 @media all and (max-width: 800px) {
     #links {
-        margin-top: 130px;
+        margin-top: 80px;
         width: 93%;
     }
     #link_container {
@@ -922,14 +929,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#80ef9300', e
       font-size: 20pt;
     }
     #top-right {
-        margin-top: -36px;
-        right: 30px;
+        margin-top: -30px;
+        right: 50px;
     }
     #topbardiv {
         margin-top: 0px;
     }
     #logotitle {
-        margin-left: 30px;
+        margin-left: 10px;
     }
     #searchbar {
         display: none;

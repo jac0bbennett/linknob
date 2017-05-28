@@ -24,8 +24,8 @@ url_for('static', filename='script.js') }}"></script>
 </head>
 <div id="topbar">
     <div id="topbardiv">
-        <a id="logotitle" href="/"><img src="/static/images/wordlogo.png" height="auto" class="linklogo" style="width:140px;">
-            </a>
+        <a id="logotitle" href="/"><img src="/static/images/knob.png" class="linklogo">
+        </a><a style="color:#fff;font-size:14pt;position:relative;top:-5px;cursor:pointer;">Linknob</a>
             <center>
                 <form id="searchbar" action="/search">
                     <input type="text" id="searchinput" name="q" value="{{ search }}" placeholder="{{ session['loadinglabel'] }}">
@@ -33,7 +33,8 @@ url_for('static', filename='script.js') }}"></script>
             </center><span id="top-right">{% if 'name' in session %}
       <span class="selfcool othtip" tip="Your points"> {{ session['points'] }}</span>
             <a class="name" href="/{{ session['user'] }}">{{ session['user'] }}</a> {% else %}
-            <a class="name signinout" href="/signin">Sign In</a> {% endif %}
+            <a class="name signinout" href="/signin">Sign In</a>
+            {% endif %}
             </span>
         </div>
     </div>

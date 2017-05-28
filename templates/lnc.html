@@ -35,7 +35,7 @@
           <span class="linkcomment">{{ link.comment|hashtag }}</span>
           <br>
           <br> {% if link.userid != session['userid'] %}
-          <button data="{{ link.id }}" data-tc="{{ link.pointcount() }}" data-pt-type="{% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}" {% if point != None %}style="color:#fff;background:#D32F2F;" {% endif %} class="cool">
+          <button data="{{ link.id }}" data-tc="{{ link.pointcount() }}" data-pt-type="{% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}" {% if point != None %}style="color:#fff;background:#C44437;" {% endif %} class="cool">
           {% if link.ptname != None %}{{ link.ptname }}{% else %}Cool{% endif %}</button>{% else %}<span class="graytext">{{ link.ptname }}:</span> {% endif %}
           <span title="Points on Link" data-id="{{ link.id }}" class="coolcount {{ link.id }} {% if link.userid != session['userid'] %}didipoint{% endif %}">
           {{ link.pointcount() }}</span> {% if link.userid == session['userid'] %}

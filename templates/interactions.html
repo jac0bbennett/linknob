@@ -1,11 +1,11 @@
 {% extends 'base.html' %}{% block content %}
 <div id="links">
-{% if freepts %}<span class="freepts"><button class="greenbutton freeptsbtn" style="color:#fff;background:#FB8C00;">Collect Free Points (1-10)</button></span>{% endif %}
+{% if freepts %}<span class="freepts"><button class="greenbutton freeptsbtn" style="color:#fff;background:#E6B730;">Collect Free Points (1-10)</button></span>{% endif %}
 <center><h4>Interactions Beta</h4></center>
-<b>Latest:</b> <a class="genlink" {% if catg=='points' %}style="border-bottom: 2px solid #303F9F;"{% endif %} href="/i/interactions">Points <span class="orngtext">{{ pointcount }}</span></a> |
-<a class="genlink" {% if catg=='trails' %}style="border-bottom: 2px solid #303F9F;"{% endif %} href="/i/interactions?catg=trails">Trails <span class="orngtext">{{ trailcount }}</span></a>
+<b>Latest:</b> <a class="genlink" {% if catg=='points' %}style="border-bottom: 2px solid #303F9F;"{% endif %} href="/i/interactions">Points <span class="yelltext">{{ pointcount }}</span></a> |
+<a class="genlink" {% if catg=='trails' %}style="border-bottom: 2px solid #303F9F;"{% endif %} href="/i/interactions?catg=trails">Trails <span class="yelltext">{{ trailcount }}</span></a>
 |
-<a class="genlink" {% if catg=='comments' %}style="border-bottom: 2px solid #303F9F;"{% endif %} href="/i/interactions?catg=comments">Comments <span class="orngtext">{{ commentcount }}</span></a>
+<a class="genlink" {% if catg=='comments' %}style="border-bottom: 2px solid #303F9F;"{% endif %} href="/i/interactions?catg=comments">Comments <span class="yelltext">{{ commentcount }}</span></a>
 <hr><br>
 {% if catg == 'points' %}
 {% for point in points %}
