@@ -3,7 +3,7 @@
 # Copyright Jacob Bennett 10/2/16
 
 from flask import render_template, request, session, flash, send_file, abort, redirect, url_for
-from config import app, db, pepper, bsalt
+from config import app, db, pepper, bsalt, mailgunkey
 from Models.models import User, Resetkey
 from utils import codegen
 from datetime import datetime
@@ -61,7 +61,7 @@ def resetkey():
                     db.session.commit()
                     requests.post(
                         "https://api.mailgun.net/v3/linknob.com/messages",
-                        auth=("api", "key-a71d55fb1c8464d60eb06291982a0eb8"),
+                        auth=("api", mailgunkey),
                         data={"from": "Linknob <noreply@linknob.com>",
                               "to": [email],
                               "subject": "Reset Key",

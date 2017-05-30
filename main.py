@@ -39,7 +39,7 @@ def before_request():
             if alert and ('alertclosed' not in session or session['alertclosed'] != alert.header):
                 session['alert'] = alert.header
                 session['alerturl'] = alert.url
-
+                
 @app.after_request
 def after_request(response):
     '''

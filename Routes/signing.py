@@ -3,7 +3,7 @@
 # Copyright Jacob Bennett 10/4/16
 
 from flask import render_template, request, session, flash, redirect, url_for
-from config import app, db, pepper, bsalt
+from config import app, db, pepper, bsalt, mailgunkey
 from Models.models import User, Invite
 from utils import codegen
 from datetime import datetime
@@ -96,7 +96,7 @@ def signup():
                     # Send confirmation Email
                     requests.post(
                         "https://api.mailgun.net/v3/linknob.com/messages",
-                        auth=("api", "key-a71d55fb1c8464d60eb06291982a0eb8"),
+                        auth=("api", mailgunkey),
                         data={"from": "Linknob <noreply@linknob.com>",
                               "to": [email],
                               "subject": "Hello, " + name,
