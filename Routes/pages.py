@@ -30,28 +30,31 @@ def signoutpage():
     return render_template('document.html', page=page)
 
 
-@app.route('/i/requestinvite', methods=['POST'])
+@app.route('/i/requestinvite', methods=['GET', 'POST'])
 def requestinviteemail():
-    email = request.form['email']
-    check = Request.query.filter_by(email=email).first()
-    usercheck = User.query.filter_by(email=email).first()
-    if check is None and usercheck is None: # Check if email has already requested
-        req = Request(email, datetime.now(), None)
-        db.session.add(req)
-        db.session.commit()
-        # Send comfort email to user for warm fuzzy feeling inside requests.post("https://api.mailgun.net/v3/linknob.com/messages",auth=("api","key-a71d55fb1c8464d60eb06291982a0eb8"),data={"from":"Linknob <noreply@linknob.com>","to": [email],"subject": "Your request has been received!","html": '<html><h1>Thank You for your interest!</h1><h3>When an invite is available, it will be sent to you!</h3><h4>Follow us on Twitter: <a href="https://twitter.com/thelinknob">@thelinknob</a></html>'})
-        # Static 'requested' page not in DB
-        page = {
-            'title': 'Requested',
-            'header': 'Your request has been received!',
-            'content': 'Thank You for requesting an invite. When one is ready, it will be sent to you.',
-            'time': None
-        }
+    if request.method == 'GET':
+        return render_template('reqinvite.html', title='Request invite code')
     else:
-        page = {
-            'title': 'Already Requested',
-            'header': 'This email has already requested an invite!',
-            'content': 'The email that you submitted has already been added to the list of invite requests.',
-            'time': None
-        }
-    return render_template('document.html', page=page)
+        email = request.form['email']
+        check = Request.query.filter_by(email=email).first()
+        usercheck = User.query.filter_by(email=email).first()
+        if check is None and usercheck is None: # Check if email has already requested
+            req = Request(email, datetime.now(), None)
+            db.session.add(req)
+            db.session.commit()
+            # Send comfort email to user for warm fuzzy feeling inside requests.post("https://api.mailgun.net/v3/linknob.com/messages",auth=("api","key-a71d55fb1c8464d60eb06291982a0eb8"),data={"from":"Linknob <noreply@linknob.com>","to": [email],"subject": "Your request has been received!","html": '<html><h1>Thank You for your interest!</h1><h3>When an invite is available, it will be sent to you!</h3><h4>Follow us on Twitter: <a href="https://twitter.com/thelinknob">@thelinknob</a></html>'})
+            # Static 'requested' page not in DB
+            page = {
+                'title': 'Requested',
+                'header': '<span style="color:#2E7D32">Your request has been received!</span>',
+                'content': 'Thank You for requesting an invite. When one is ready, it will be sent to you.',
+                'time': None
+            }
+        else:
+            page = {
+                'title': 'Already Requested',
+                'header': '<span style="color:#E6B730">This email has already requested an invite!</span>',
+                'content': 'The email that you submitted has already been added to the list of invite requests.',
+                'time': None
+            }
+        return render_template('document.html', page=page)

@@ -187,7 +187,7 @@ b {
 }
 
 .postedlinks a:hover {
-    color: #FB8C00;
+    color: #E6B730;
 }
 
 #catg a {
@@ -540,6 +540,10 @@ h4 {
     font-size: 15pt;
     font-family: Roboto;
     font-weight: bold;
+}
+
+p {
+  line-height: 150%;
 }
 
 hr {

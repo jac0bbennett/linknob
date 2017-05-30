@@ -1,8 +1,9 @@
 {% extends 'base.html' %}{% block content %}
+<title>{{ page.title }}</title>
 <body>
     <div id="links">
         <div id="document" class="gencontent" data-id="{{ page.id }}">
-            <h1>{{ page.header }}</h1>{% if page.time != None %}<span style="color:gray;">Last Updated: {{ page.time|absolutetime }}</span>{% endif %}
+            <h1>{{ page.header|safe }}</h1>{% if page.time != None %}<span style="color:gray;">Last Updated: {{ page.time|absolutetime }}</span>{% endif %}
             <hr>
             <div id="doc-content">
                 {{ page.content|safe }}

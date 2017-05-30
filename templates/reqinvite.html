@@ -1,0 +1,11 @@
+{% extends 'base.html' %}{% block content %}
+<div id="links">
+  <center>
+  <form action="/i/requestinvite" method="POST">
+    <span style="color:#292929;font-size:24pt;font-family:Roboto;font-weight:300;">Get a sign up code</span><br><br>
+    <input class="geninput" type="email" required="true" placeholder="email" name="email" style="width:200px;color:#E6B730;font-weight:400;border:2px solid #E6B730;height:35px;">
+    <button type="submit" class="greenbutton" style="height:35px;background:#E6B730;">Request Invite</button>
+  </form>
+</center>
+</div>
+{% endblock %}

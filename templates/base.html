@@ -46,7 +46,7 @@ url_for('static', filename='script.js') }}"></script>
               <a class="toplink {% if catgpage == 'path' %}catgpage{% endif %}" href="/i/path">Path</a> | <a class="toplink {% if catgpage == 'global' %}catgpage{% endif %}" href="/i/new">Global</a>
               | <a class="toplink {% if catgpage == 'chains' %}catgpage{% endif %}" href="/i/chains">Chains</a> | <a class="toplink {% if catgpage == 'interactions' %}catgpage{% endif %}" href="/i/interactions">Interactions <span class="intcount"></span></a>
               {% else %}
-              <a class="toplink {% if catgpage == 'about' %}catgpage{% endif %}" href="/d/about">About</a> | <a class="toplink {% if catgpage == 'signup' %}catgpage{% endif %}" href="/signup">Signup</a>
+              <a class="toplink {% if catgpage == 'about' %}catgpage{% endif %}" href="/d/about">About</a> | <a class="toplink {% if catgpage == 'signup' %}catgpage{% endif %}" href="/signup">Sign Up</a>
               {% endif %}
             </center>
         </div>
@@ -63,8 +63,10 @@ url_for('static', filename='script.js') }}"></script>
     <center>
         <img title="Jwb Media" src="/static/images/logotest2two.png" width=23px>
         <br>
+        <span style="font-weight:300;">
         <a href="/d/about" class="profilelink">About</a> | <a href="/d/privacypolicy" class="profilelink">Privacy Policy</a> | <a href="/d/termsofservice" class="profilelink">Terms of Service</a> | <a href="https://chrome.google.com/webstore/detail/linknob/hgnngloicpmdfdffnoodlpmfcflkbcfd?utm_source=chrome-ntp-icon" class="profilelink">Chrome Extension</a>
-        <br><span style="color:#5a5a5a;font-size:10pt;font-family:Roboto;" title="Server returned a response in {{ session['reqtime'] }} seconds">&copy; 2015-2017 Jwb Media</span>{{ session['closedalert'] }}
+      </span>
+        <br><span style="color:#5a5a5a;font-size:10pt;font-family:Roboto;" title="Crafted in Utah, Served through a San Francisco Server">&copy; 2015-2017 Jwb Media</span>{{ session['closedalert'] }}
     </center>
 </footer>
 

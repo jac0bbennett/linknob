@@ -19,8 +19,7 @@ def main():
         return redirect(url_for('path'))
     else:
         title = 'Linknob'
-        toplinks = Link.query.join(Point, (Point.link == Link.id)).group_by(Link.id).filter((Link.visibility == 1) & (Link.points > 0) & (Link.age >= 60)).order_by((score(Link.points, Link.time, func.count(Point.id))).desc()).limit(2)
-        return render_template('homepage.html', title=title, toplinks=toplinks)
+        return render_template('homepage.html', title=title)
 
 
 @app.route('/i/<catg>')
