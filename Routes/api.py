@@ -565,10 +565,10 @@ def closealert():
     alert = Page.query.filter_by(active=1).first()
     if alert:
         session['alertclosed'] = alert.header
-    else:
-        session.pop('alert')
-        session.pop('alerturl')
-        return jsonify({'status': 'success'})
+
+    session.pop('alert')
+    session.pop('alerturl')
+    return jsonify({'status': 'success'})
 
 # Generate an invite for user to give Out
 # NOTE: Add functionality to send invite via email directly from invite page
