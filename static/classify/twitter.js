@@ -19,7 +19,7 @@ $(document).ready(function () {
             if (data.error) {
               $('.msg').text(data.error);
             } else {
-        				if (data.status == 'complete' && ~data.status.indexOf('Twitter-')) {
+        				if (data.status == 'complete' && data.status.indexOf('Twitter-')) {
                         $('.msg').html('Finished last <a class="genlink tooltiplong" tip="'+data.result+'" href="'+data.url+'">File</a> ('+data.total+')');
                         $('.upload').text('Submit');
                         $('.upload').css({'background': '#2E7D32'});
