@@ -103,7 +103,10 @@ def usersettings():
             pseudo = request.form['pseudo']
             email = request.form['email']
             bio = request.form['bio']
-            flair = request.form['flair']
+            if user.verified == 1:
+                flair = request.form['flair']
+            else:
+                flair = None
             curkey = request.form['curkey']
             newkey = request.form['newkey']
             if curkey:
