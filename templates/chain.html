@@ -4,7 +4,7 @@
     <div id="links">
         <button posit='+' class="add toggle">+</button>
         <div class="addlnc">
-            {% if 'user' in session and chain.userid == session['userid']%}
+            {% if 'user' in session %}
             <div>
                 <h3>Post a link to this Chain:</h3>
                 <center>

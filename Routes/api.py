@@ -71,20 +71,12 @@ def apipost():
     comment = request.json['comment']
     link = request.json['link'].strip()
     ptname = request.json['ptname']
-    userid = request.json['userid']
+    userid = int(request.json['userid'])
     formkey = request.json['userkey']
-    if 'chain' in request.json and 'vis' in request.json:
-        chain = request.json['chain']
+    if 'vis' in request.json:
         vis = request.json['vis']
     else:
-        chain = None
         vis = 1
-
-    if chain != None:
-        print(chain)
-        chain = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == userid)) & (Chain.title==chain)).first()
-        if chain == None:
-            return jsonify({ 'errors': ' Chain not found!'})
 
     user = User.query.filter_by(id=userid).first()
 
@@ -127,11 +119,22 @@ def apipost():
                 newlnc = Link(uuid, userid, link, escapeit(comment), time, 0, None, escapeit(title), escapeit(ptname), favicon, image, escapeit(description), vis)
             db.session.add(newlnc)
             db.session.commit()
-            if chain:
-                postedlnc = Link.query.filter_by(uuid=uuid).first()
-                addlnc = Chainlink(userid, postedlnc.id, chain.id, datetime.now())
-                db.session.add(addlnc)
-                db.session.commit()
+
+            postedlnc = Link.query.filter_by(uuid=uuid).first()
+            if request.json['chain'] and request.json['chain'] != '':
+                chaintitles = request.json['chain'].strip().lower().replace(', ', ',').split(',')
+                for chaintitle in chaintitles:
+                    if not chaintitle.isspace() and chaintitle != '':
+                        chain = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == request.args.get('userid'))) & (func.lower(Chain.title)==chaintitle)).first()
+                        if chain != None:
+                            if link != None and vis == 1:
+                                addlink = Chainlink(userid, postedlnc.id, chain.id, datetime.now())
+                                db.session.add(addlink)
+                                db.session.commit()
+                            else:
+                                error = 'That link does not exist!'
+                        else:
+                            error = 'The chain "'+chaintitle+'" is not real!'
             return jsonify()
     else:
         return jsonify({ 'errors': 'Invalid Key'})
@@ -279,13 +282,17 @@ def newchain():
 def suggestchain():
     chainlist = []
     term = request.args.get('term')
-    if 'user' in session:
-        chains = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == session['userid'])) & (func.lower(Chain.title).startswith(term))).limit(5)
-        for chain in chains:
-            chainlist.append(chain.title)
-        return json.dumps(chainlist)
+    if request.args.get('userid'):
+        userid = int(request.args.get('userid'))
+    elif 'user' in session:
+        userid = session['userid']
     else:
         return 'error'
+    chains = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == userid)) & (func.lower(Chain.title).startswith(term))).limit(5)
+    for chain in chains:
+        chainlist.append(chain.title)
+    return json.dumps(chainlist)
+
 
 # Add a link to a chain
 @app.route('/i/addchain', methods=['POST'])
@@ -296,20 +303,21 @@ def addlinktochain():
         linkid = request.json['linkid']
         link = Link.query.filter_by(id=linkid).first()
         for chaintitle in chaintitles:
-            chain = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == session['userid'])) & (func.lower(Chain.title)==chaintitle)).first()
-            if chain != None:
-                if link != None and link.visibility == 1:
-                    check = Chainlink.query.filter((Chainlink.chain == chain.id) & (Chainlink.link == linkid)).first()
-                    if check == None:
-                        addlink = Chainlink(session['userid'], linkid, chain.id, datetime.now())
-                        db.session.add(addlink)
-                        db.session.commit()
+            if not chaintitle.isspace() and chaintitle != '':
+                chain = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == session['userid'])) & (func.lower(Chain.title)==chaintitle)).first()
+                if chain != None:
+                    if link != None and link.visibility == 1:
+                        check = Chainlink.query.filter((Chainlink.chain == chain.id) & (Chainlink.link == linkid)).first()
+                        if check == None:
+                            addlink = Chainlink(session['userid'], linkid, chain.id, datetime.now())
+                            db.session.add(addlink)
+                            db.session.commit()
+                        else:
+                            error = 'That link is already in chain '+ chain.title + '!'
                     else:
-                        error = 'That link is already in chain '+ chain.title + '!'
+                        error = 'That link does not exist!'
                 else:
-                    error = 'That link does not exist!'
-            else:
-                error = 'The chain "'+chaintitle+'" is not real!'
+                    error = 'The chain "'+chaintitle+'" is not real!'
         if error:
             return jsonify({'error': error})
         else:
