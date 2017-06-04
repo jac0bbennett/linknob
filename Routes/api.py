@@ -125,7 +125,7 @@ def apipost():
                 chaintitles = request.json['chain'].strip().lower().replace(', ', ',').split(',')
                 for chaintitle in chaintitles:
                     if not chaintitle.isspace() and chaintitle != '':
-                        chain = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == request.args.get('userid'))) & (func.lower(Chain.title)==chaintitle)).first()
+                        chain = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == userid)) & (func.lower(Chain.title)==chaintitle)).first()
                         if chain != None:
                             if link != None and vis == 1:
                                 addlink = Chainlink(userid, postedlnc.id, chain.id, datetime.now())
