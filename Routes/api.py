@@ -121,6 +121,7 @@ def apipost():
             db.session.commit()
 
             postedlnc = Link.query.filter_by(uuid=uuid).first()
+            error = None
             if request.json['chain'] and request.json['chain'] != '':
                 chaintitles = request.json['chain'].strip().lower().replace(', ', ',').split(',')
                 for chaintitle in chaintitles:
@@ -135,7 +136,10 @@ def apipost():
                                 error = 'That link does not exist!'
                         else:
                             error = 'The chain "'+chaintitle+'" is not real!'
-            return jsonify()
+            if error:
+                return jsonify()
+            else
+                return jsonify({'error': error})
     else:
         return jsonify({ 'errors': 'Invalid Key'})
 

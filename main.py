@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 4/22/17 bV1.0.7
+# Copyright Jacob Bennett 6/4/17 bV1.1.1
 # Status: Pre-Beta Stable
 
 # Import all the things
@@ -39,7 +39,7 @@ def before_request():
             if alert and ('alertclosed' not in session or session['alertclosed'] != alert.header):
                 session['alert'] = alert.header
                 session['alerturl'] = alert.url
-                
+
 @app.after_request
 def after_request(response):
     '''
