@@ -133,9 +133,9 @@ def apipost():
                                 db.session.add(addlink)
                                 db.session.commit()
                             else:
-                                error = 'That link does not exist!'
+                                errors = 'That link does not exist!'
                         else:
-                            error = 'The chain "'+chaintitle+'" is not real!'
+                            errors = 'The chain "'+chaintitle+'" is not real!'
             if error:
                 return jsonify()
             else
