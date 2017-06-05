@@ -127,7 +127,7 @@ def apipost():
                 for chaintitle in chaintitles:
                     if not chaintitle.isspace() and chaintitle != '':
                         chain = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == userid)) & (func.lower(Chain.title)==chaintitle)).first()
-                        if chain != None:
+                        if chain:
                             if link != None and vis == 1:
                                 addlink = Chainlink(userid, postedlnc.id, chain.id, datetime.now())
                                 db.session.add(addlink)
@@ -136,9 +136,11 @@ def apipost():
                                 error = 'That link does not exist!'
                         else:
                             error = 'The chain "'+chaintitle+'" is not real!'
-            if error:
+            if not error:
                 return jsonify()
             else:
+                db.session.delete(postedlnc)
+                db.session.commit()
                 return jsonify({'errors': error})
     else:
         return jsonify({ 'errors': 'Invalid Key'})
