@@ -138,7 +138,7 @@ def apipost():
                             error = 'The chain "'+chaintitle+'" is not real!'
             if error:
                 return jsonify()
-            else
+            else:
                 return jsonify({'errors': error})
     else:
         return jsonify({ 'errors': 'Invalid Key'})
