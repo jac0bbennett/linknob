@@ -133,13 +133,13 @@ def apipost():
                                 db.session.add(addlink)
                                 db.session.commit()
                             else:
-                                errors = 'That link does not exist!'
+                                error = 'That link does not exist!'
                         else:
-                            errors = 'The chain "'+chaintitle+'" is not real!'
+                            error = 'The chain "'+chaintitle+'" is not real!'
             if error:
                 return jsonify()
             else
-                return jsonify({'error': error})
+                return jsonify({'errors': error})
     else:
         return jsonify({ 'errors': 'Invalid Key'})
 
