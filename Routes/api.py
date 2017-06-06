@@ -128,7 +128,7 @@ def apipost():
                     if not chaintitle.isspace() and chaintitle != '':
                         chain = Chain.query.filter((or_(Chain.visibility == 1, Chain.userid == userid)) & (func.lower(Chain.title)==chaintitle)).first()
                         if chain:
-                            if link != None and vis == 1:
+                            if link != None:
                                 addlink = Chainlink(userid, postedlnc.id, chain.id, datetime.now())
                                 db.session.add(addlink)
                                 db.session.commit()
