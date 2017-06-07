@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 1/28/17
+# Copyright Jacob Bennett 6/7/17
 
 from flask import render_template, request, session, jsonify, abort, flash, redirect, url_for, send_file
 from sqlalchemy import or_, func
