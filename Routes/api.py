@@ -694,16 +694,16 @@ def collectfreepts():
 
         return jsonify({'points':points})
 
-@app.route('/api/getcustomdash/donald/<count>')
-def getcustomdash(count):
-    donald = requests.get('https://www.reddit.com/r/the_donald.json', headers=headers).text
-    donalddata = json.loads(donald)['data']['children']
-    ret = {'donald': {}}
+@app.route('/api/getsubposts/<sub>/<count>')
+def getcustomdash(sub, count):
+    posts = requests.get('https://www.reddit.com/r/'+sub+'.json', headers=headers).text
+    data = json.loads(posts)['data']['children']
+    ret = {sub: {}}
     i = 0
     while i < int(count):
         try:
-            ret['donald'][i] = donalddata[i]['data']['title']
+            ret[sub][i] = data[i]['data']['title']
         except Exception:
-            ret['donald'][i] = 'Error!'
+            ret[sub][i] = 'Error!'
         i+=1
     return jsonify(ret)
