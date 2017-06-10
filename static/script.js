@@ -71,7 +71,7 @@ $(document).ready(function () {
         var self = $(this).text('---');
         var totalc = $(this);
         $(this).css({
-            'background': '#D32F2F',
+            'background': '#C44437',
             'color': '#fff'
         });
         $.ajax({
