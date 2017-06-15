@@ -533,6 +533,7 @@ def apisignin():
             pseudo = user.pseudo
             userid = user.id
             return jsonify({'pseudonym': pseudo, 'userid': userid, 'key': user.key})
+    return jsonify({'error': 'Incorrect credentials!'})
 
 # Delete a post
 @app.route('/api/delete', methods=['POST'])
