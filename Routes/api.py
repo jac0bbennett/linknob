@@ -6,7 +6,7 @@ from flask import render_template, request, session, jsonify, abort, flash, redi
 from sqlalchemy import or_, func
 from config import app, db, pepper, bsalt
 from hashlib import md5
-from Models.models import User, Link, ReferenceLink, Point, Invite, Follow, Chain, Chainlink, Monthupdate, Comment, Page, FreePoint
+from Models.models import User, Link, ReferenceLink, Point, Invite, Follow, Chain, Chainlink, Monthupdate, Comment, Page, FreePoint, UserApiKey
 from Links.scrape import scrape_link, check_link
 from utils import Pagination, codegen, escapeit, loadmsgs, genuuid, randLowNum
 from datetime import datetime, timedelta
@@ -72,7 +72,7 @@ def apipost():
     link = request.json['link'].strip()
     ptname = request.json['ptname']
     userid = int(request.json['userid'])
-    formkey = request.json['userkey']
+    formkey = request.json['apikey']
     if 'vis' in request.json:
         vis = request.json['vis']
     else:
@@ -82,7 +82,11 @@ def apipost():
 
     # Check for user's key saved in extension
     if user is not None:
-        key = user.key
+        apicheck = UserApiKey.query.filter_by(key=formkey).first()
+        if apicheck != None and apicheck.userid == userid:
+            key = apicheck.key
+        else:
+            return jsonify({'errors': ' Session expired! Please signout and sign back in.'})
     if key == formkey:
         if ptname == '':
             ptname = 'Cool'
@@ -145,17 +149,52 @@ def apipost():
     else:
         return jsonify({ 'errors': 'Invalid Key'})
 
+# Sign in with api
+@app.route('/api/signin', methods=['POST'])
+def apisignin():
+    pseudo = request.json['pseudo']
+    formkey = request.json['key']
+    user = User.query.filter_by(pseudo=pseudo).first()
+    if user is not None:
+        formkey = formkey.encode('utf-8')
+        theemail = user.email.encode('utf-8')
+        pepperkey = pepper.encode('utf-8')
+        formkey = md5(theemail + formkey + pepperkey).hexdigest() # Encrypt the key in form for checking
+        formkey = bcrypt.hashpw(formkey.encode('utf-8'), bsalt).decode('utf-8')
+        if user.key == formkey:
+            pseudo = user.pseudo
+            userid = user.id
+            apikey = codegen(12)
+            newapi = UserApiKey(userid, apikey, datetime.now())
+            db.session.add(newapi)
+            db.session.commit()
+            return jsonify({'apikey': apikey, 'pseudonym': pseudo, 'userid': userid, 'points': user.points})
+    return jsonify({'errors': 'Incorrect credentials!'})
+
+@app.route('/api/signout', methods=['POST'])
+def apisignout():
+    userid = request.json['userid']
+    formkey = request.json['apikey']
+    user = User.query.filter_by(id=userid).first()
+    apicheck = UserApiKey.query.filter_by(key=formkey).first()
+    if user is not None and apicheck.key == formkey:
+        db.session.delete(apicheck)
+        db.session.commit()
+        return jsonify()
+    return jsonify({'errors': 'Unable to logout!'})
+
+
 @app.route('/api/getunlistedchains', methods=['POST'])
 def getunlistedchains():
     formid = request.json['userid']
-    formkey = request.json['userkey']
+    formkey = request.json['apikey']
     user = User.query.filter_by(id=formid).first()
-    if user is not None and formkey == user.key:
+    apicheck = UserApiKey.query.filter_by(key=formkey).first()
+    if user is not None and formkey == apicheck.key:
         unlchains = Chain.query.filter_by(userid=user.id).filter(Chain.visibility==2).all()
         chains = {}
         for chain in unlchains:
             chains[chain.id] = chain.title
-        print(chains)
         return jsonify(chains)
 
 @app.route('/api/crawl', methods=['POST'])
@@ -516,24 +555,6 @@ def addclick():
         linked.clicks += 1
         db.session.commit()
     return jsonify()
-
-# Sign in with extension
-@app.route('/api/signin', methods=['POST'])
-def apisignin():
-    pseudo = request.json['pseudo']
-    formkey = request.json['key']
-    user = User.query.filter_by(pseudo=pseudo).first()
-    if user is not None:
-        formkey = formkey.encode('utf-8')
-        theemail = user.email.encode('utf-8')
-        pepperkey = pepper.encode('utf-8')
-        formkey = md5(theemail + formkey + pepperkey).hexdigest() # Encrypt the key in form for checking
-        formkey = bcrypt.hashpw(formkey.encode('utf-8'), bsalt).decode('utf-8')
-        if user.key == formkey:
-            pseudo = user.pseudo
-            userid = user.id
-            return jsonify({'pseudonym': pseudo, 'userid': userid, 'key': user.key})
-    return jsonify({'error': 'Incorrect credentials!'})
 
 # Delete a post
 @app.route('/api/delete', methods=['POST'])

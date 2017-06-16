@@ -431,8 +431,32 @@ class Chainlink(db.Model):
         else:
             return '[Deleted]'
 
-#Classifier api
+class UserApiKey(db.Model):
+    __tablename__ = 'userapikeys'
 
+    id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer, nullable=False)
+    key = db.Column(db.String, nullable=False)
+    added = db.Column(db.DateTime)
+
+    def __init__(self, userid, key, added):
+        self.userid = userid
+        self.key = key
+        self.added = added
+
+    def __repr__(self):
+        return '<User Api Key %r>' % self.userid
+
+    def pseudo(self):
+        user = User.query.filter_by(id=self.userid).first()
+        if user:
+            return user.pseudo
+        else:
+            return '[Deleted]'
+
+'''
+Classifier Api
+'''
 class ClassifyKey(db.Model):
     __bind_key__ = 'classify'
     __tablename__ = 'keys'
