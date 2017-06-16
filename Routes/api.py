@@ -174,7 +174,10 @@ def apisignin():
 @app.route('/api/signout', methods=['POST'])
 def apisignout():
     userid = request.json['userid']
-    formkey = request.json['apikey']
+    try:
+        formkey = request.json['apikey']
+    except Exception:
+        return jsonify()
     user = User.query.filter_by(id=userid).first()
     apicheck = UserApiKey.query.filter_by(key=formkey).first()
     if user is not None and apicheck.key == formkey:

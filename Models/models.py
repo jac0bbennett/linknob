@@ -445,7 +445,7 @@ class UserApiKey(db.Model):
         self.added = added
 
     def __repr__(self):
-        return '<User Api Key %r>' % self.userid
+        return '<User Api Key %r>' % self.key
 
     def pseudo(self):
         user = User.query.filter_by(id=self.userid).first()
