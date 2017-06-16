@@ -186,6 +186,47 @@ def apisignout():
         return jsonify()
     return jsonify({'errors': 'Unable to logout!'})
 
+@app.route('/api/global/<catg>')
+def getglobalpostsapi(catg):
+    PER_PAGE = 20
+    try:
+        page = int(request.args.get('page'))
+    except TypeError:
+        page = 1
+
+    linkcount = Link.query.filter(Link.visibility == 1).limit(200).count()
+
+    if request.args.get('after'):
+        after = request.args.get('after')
+        if catg == 'new':
+            links = Link.query.filter((Link.visibility == 1) & (Link.id <= after)).order_by(Link.time.desc()).paginate(page, PER_PAGE, linkcount).items
+    else:
+        if catg == 'new':
+            after = Link.query.filter(Link.visibility == 1).order_by(Link.time.desc()).first().id
+            links = Link.query.filter(Link.visibility == 1).order_by(Link.time.desc()).paginate(page, PER_PAGE, linkcount).items
+    pagination = Pagination(page, PER_PAGE, linkcount)
+    jsonposts = {}
+    count = 0
+    for link in links:
+        linkdata = {
+            'id': link.id,
+            'uuid': link.uuid,
+            'userid': link.userid,
+            'url': link.link,
+            'comment': link.comment,
+            'time': link.time,
+            'points': link.points,
+            'title': link.title,
+            'favicon': link.favicon,
+            'image': link.image,
+            'description': link.description,
+            'ptname': link.ptname
+            }
+        jsonposts[str(count)] = linkdata
+        count += 1
+    return jsonify(jsonposts)
+
+
 
 @app.route('/api/getunlistedchains', methods=['POST'])
 def getunlistedchains():
