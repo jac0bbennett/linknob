@@ -683,10 +683,12 @@ def confirmaccount(user, code):
 # PS: It's basic, but I'm pretty proud of this
 @app.route('/api/getexternalimage')
 def externalimage():
-    urlurl = request.args.get('url').split('?=url')[0] # Insert special characters back into URL
+    urlurl = request.args.get('url') # Insert special characters back into URL
     url = urlurl # I don't really know/remember what this is about; Maybe debugging? ¯\_(ツ)_/¯
+    if urlurl == 'none' or urlurl == 'None':
+        return send_file('static/images/defaultglobe.ico', mimetype='image/png')
     urlurl = requests.get(url)
-    if urlurl.status_code != 200 or url == 'None':
+    if urlurl.status_code != 200:
         return send_file('static/images/defaultglobe.ico', mimetype='image/png')
     try:
         url = requests.get(url, headers=headers, timeout=5)
