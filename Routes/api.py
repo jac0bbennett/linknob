@@ -208,6 +208,11 @@ def getglobalpostsapi(catg):
     jsonposts = {}
     count = 0
     for link in links:
+        if link.favicon == 'None':
+            favicon = ''
+        else:
+            favicon = link.favicon
+
         linkdata = {
             'id': link.id,
             'uuid': link.uuid,
@@ -217,7 +222,7 @@ def getglobalpostsapi(catg):
             'time': link.time,
             'points': link.points,
             'title': link.title,
-            'favicon': link.favicon,
+            'favicon': favicon,
             'image': link.image,
             'description': link.description,
             'ptname': link.ptname
