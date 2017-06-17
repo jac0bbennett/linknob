@@ -685,11 +685,11 @@ def confirmaccount(user, code):
 def externalimage():
     urlurl = request.args.get('url').split('?=url')[0] # Insert special characters back into URL
     url = urlurl # I don't really know/remember what this is about; Maybe debugging? ¯\_(ツ)_/¯
+    if url.status_code != 200 or url == 'None':
+        return send_file('static/images/defaultglobe.ico', mimetype='image/png')
     try:
         url = requests.get(url, headers=headers, timeout=5)
     except requests.exceptions.Timeout:
-        return send_file('static/images/defaultglobe.ico', mimetype='image/png')
-    if url.status_code != 200:
         return send_file('static/images/defaultglobe.ico', mimetype='image/png')
     else:
         image = app.make_response(url.content)
