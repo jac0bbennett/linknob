@@ -164,10 +164,14 @@ def apisignin():
         if user.key == formkey:
             pseudo = user.pseudo
             userid = user.id
-            apikey = codegen(12)
-            newapi = UserApiKey(userid, apikey, datetime.now())
-            db.session.add(newapi)
-            db.session.commit()
+            apicheck = UserApiKey.query.filter_by(userid=userid).first()
+            if not apicheck:
+                apikey = codegen(12)
+                newapi = UserApiKey(userid, apikey, datetime.now())
+                db.session.add(newapi)
+                db.session.commit()
+            else:
+                apikey = apicheck.key
             return jsonify({'apikey': apikey, 'pseudonym': pseudo, 'userid': userid, 'points': user.points})
     return jsonify({'errors': 'Incorrect credentials!'})
 
@@ -188,6 +192,14 @@ def apisignout():
 
 @app.route('/api/global/<catg>')
 def getglobalpostsapi(catg):
+    apikey = request.args.get('apikey')
+    apicheck = UserApiKey.query.filter_by(key=apikey).first()
+
+    if apicheck:
+        user = User.query.filter_by(id=apicheck.userid).first()
+    else:
+        return jsonify({'errors': 'Invalid User Api key!'})
+
     PER_PAGE = 20
     try:
         page = int(request.args.get('page'))
@@ -229,6 +241,7 @@ def getglobalpostsapi(catg):
             }
         jsonposts[str(count)] = linkdata
         count += 1
+    jsonposts['user'] = {'points': user.points}
     return jsonify(jsonposts)
 
 
