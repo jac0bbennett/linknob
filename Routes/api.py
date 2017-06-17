@@ -209,7 +209,7 @@ def getglobalpostsapi(catg):
     count = 0
     for link in links:
         if link.favicon == 'None':
-            favicon = ''
+            favicon = 'https://www.linknob.com/static/images/defaultglobe.ico'
         else:
             favicon = link.favicon
 
