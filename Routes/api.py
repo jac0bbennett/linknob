@@ -180,8 +180,6 @@ def apisignout():
         return jsonify()
     user = User.query.filter_by(id=userid).first()
     apicheck = UserApiKey.query.filter_by(key=formkey).first()
-    print(user)
-    print(apicheck)
     if user is not None:
         db.session.delete(apicheck)
         db.session.commit()
