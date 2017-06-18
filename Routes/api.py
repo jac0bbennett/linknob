@@ -7,6 +7,7 @@ from sqlalchemy import or_, func
 from config import app, db, pepper, bsalt
 from hashlib import md5
 from Models.models import User, Link, ReferenceLink, Point, Invite, Follow, Chain, Chainlink, Monthupdate, Comment, Page, FreePoint, UserApiKey
+from Links.score import score
 from Links.scrape import scrape_link, check_link
 from utils import Pagination, codegen, escapeit, loadmsgs, genuuid, randLowNum
 from datetime import datetime, timedelta
