@@ -276,7 +276,7 @@ def getpathpostsapi(catg):
         if catg == 'new':
             links = User.followed_posts(user.id).filter((Link.id <= after)).paginate(page, PER_PAGE, linkcount).items
         elif catg == 'top':
-            links = User.followed_posts_top(session['userid']).filter((Link.points <= after)).paginate(page, PER_PAGE, linkcount).items
+            links = User.followed_posts_top(user.id).filter((Link.points <= after)).paginate(page, PER_PAGE, linkcount).items
     else:
         if catg == 'new':
             after = User.followed_posts(user.id).first()
@@ -284,10 +284,10 @@ def getpathpostsapi(catg):
                 after = after.id
             links = User.followed_posts(user.id).paginate(page, PER_PAGE, linkcount).items
         elif catg == 'top':
-            after = User.followed_posts_top(session['userid']).first()
+            after = User.followed_posts_top(user.id).first()
             if after:
                 after = after.points
-            links = User.followed_posts_top(session['userid']).paginate(page, PER_PAGE, linkcount).items
+            links = User.followed_posts_top(user.id).paginate(page, PER_PAGE, linkcount).items
     pagination = Pagination(page, PER_PAGE, linkcount)
     jsonposts = {}
     count = 0
