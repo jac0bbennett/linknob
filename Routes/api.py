@@ -164,14 +164,10 @@ def apisignin():
         if user.key == formkey:
             pseudo = user.pseudo
             userid = user.id
-            apicheck = UserApiKey.query.filter_by(userid=userid).first()
-            if not apicheck:
-                apikey = codegen(12)
-                newapi = UserApiKey(userid, apikey, datetime.now())
-                db.session.add(newapi)
-                db.session.commit()
-            else:
-                apikey = apicheck.key
+            apikey = codegen(12)
+            newapi = UserApiKey(userid, apikey, datetime.now())
+            db.session.add(newapi)
+            db.session.commit()
             return jsonify({'apikey': apikey, 'pseudonym': pseudo, 'userid': userid, 'points': user.points})
     return jsonify({'errors': 'Incorrect credentials!'})
 
@@ -241,7 +237,63 @@ def getglobalpostsapi(catg):
             }
         jsonposts[str(count)] = linkdata
         count += 1
-    jsonposts['user'] = {'points': user.points}
+    jsonposts['user'] = {'points': int(user.points)}
+    return jsonify(jsonposts)
+
+@app.route('/api/path/<catg>')
+def getpathpostsapi(catg):
+    apikey = request.args.get('apikey')
+    apicheck = UserApiKey.query.filter_by(key=apikey).first()
+
+    if apicheck:
+        user = User.query.filter_by(id=apicheck.userid).first()
+    else:
+        return jsonify({'errors': 'Invalid User Api key!'})
+
+    PER_PAGE = 20
+    try:
+        page = int(request.args.get('page'))
+    except TypeError:
+        page = 1
+
+    linkcount = User.followed_posts(user.id).limit(200).count()
+
+    if request.args.get('after'):
+        after = request.args.get('after')
+        if catg == 'new':
+            links = User.followed_posts(user.id).filter((Link.id <= after)).paginate(page, PER_PAGE, linkcount).items
+    else:
+        if catg == 'new':
+            after = User.followed_posts(user.id).first()
+            if after:
+                after = after.id
+            links = User.followed_posts(user.id).paginate(page, PER_PAGE, linkcount).items
+    pagination = Pagination(page, PER_PAGE, linkcount)
+    jsonposts = {}
+    count = 0
+    for link in links:
+        if link.favicon == 'None':
+            favicon = 'https://www.linknob.com/static/images/defaultglobe.ico'
+        else:
+            favicon = link.favicon
+
+        linkdata = {
+            'id': link.id,
+            'uuid': link.uuid,
+            'userid': link.userid,
+            'url': link.link,
+            'comment': link.comment,
+            'time': link.time,
+            'points': link.points,
+            'title': link.title,
+            'favicon': favicon,
+            'image': link.image,
+            'description': link.description,
+            'ptname': link.ptname
+            }
+        jsonposts[str(count)] = linkdata
+        count += 1
+    jsonposts['user'] = {'points': int(user.points)}
     return jsonify(jsonposts)
 
 
