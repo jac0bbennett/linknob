@@ -180,7 +180,7 @@ def apisignout():
         return jsonify()
     user = User.query.filter_by(id=userid).first()
     apicheck = UserApiKey.query.filter_by(key=formkey).first()
-    if user is not None and apicheck.key == formkey:
+    if user is not None:
         db.session.delete(apicheck)
         db.session.commit()
         return jsonify()
@@ -208,10 +208,21 @@ def getglobalpostsapi(catg):
         after = request.args.get('after')
         if catg == 'new':
             links = Link.query.filter((Link.visibility == 1) & (Link.id <= after)).order_by(Link.time.desc()).paginate(page, PER_PAGE, linkcount).items
+        elif catg == 'top':
+            links = Link.query.filter((Link.visibility == 1) & (Link.points <= after)).order_by(Link.points.desc()).paginate(page, PER_PAGE, linkcount).items
     else:
         if catg == 'new':
             after = Link.query.filter(Link.visibility == 1).order_by(Link.time.desc()).first().id
             links = Link.query.filter(Link.visibility == 1).order_by(Link.time.desc()).paginate(page, PER_PAGE, linkcount).items
+        elif catg == 'top':
+            after = Link.query.filter(Link.visibility == 1).order_by(Link.points.desc()).first().points
+            links = Link.query.filter(Link.visibility == 1).order_by(Link.points.desc()).paginate(page, PER_PAGE, linkcount).items
+        elif catg == 'scored':
+            # NOTE: change name
+            after = None
+            PER_PAGE = 50
+            linkcount = Link.query.filter(Link.visibility == 1).limit(50).count()
+            links = Link.query.join(Point, (Point.link == Link.id)).group_by(Link.id).filter((Link.visibility == 1) & (Link.points > 0) & (Link.age >= 60)).order_by((score(Link.points, Link.time, func.count(Point.id))).desc()).limit(50)
     pagination = Pagination(page, PER_PAGE, linkcount)
     jsonposts = {}
     count = 0
@@ -262,12 +273,19 @@ def getpathpostsapi(catg):
         after = request.args.get('after')
         if catg == 'new':
             links = User.followed_posts(user.id).filter((Link.id <= after)).paginate(page, PER_PAGE, linkcount).items
+        elif catg == 'top':
+            links = User.followed_posts_top(session['userid']).filter((Link.points <= after)).paginate(page, PER_PAGE, linkcount).items
     else:
         if catg == 'new':
             after = User.followed_posts(user.id).first()
             if after:
                 after = after.id
             links = User.followed_posts(user.id).paginate(page, PER_PAGE, linkcount).items
+        elif catg == 'top':
+            after = User.followed_posts_top(session['userid']).first()
+            if after:
+                after = after.points
+            links = User.followed_posts_top(session['userid']).paginate(page, PER_PAGE, linkcount).items
     pagination = Pagination(page, PER_PAGE, linkcount)
     jsonposts = {}
     count = 0
