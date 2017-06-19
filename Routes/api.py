@@ -253,7 +253,8 @@ def getglobalpostsapi(catg):
             'favicon': 'https://www.linknob.com/api/getexternalimage?url='+safeurl(favicon),
             'image': link.image,
             'description': link.description,
-            'ptname': link.ptname
+            'ptname': link.ptname,
+            'pointed': link.pointedapi(user.id)
             }
         jsonposts[str(count)] = linkdata
         count += 1
@@ -318,7 +319,8 @@ def getpathpostsapi(catg):
             'favicon': 'https://www.linknob.com/api/getexternalimage?url='+safeurl(favicon),
             'image': link.image,
             'description': link.description,
-            'ptname': link.ptname
+            'ptname': link.ptname,
+            'pointed': link.pointedapi(user.id)
             }
         jsonposts[str(count)] = linkdata
         count += 1
@@ -643,7 +645,30 @@ def addpoint(linkid):
         else:
             return '<h1>Oops</h1>Your all out of points'
     else:
-        return redirect(url_for('signin'))
+        userid = request.json['userid']
+        linkid = request.json['linkid']
+        try:
+            formkey = request.json['apikey']
+        except Exception:
+            return jsonify()
+        linked = Link.query.filter_by(id=linkid).first()
+        user = User.query.filter_by(id=userid).first()
+        apicheck = UserApiKey.query.filter_by(key=formkey).first()
+        if user.id == apicheck.key:
+            person = User.query.filter_by(id=linked.userid).first()
+            points = Point(user.id, linked.id, datetime.now(), 1)
+            check = Point.query.filter((Point.link == linkid) & (Point.userid == user.id)).first()
+            person.points += .5 # Give the person half a point (Gives a person a point for every other one donated)
+            linked.points += 1
+            user.points -= 1
+            if check:
+                check.amount += 1
+                check.time = datetime.now()
+            else:
+                db.session.add(points)
+            db.session.commit()
+            return jsonify()
+        return jsonify({'errors': 'Unable to add point!'})
     return jsonify()
 
 # Trail or untrail a user

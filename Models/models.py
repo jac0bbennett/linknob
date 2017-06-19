@@ -151,6 +151,13 @@ class Link(db.Model):
             if point:
                 return 'style=color:#fff;background:#C44437;'
 
+    def pointedapi(self, userid):
+        point = Point.query.filter_by(link=self.id).filter(Point.userid == userid).first()
+        if point:
+            return True
+        else:
+            return False
+
     def comcount(self):
         count = Comment.query.filter_by(link=self.id).count()
         return count
