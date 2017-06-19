@@ -11,7 +11,7 @@ from Links.score import score
 from Links.scrape import scrape_link, check_link
 from utils import Pagination, codegen, escapeit, loadmsgs, genuuid, randLowNum
 from datetime import datetime, timedelta
-from filters import safeurl
+from filters import safeurl, datetimeformat, getuserid
 import lxml.html, requests, re, random, bcrypt, json
 
 headers = {'user-agent': 'Linknob server'}
@@ -243,9 +243,11 @@ def getglobalpostsapi(catg):
             'id': link.id,
             'uuid': link.uuid,
             'userid': link.userid,
+            'pseudo': getuserid(link.userid),
             'url': link.link,
             'comment': link.comment,
             'time': link.time,
+            'timeAgo': datetimeformat(link.time),
             'points': link.points,
             'title': link.title,
             'favicon': 'https://www.linknob.com/api/getexternalimage?url='+safeurl(favicon),
@@ -306,9 +308,11 @@ def getpathpostsapi(catg):
             'id': link.id,
             'uuid': link.uuid,
             'userid': link.userid,
+            'pseudo': getuserid(link.userid),
             'url': link.link,
             'comment': link.comment,
             'time': link.time,
+            'timeAgo': datetimeformat(link.time),
             'points': link.points,
             'title': link.title,
             'favicon': 'https://www.linknob.com/api/getexternalimage?url='+safeurl(favicon),
