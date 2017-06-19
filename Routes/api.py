@@ -654,6 +654,8 @@ def addpoint(linkid):
         linked = Link.query.filter_by(id=linkid).first()
         user = User.query.filter_by(id=userid).first()
         apicheck = UserApiKey.query.filter_by(key=formkey).first()
+        if link.userid == user.id:
+            return jsonify({'errors': "Can't give points to your own link!"})
         if user.id == apicheck.userid:
             person = User.query.filter_by(id=linked.userid).first()
             points = Point(user.id, linked.id, datetime.now(), 1)
