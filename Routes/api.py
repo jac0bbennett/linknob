@@ -646,7 +646,7 @@ def addpoint(linkid):
             return '<h1>Oops</h1>Your all out of points'
     else:
         userid = request.json['userid']
-        linkid = request.json['linkid']
+        apikey = request.json['apikey']
         try:
             formkey = request.json['apikey']
         except Exception:
