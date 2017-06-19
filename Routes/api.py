@@ -654,14 +654,7 @@ def addpoint(linkid):
         linked = Link.query.filter_by(id=linkid).first()
         user = User.query.filter_by(id=userid).first()
         apicheck = UserApiKey.query.filter_by(key=formkey).first()
-        print(userid)
-        print(apikey)
-        print(user)
-        print(apicheck)
-        print(user.id)
-        print(apicheck.key)
-        if user.id == apicheck.key:
-            print("in if")
+        if user.id == apicheck.userid:
             person = User.query.filter_by(id=linked.userid).first()
             points = Point(user.id, linked.id, datetime.now(), 1)
             check = Point.query.filter((Point.link == linkid) & (Point.userid == user.id)).first()
@@ -674,9 +667,7 @@ def addpoint(linkid):
             else:
                 db.session.add(points)
             db.session.commit()
-            print("returning final")
             return jsonify()
-        print("didn't go final")
         return jsonify({'errors': 'Unable to add point!'})
     return jsonify()
 
