@@ -170,7 +170,12 @@ def apisignin():
             newapi = UserApiKey(userid, apikey, datetime.now())
             db.session.add(newapi)
             db.session.commit()
-            return jsonify({'apikey': apikey, 'pseudonym': pseudo, 'userid': userid, 'points': int(user.points)})
+            return jsonify({'apikey': apikey,
+                            'pseudonym': pseudo,
+                            'userid': userid,
+                            'avatar': user.avatar(),
+                            'points': int(user.points),
+                            })
     return jsonify({'errors': 'Incorrect credentials!'})
 
 @app.route('/api/signout', methods=['POST'])
