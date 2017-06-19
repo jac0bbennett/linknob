@@ -658,6 +658,8 @@ def addpoint(linkid):
         print(apikey)
         print(user)
         print(apicheck)
+        print(user.id)
+        print(apicheck.key)
         if user.id == apicheck.key:
             person = User.query.filter_by(id=linked.userid).first()
             points = Point(user.id, linked.id, datetime.now(), 1)
