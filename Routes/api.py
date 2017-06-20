@@ -258,6 +258,7 @@ def getglobalpostsapi(catg):
             }
         jsonposts[str(count)] = linkdata
         count += 1
+    jsonposts['has_next'] = pagination.has_next
     jsonposts['user'] = {'points': int(user.points)}
     return jsonify(jsonposts)
 
