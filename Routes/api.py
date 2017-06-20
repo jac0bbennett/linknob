@@ -816,11 +816,16 @@ def externalimage():
     url = urlurl # I don't really know/remember what this is about; Maybe debugging? ¯\_(ツ)_/¯
     if urlurl == 'none' or urlurl == 'None':
         return send_file('static/images/defaultglobe.ico', mimetype='image/png')
-    urlurl = requests.get(url)
+    try:
+        urlurl = requests.get(url)
+    except requests.ConnectionError:
+        return send_file('static/images/defaultglobe.ico', mimetype='image/png')
     if urlurl.status_code != 200:
         return send_file('static/images/defaultglobe.ico', mimetype='image/png')
     try:
         url = requests.get(url, headers=headers, timeout=5)
+    except requests.ConnectionError:
+        return send_file('static/images/defaultglobe.ico', mimetype='image/png')
     except requests.exceptions.Timeout:
         return send_file('static/images/defaultglobe.ico', mimetype='image/png')
     else:
