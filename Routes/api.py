@@ -654,25 +654,26 @@ def addpoint(linkid):
         linked = Link.query.filter_by(id=linkid).first()
         user = User.query.filter_by(id=userid).first()
         apicheck = UserApiKey.query.filter_by(key=formkey).first()
-        if linked.userid == user.id:
-            return jsonify({'errors': "Can't give points to your own link!"})
-        if user.id == apicheck.userid:
-            person = User.query.filter_by(id=linked.userid).first()
-            points = Point(user.id, linked.id, datetime.now(), 1)
-            check = Point.query.filter((Point.link == linkid) & (Point.userid == user.id)).first()
-            person.points += .5 # Give the person half a point (Gives a person a point for every other one donated)
-            linked.points += 1
-            user.points -= 1
-            if check:
-                check.amount += 1
-                check.time = datetime.now()
-            else:
-                db.session.add(points)
-            db.session.commit()
-            return jsonify()
+        if user.points > .5:
+            if linked.userid == user.id:
+                return jsonify({'errors': "Can't give points to your own link!"})
+            if user.id == apicheck.userid:
+                person = User.query.filter_by(id=linked.userid).first()
+                points = Point(user.id, linked.id, datetime.now(), 1)
+                check = Point.query.filter((Point.link == linkid) & (Point.userid == user.id)).first()
+                person.points += .5 # Give the person half a point (Gives a person a point for every other one donated)
+                linked.points += 1
+                user.points -= 1
+                if check:
+                    check.amount += 1
+                    check.time = datetime.now()
+                else:
+                    db.session.add(points)
+                db.session.commit()
+                return jsonify()
+        else:
+            return jsonify({'errors': 'Out of points!'})
         return jsonify({'errors': 'Unable to add point!'})
-    return jsonify()
-
 # Trail or untrail a user
 @app.route('/api/trail/<userid>', methods=['POST'])
 def trail(userid):
