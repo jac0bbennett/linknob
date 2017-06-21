@@ -143,7 +143,7 @@ def apipost():
                         else:
                             error = 'The chain "'+chaintitle+'" is not real!'
             if not error:
-                return jsonify({''})
+                return jsonify()
             else:
                 db.session.delete(postedlnc)
                 db.session.commit()
