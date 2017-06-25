@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 6/7/17
+# Copyright Jacob Bennett 6/24/17
 
 from flask import render_template, request, session, jsonify, abort, flash, redirect, url_for, send_file
 from sqlalchemy import or_, func
@@ -329,6 +329,90 @@ def getpathpostsapi(catg):
     jsonposts['user'] = {'points': int(user.points)}
     return jsonify(jsonposts)
 
+@app.route('/api/user/<user>')
+def getusersposts(user):
+    apikey = request.args.get('apikey')
+    apikey = UserApiKey.query.filter_by(key=apikey).first()
+    apiuser = User.query.filter_by(id=apikey.userid).first()
+    user = User.query.filter_by(pseudo=user).first()
+    if user:
+        try:
+            page = int(request.args.get('page'))
+        except TypeError:
+            page = 1
+
+        catg = request.args.get('catg')
+        if not catg:
+            catg = 'new'
+
+        PER_PAGE = 20
+        linkcount = Link.query.filter_by(userid=user.id).filter(Link.visibility == 1).limit(200).count()
+
+        if request.args.get('after'):
+            after = request.args.get('after')
+            if catg == 'new':
+                links = Link.query.filter_by(userid=user.id).filter((Link.visibility == 1) & (Link.id <= after)).order_by(Link.time.desc()).paginate(page, PER_PAGE, linkcount).items
+            elif catg == 'top':
+                links = Link.query.filter_by(userid=user.id).filter((Link.visibility == 1) & (Link.points <= after)).order_by(Link.points.desc()).paginate(page, PER_PAGE, linkcount).items
+        else:
+            if catg == 'new':
+                after = Link.query.filter_by(userid=user.id).filter(Link.visibility == 1).order_by(Link.time.desc()).first()
+                if after:
+                    after = after.id
+                links = Link.query.filter_by(userid=user.id).filter(Link.visibility == 1).order_by(Link.time.desc()).paginate(page, PER_PAGE, linkcount).items
+            elif catg == 'top':
+                after = Link.query.filter_by(userid=user.id).filter(Link.visibility == 1).order_by(Link.points.desc()).first()
+                if after:
+                    after = after.points
+                links = Link.query.filter_by(userid=user.id).filter(Link.visibility == 1).order_by(Link.points.desc()).paginate(page, PER_PAGE, linkcount).items
+
+        pagination = Pagination(page, PER_PAGE, linkcount)
+        jsonposts = {}
+        count = 0
+        for link in links:
+            if link.favicon == 'None':
+                favicon = 'https://www.linknob.com/static/images/defaultglobe.ico'
+            else:
+                favicon = link.favicon
+
+            linkdata = {
+                'id': link.id,
+                'uuid': link.uuid,
+                'userid': link.userid,
+                'pseudo': getuserid(link.userid),
+                'url': link.link,
+                'comment': link.comment,
+                'time': link.time,
+                'timeAgo': datetimeformat(link.time),
+                'points': link.points,
+                'title': link.title,
+                'favicon': 'https://www.linknob.com/api/getexternalimage?url='+safeurl(favicon),
+                'image': link.image,
+                'description': link.description,
+                'ptname': link.ptname,
+                'pointed': link.pointedapi(apiuser.id)
+                }
+            jsonposts[str(count)] = linkdata
+            count += 1
+        jsonposts['sel_user'] = {
+                'id': user.id,
+                'pseudo': user.pseudo,
+                'name': user.name,
+                'bio': user.bio,
+                'joindate': user.joindate,
+                'verified': user.verified,
+                'flair': user.flair,
+                'avatar': user.avatar(),
+                'postcount': user.postcount(),
+                'trailscount': user.trailscount(),
+                'trailingcount': user.trailingcount(),
+                'istrailing': user.istrailing(apiuser.id)
+                }
+        jsonposts['has_next'] = pagination.has_next
+        jsonposts['user'] = {'points': int(apiuser.points)}
+        return jsonify(jsonposts)
+    else:
+        return jsonify({'errors': 'User not found!'})
 
 
 @app.route('/api/getunlistedchains', methods=['POST'])

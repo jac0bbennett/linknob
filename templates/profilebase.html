@@ -14,7 +14,7 @@
           <h1>{{ user.name }}{% if user.verified == 1 %} <span class="tooltip" tip="{{ user.flair }}"><img src="/static/images/verified.png" width="32px" style="vertical-align:middle;"></span>{% endif %}</h1>
         </center>
         <span class="graytext" style="font-size:16pt;">{{ user.pseudo }}</span>
-         {% if user.istrailing() != True %}{% if 'user' in session and session['userid'] != user.id %}
+         {% if user.istrailing(session['userid']) != True %}{% if 'user' in session and session['userid'] != user.id %}
         <button id="trail" data-userid="{{ user.id }}" class="unfollow-button" style="display:none;">&#10003;Trailing</button>
         <button id="trail" data-userid="{{ user.id }}" class="follow-button">+Trail</button>{% elif 'user' in session and session['userid'] == user.id %}<span style="float:right;">{% if user.rank >= 2 or user.verified == 1 %}<a href="/i/invite" class="genlink">Invites</a> |{% endif %} <a href="/i/settings" class="genlink">Settings</a> | <a href="/i/signout" class="genlink">Sign Out</a></span>{% endif %}{% else %}
         <button id="trail" data-userid="{{ user.id }}" class="follow-button" style="display:none;">+Trail</button>

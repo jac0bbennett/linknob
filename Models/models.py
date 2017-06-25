@@ -65,10 +65,10 @@ class User(db.Model):
         count = Follow.query.filter_by(follower=self.id).count()
         return count
 
-    def istrailing(self):
+    def istrailing(self, userid):
         if 'user' in session:
             # Check if user is trailing this user
-            istrail = Follow.query.filter((Follow.follower == session['userid']) & (Follow.followed == self.id)).first()
+            istrail = Follow.query.filter((Follow.follower == userid) & (Follow.followed == self.id)).first()
         else:
             istrail = None
         if istrail:
