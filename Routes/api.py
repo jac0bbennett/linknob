@@ -66,8 +66,7 @@ def sendpost():
         db.session.commit()
     return jsonify()
 
-# Post link using the extension
-# Basically same as '/i/addlnc'
+# Post link using the json api
 @app.route('/api/addlnc', methods=['POST'])
 def apipost():
     comment = request.json['comment']
@@ -760,6 +759,8 @@ def addpoint(linkid):
         else:
             return jsonify({'errors': 'Out of points!'})
         return jsonify({'errors': 'Unable to add point!'})
+    return jsonify()
+
 # Trail or untrail a user
 @app.route('/api/trail/<userid>', methods=['POST'])
 def trail(userid):
