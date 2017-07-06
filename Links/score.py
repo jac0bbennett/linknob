@@ -4,7 +4,6 @@
 
 from sqlalchemy import func
 
-def score(points, linktime, users):
-    age = func.extract('epoch', func.current_timestamp() - linktime)
+def score(points, age, users):
     score = ((points / age) / users)
     return score

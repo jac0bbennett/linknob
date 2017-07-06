@@ -328,8 +328,8 @@ def getpathpostsapi(catg):
     jsonposts['user'] = {'points': int(user.points)}
     return jsonify(jsonposts)
 
-@app.route('/api/user/<user>')
-def getusersposts(user):
+@app.route('/api/user/<user>/<catg>')
+def getusersposts(user, catg):
     apikey = request.args.get('apikey')
     apikey = UserApiKey.query.filter_by(key=apikey).first()
     apiuser = User.query.filter_by(id=apikey.userid).first()
@@ -339,10 +339,6 @@ def getusersposts(user):
             page = int(request.args.get('page'))
         except TypeError:
             page = 1
-
-        catg = request.args.get('catg')
-        if not catg:
-            catg = 'new'
 
         PER_PAGE = 20
         linkcount = Link.query.filter_by(userid=user.id).filter(Link.visibility == 1).limit(200).count()

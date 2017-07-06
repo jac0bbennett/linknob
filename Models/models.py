@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 2/4/17
+# Copyright Jacob Bennett 6/25/17
 
 from config import db
 from flask import session
