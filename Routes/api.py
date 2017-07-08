@@ -224,11 +224,10 @@ def getglobalpostsapi(catg):
             after = Link.query.filter(Link.visibility == 1).order_by(Link.points.desc()).first().points
             links = Link.query.filter(Link.visibility == 1).order_by(Link.points.desc()).paginate(page, PER_PAGE, linkcount).items
         elif catg == 'scored':
-            # NOTE: change name
             after = None
             PER_PAGE = 50
             linkcount = Link.query.filter(Link.visibility == 1).limit(50).count()
-            links = Link.query.join(Point, (Point.link == Link.id)).group_by(Link.id).filter((Link.visibility == 1) & (Link.points > 0) & (Link.age >= 60)).order_by((score(Link.points, Link.time, func.count(Point.id))).desc()).limit(50)
+            links = Link.query.join(Point, (Point.link == Link.id)).group_by(Link.id).filter((Link.visibility == 1) & (Link.points > 0) & (Link.age >= 60)).order_by((score(Link.points, Link.age, func.count(Point.id))).desc()).limit(50)
     pagination = Pagination(page, PER_PAGE, linkcount)
     jsonposts = {}
     count = 0
