@@ -551,7 +551,7 @@ def newchain():
 @app.route('/api/chainsuggest', methods=['GET'])
 def suggestchain():
     chainlist = []
-    term = request.args.get('term')
+    term = request.args.get('term').lower()
     if request.args.get('userid'):
         userid = int(request.args.get('userid'))
     elif 'user' in session:
