@@ -327,13 +327,15 @@ def listclassifyfiles(classifier):
     key = request.args.get('key')
     if key and ClassifyKey.query.filter_by(key=key).first():
         session['classifykey'] = key
-        files = FileQueue.query.filter_by(key=key).filter(FileQueue.save.contains(classifier.capitalize())).order_by(FileQueue.added.desc()).all()
+        files = FileQueue.query.filter_by(key=key).filter(FileQueue.save.contains("-"+classifier+"-")).order_by(FileQueue.added.desc()).all()
         '''
         #View files in file system
         files = [f for f in os.listdir(os.path.join('Classify/temp/'+key)) if '-'+classifier+'-' in f]
         files.sort(key=lambda x: os.stat(os.path.join('Classify/temp/'+key, x)).st_mtime)
         files = files[::-1]
         '''
+
+        print(classifier)
 
         if classifier != 'assoc' and classifier != 'twitter':
             return render_template('classify/listfiles.html', files=files, classifier=classifier, key=key)

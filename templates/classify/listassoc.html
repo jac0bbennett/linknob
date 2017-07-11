@@ -11,7 +11,7 @@
        <a href="/api/classify/twitter" class="graytext flatbutton">Twitter</a>
     </div>
     <div id="links">
-      <a style="float:right;" class="genlink" href="/api/classify/assoc">Upload</a>
+      <a style="float:right;" class="genlink" href="/api/classify/assoc">Back to Upload</a>
       <h1>Association Result Files</h1><hr>
       {% for file in files %}
         <a class="genlink" {% if file.status == 'complete' or file.status == 'cancelled' %}href="/api/classify/temp/{{ file.save }}?key={{ key }}"
