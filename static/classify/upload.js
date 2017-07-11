@@ -19,7 +19,12 @@ $(document).ready(function () {
             if (data.error) {
               $('.msg').text(data.error);
             } else {
-              if ((data.complete != data.total) && (data.status != 'cancelled')) {
+              if (data.status == 'complete') {
+                $('.msg').html('Finished last <a class="genlink tooltiplong" tip="'+data.result+'" href="'+data.url+'">File</a> ('+data.total+')');
+                $('.upload').text('Upload');
+                $('.upload').css({'background': '#2E7D32'});
+              }
+              else if ((data.complete != data.total) && (data.status != 'cancelled')) {
                 if (data.result.toLowerCase().indexOf('-assoc-') >= 0) {
                   $('.msg').text('Processing Association...');
                 } else {

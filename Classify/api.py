@@ -129,7 +129,9 @@ def queuefile(uploadname, savename, keycheck, type='topics', support=0, confiden
     checkkeyqueue = FileQueue.query.filter_by(key=keycheck.key).filter(FileQueue.status=='processing').first()
     if type != 'twitter':
         with open('Classify/temp/uploads/'+uploadname, 'r') as r:
-            rowcount = len(r.read().split('\n'))
+            rows = r.read().split('\n')
+            rows[:] = [item for item in rows if item != '']
+            rowcount = len(rows)
         if type == 'topics':
             rowcount -= 1
     else:
