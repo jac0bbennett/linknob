@@ -52,8 +52,7 @@ def processfile(uploadname, savename, key, topictypes):
     		"Military","Organizations","Paranormal","Philanthropy","Philosophy",
     		"Politics","Relationships","Religion_and_Spirituality","Sexuality",
     		"Subcultures","Support_Groups","Transgendered","Work"]
-        alltopics = [] #Append all selected categories to this list
-        alltopics.append('Url')
+        alltopics = ['Id','Url'] #Append all selected categories to this list
         if 'general' in topictypes:
             for topic in gentopics:
                 alltopics.append(topic)
@@ -74,13 +73,16 @@ def processfile(uploadname, savename, key, topictypes):
         with open('Classify/temp/'+key+'/'+savename, 'w', newline="") as destfile, open('Classify/temp/uploads/'+uploadname, 'r') as r:
             f = csv.DictWriter(destfile, fieldnames=alltopics)
             f.writeheader()
-            for url in r.read().split('\n'):
+            d = csv.DictReader(r)
+            for row in d:
+                url = row['Url']
                 if fileq.status == 'cancelled':
                     break
                 elif keycheck.queries < keycheck.querylimit:
                     if not url.startswith('http'):
                         url = 'http://' + url
                     writedata = {}
+                    writedata['Id'] = row['Id']
                     writedata['Url'] = url
 
                     def appenddata(data):
@@ -128,6 +130,8 @@ def queuefile(uploadname, savename, keycheck, type='topics', support=0, confiden
     if type != 'twitter':
         with open('Classify/temp/uploads/'+uploadname, 'r') as r:
             rowcount = len(r.read().split('\n'))
+        if type == 'topics':
+            rowcount -= 1
     else:
         rowcount = 0
     if checkkeyqueue:
