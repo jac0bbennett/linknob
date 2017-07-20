@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 10/20/16
+# Copyright Jacob Bennett 7/20/17
 
 from flask import render_template, request, session, abort, jsonify
 from config import app, db
-from Models.models import User, Link, Point, Page
+from Models.models import User, Link, Point, Page, Request
 from utils import Pagination, colorgen, escapeit
 from Links.trending import trend
 from datetime import datetime
@@ -17,7 +17,8 @@ def dashboard():
     if 'user' in session and session['rank'] == 3:
         title = 'Dashboard'
         # Query site stats
-        users = User.query.filter(User.joindate != None).order_by(User.joindate.desc()).limit(20)
+        users = User.query.filter(User.joindate != None).order_by(
+                User.joindate.desc()).limit(20)
         links = Link.query.order_by(Link.time.desc()).limit(20)
         points = Point.query.order_by(Point.time.desc()).limit(20)
         totalusers = User.query.count() - 3
@@ -26,7 +27,12 @@ def dashboard():
         trendingurls = trend.urls()
         activepage = Page.query.filter_by(active=1).first()
         pages = Page.query.filter_by(active=0).order_by(Page.time.desc()).limit(10)
-        return render_template('dashboard.html', title=title, users=users, links=links, points=points, totalusers=totalusers, totallinks=totallinks, totalpoints=totalpoints, trendingurls=trendingurls, activepage=activepage, pages=pages)
+        requests = Request.query.order_by(Request.time.desc()).all()
+        return render_template('dashboard.html', title=title, users=users,
+                links=links, points=points, totalusers=totalusers,
+                totallinks=totallinks, totalpoints=totalpoints,
+                trendingurls=trendingurls, activepage=activepage, pages=pages,
+                requests=requests)
     else:
         abort(403)
 

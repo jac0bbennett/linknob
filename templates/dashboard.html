@@ -12,6 +12,10 @@
                 <a class="genlink" href="/{{ user.pseudo }}">{{ user.name }}</a> | {{ user.pseudo }} | {% if user.joindate != None %}{{ user.joindate|datetimeformat }}{% endif %}<br><br>
                 {% endfor %}
                 <hr>
+                <h4>Recent Key Requests:</h4>
+                {% for request in requests %}
+                  {{ request.email }} | <span class="graytext">{{ request.time|datetimeformat }}</span><br>
+                {% endfor %}
                 <h4>Recent Links:</h4>
                 {% for link in links %}
                 <a class="genlink" href="/link/{{ link.uuid }}">{% if link.title == None or link.title == 'None' %}<a id="{{ link.id }}" href="/link/{{ link.uuid }}" target="_blank" rel="nofollow" class="genlink">{{ link.link|truncate(50) }}</a> {% else %}

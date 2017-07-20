@@ -899,14 +899,18 @@ def externalimage():
     try:
         urlurl = requests.get(url)
     except requests.ConnectionError:
+        print('Connection error!')
         return send_file('static/images/defaultglobe.ico', mimetype='image/png')
     if urlurl.status_code != 200:
+        print('Not 200!')
         return send_file('static/images/defaultglobe.ico', mimetype='image/png')
     try:
         url = requests.get(url, headers=headers, timeout=5)
     except requests.ConnectionError:
+        print('2nd Connection error!')
         return send_file('static/images/defaultglobe.ico', mimetype='image/png')
     except requests.exceptions.Timeout:
+        print('Timeout!')
         return send_file('static/images/defaultglobe.ico', mimetype='image/png')
     else:
         image = app.make_response(url.content)

@@ -86,6 +86,13 @@ class scrape_link:
         if self.favicon != 'None':
             self.favicon = proto + self.favicon
 
+        # Check to make sure it's an image
+        test = requests.get(self.favicon)
+        contype = test.headers['Content-Type']
+        contype = re.match('image/', contype)
+        if not contype:
+            self.favicon = 'http://' + linksplit[2] + '/favicon.ico'
+
 
 # Check for valid linkid
 def check_link(link):
