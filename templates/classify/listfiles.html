@@ -23,7 +23,7 @@
           Cancelled ({{ file.complete }} / {{ file.total }})
           {% else %}
           {{ file.complete }} / {{ file.total }}{% endif %}
-        </span><br><span class="graytext" style="font-size:9pt">Added {{ file.added|datetimeformat }}</span><hr>
+        </span><br><span class="graytext" style="font-size:9pt">Added {{ file.added|datetimeformat }} | <span class="deletefile underlinejslink {{ file.key }}{{ file.id }}" dataid="{{ file.id }}" datakey="{{ file.key }}">Delete</span></span><hr>
       {% endfor %}
     </div>
   </body>

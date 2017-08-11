@@ -110,4 +110,26 @@ $(document).ready(function () {
     }
   }
   });
+
+  $('.deletefile').click(function() {
+    var fileid = $(this).attr('dataid');
+    var key = $(this).attr('datakey');
+    var file = $(this);
+    $.ajax({
+        type: 'GET',
+        url: '/api/classify/delete/'+fileid+'/'+key,
+        success: function (data) {
+          if (data.error) {
+            file.text(data.error);
+          } else {
+              file.text('Removed!');
+              file.removeClass('deletefile');
+              file.removeClass('underlinejslink');
+          }
+        },
+        error: function (data) {
+            file.text('Error Removing!');
+        }
+    });
+  });
 });

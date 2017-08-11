@@ -55,7 +55,7 @@ class scrape_link:
                 # If it is, get the real URL
                 self.favicon = t.xpath('//link[@rel="icon" or @rel="shortcut icon" or @rel="icon shortcut"]/@href')[0].split('//')[1]
             try:
-                # If it found it, check if it is a live page
+                # If its found it, check if it is a live page
                 a = requests.get('http://' + self.favicon, headers=headers)
                 if a.status_code != 200:
                     raise Exception

@@ -28,7 +28,7 @@
         {% else %}
         style="color:gray;cursor:wait;"
         {% endif %}>{{ file.save.split('.csv')[0]+'.json' }}</a>
-        <br><span class="graytext" style="font-size:9pt">Added {{ file.added|datetimeformat }}</span><hr>
+        <br><span class="graytext" style="font-size:9pt">Added {{ file.added|datetimeformat }} | <span class="deletefile underlinejslink {{ file.key }}{{ file.id }}" dataid="{{ file.id }}" datakey="{{ file.key }}">Delete</span></span><hr>
       {% endfor %}
     </div>
   </body>

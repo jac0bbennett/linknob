@@ -167,6 +167,7 @@ def queuefile(uploadname, savename, keycheck, type='topics', support=0, confiden
 def checkqueueid(key):
     check = FileQueue.query.filter_by(key=key).order_by(FileQueue.added.desc()).first()
     apikey = ClassifyKey.query.filter_by(key=key).first()
+    print(check)
     if apikey and (datetime.date(apikey.lastquery) != datetime.date(datetime.now())):
         apikey.queries = 0
         db.session.commit()
@@ -199,6 +200,21 @@ def cancelqueue(key):
         return jsonify({'error': 'Cancellation unavailable!'})
     else:
         abort(404)
+
+@app.route('/api/classify/delete/<fileid>/<key>')
+def deletefile(fileid, key):
+    file = FileQueue.query.filter_by(id=fileid).first()
+    if file:
+        if file.key == key:
+            db.session.delete(file)
+            db.session.commit()
+            if os.path.isfile('Classify/temp/'+key+'/'+file.save):
+                os.remove('Classify/temp/'+key+'/'+file.save)
+            return jsonify({})
+        else:
+            return jsonify({'error': 'Api key does not match file!'})
+    else:
+        return jsonify({'error': 'File does not exist!'})
 
 @app.route('/api/classify', methods=['GET', 'POST'])
 def classifytopics():
@@ -359,6 +375,6 @@ def downloadcsv(csvname):
         try:
             return send_file('Classify/temp/'+key+'/'+csvname, mimetype='text/csv')
         except Exception:
-            return abort(404)
+            return 'File not found!'
     else:
         abort(404)

@@ -445,6 +445,11 @@ body {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 }
 
+.underlinejslink:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .cool {
     color: #EEEEEE;
     border: none;
