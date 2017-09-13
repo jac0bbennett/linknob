@@ -14,9 +14,14 @@
     <div id="links">
       <span class="graytext apicalls" style="float:right;">{% if apikey %}Used Today: {{ apikey.queries }} / {{ apikey.querylimit }}{% endif %}</span>
       <h1>{{ catg.capitalize() }} Classification</h1>
-      <span class="graytext">1. Choose a csv with "Id" and "Url" columns. <br>2. Click upload. <br>3. Your upload will be processed by our server.
-        <br>4. The file containing results will be available
-        in results page for download at any time.
+      <span class="graytext"><ol>
+        <li>Choose a csv with "Id" and "Url" columns.</li>
+        <li>Click upload.</li>
+        <li>Your upload will be processed by our server.</li>
+        <li>The file containing results will be available
+        in results page for download at any time.</li>
+        <li>If the result count hangs at 0 for an extended period of time, then an error most likely occured. Just click cancel and check your uploaded file.</li>
+      </ol>
       </span>
       <hr>
       <a class="genlink allres" href="/api/classify/temp/list/{{ catg }}">All Results</a>

@@ -14,9 +14,13 @@
     </div>
     <div id="links">
       <h1>Association Analysis</h1>
-      <span class="graytext">1. Choose a csv containing associations. <br>2. Click upload. <br>3. Your upload will be processed by our server.
-        <br>4. The csv and json version of results will be available in all results page at any time
-      </span>
+      <span class="graytext"><ol>
+        <li>Choose a csv containing associations.</li>
+        <li>Click upload.</li>
+        <li>Your upload will be processed by our server.</li>
+        <li>The csv and json version of results will be available in all results page at any time</li>
+      </ol>
+    </span>
       <hr>
       <a class="genlink allres" href="/api/classify/temp/list/assoc">All Results</a>
       <span style="float:right;" class="graytext msg">{% if queuedfile %}Processing... ({{ queuedfile.complete }} / {{ queuedfile.total }}){% endif %}</span><br><br>

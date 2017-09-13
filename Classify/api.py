@@ -190,12 +190,10 @@ def checkqueueid(key):
 @app.route('/api/classify/cancel/<key>')
 def cancelqueue(key):
     check = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').order_by(FileQueue.added.desc()).first()
-    if check and ('-assoc-' not in check.save and 'Twitter-' not in check.save):
+    if check and ('-assoc-' not in check.save):
         check.status = 'cancelled'
         db.session.commit()
         return jsonify()
-    elif check and 'Twitter-' in check.save:
-        return jsonify({'error': 'Cancellation unavailable!'})
     elif check and ('-assoc-' in check.save):
         return jsonify({'error': 'Cancellation unavailable!'})
     else:
@@ -316,7 +314,16 @@ def classifyassoc():
 @app.route('/api/classify/twitter', methods=['GET', 'POST'])
 def twitterwords():
     if request.method == 'GET':
-        return render_template('classify/twittercsv.html', title="Twitter")
+        if 'classifykey' in session:
+            queuedfile = FileQueue.query.filter_by(key=session['classifykey']).filter(FileQueue.status=='processing').order_by(FileQueue.added.asc()).first()
+        else:
+            queuedfile = None
+
+        if 'classifykey' in session:
+            apikey = ClassifyKey.query.filter_by(key=session['classifykey']).first()
+        else:
+            apikey = None
+        return render_template('classify/twittercsv.html', title="Twitter", queuedfile=queuedfile, apikey=apikey)
     elif request.method == 'POST':
         key = request.json['key']
         keycheck = ClassifyKey.query.filter_by(key=key).first()
@@ -324,21 +331,11 @@ def twitterwords():
             return jsonify({'error': 'Invalid API key'})
         session['classifykey'] = key
 
-        twitcheck = FileQueue.query.filter_by(key=key).filter(FileQueue.save.contains('Twitter')).order_by(FileQueue.added.desc()).first()
-        if twitcheck:
-            dif = (datetime.now() - twitcheck.added).total_seconds()
-            if dif < 300:
-                return jsonify({'error': 'Please wait '+str(int(300-dif))+' seconds.'})
-
-        keywords = []
-
-        request.json['keywords'] = request.json['keywords'].replace(', ', ',')
-        for word in request.json['keywords'].split(','):
-            keywords.append(word)
+        keywords = request.json['keywords']
 
         if not os.path.exists(os.path.join('Classify/temp/'+key)):
             os.makedirs(os.path.join('Classify/temp/'+key))
-        savename = 'Twitter-'+secure_filename(request.json['keywords'].split(',')[0])+'-'+str(datetime.now()).split('.')[0].replace(':', '-')+'.csv'
+        savename = secure_filename(request.json['keywords'].split(',')[0])+'-twitter-'+str(datetime.now()).split('.')[0].replace(':', '-')+'.csv'
 
         queue = queuefile(None, savename, keycheck, type='twitter', topictypes=keywords)
         return jsonify({'status': queue, 'savename': savename})
@@ -356,8 +353,6 @@ def listclassifyfiles(classifier):
         files.sort(key=lambda x: os.stat(os.path.join('Classify/temp/'+key, x)).st_mtime)
         files = files[::-1]
         '''
-
-        print(classifier)
 
         if classifier != 'assoc' and classifier != 'twitter':
             return render_template('classify/listfiles.html', files=files, classifier=classifier, key=key)

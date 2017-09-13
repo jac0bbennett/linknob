@@ -1,4 +1,6 @@
 $(document).ready(function () {
+  var curerr = false;
+
   $('.allres').click(function(e) {
     var key = $('.apikey');
     if (key.val() == '') {
@@ -11,6 +13,10 @@ $(document).ready(function () {
 
   function checkqueue() {
     var key = $('.apikey').val();
+    console.log(curerr);
+    if (curerr == true) {
+      return;
+    }
     if (key != '') {
       $.ajax({
           type: 'GET',
@@ -18,8 +24,9 @@ $(document).ready(function () {
           success: function (data) {
             if (data.error) {
               $('.msg').text(data.error);
+              curerr = true;
             } else {
-        				if (data.status == 'complete' && data.status.indexOf('Twitter-')) {
+        				if (data.status == 'complete' && data.result.toLowerCase().indexOf('-twitter-') >= 0) {
                         $('.msg').html('Finished last <a class="genlink tooltiplong" tip="'+data.result+'" href="'+data.url+'">File</a> ('+data.total+')');
                         $('.upload').text('Submit');
                         $('.upload').css({'background': '#2E7D32'});
@@ -45,6 +52,7 @@ $(document).ready(function () {
   $('#searchtweet').click(function() {
     if ($(this).text() == 'Submit') {
       $('.msg').text('Submitting...');
+      curerr = false;
       $.ajax({
           type: 'POST',
           contentType: 'application/json; charset=utf-8',
@@ -57,11 +65,13 @@ $(document).ready(function () {
           success: function (data) {
             if (data.error) {
               $('.msg').text(data.error);
+              curerr = true;
             } else {
               if (data.status == 'processing') {
                 $('.msg').text('Processing...');
                 $('.upload').text('Cancel');
                 $('.upload').css({'background': '#981e1e'});
+                checkqueue();
               } else if (data.status == 'unavailable') {
                 $('.msg').text('All workers are busy. Try again in a minute.');
               } else if (data.status == 'running') {

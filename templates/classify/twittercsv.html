@@ -13,9 +13,12 @@
     <div id="links">
       <h1>Twitter to CSV</h1>
       <span class="graytext"><ol>
-        <li>Enter keywords separated by commas</li>
-        <li>Enter unwanted keywords beginning with -</li>
-        <li>Tweets will be retrieved from back to the beginning of the month or 1 week, whichever is more recent.</li>
+        <li>Enter query into input.</li>
+        <li>Click submit.</li>
+        <li>The server will attempt to get a maximum of 3000 tweets.</li>
+        <li>Retweets are filtered out and will subquently reduce number of tweets returned.</li>
+        <li>Note: Several queries in a short period of time may exceed the twitter API rate limit. This will cause the request to be delayed
+          for up to 15 minutes.</li>
       </ol>
       </span>
       <hr>

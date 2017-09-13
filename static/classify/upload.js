@@ -1,4 +1,6 @@
 $(document).ready(function () {
+  var curerr = false;
+
   $('.allres').click(function(e) {
     var key = $('.apikey');
     if (key.val() == '') {
@@ -11,6 +13,11 @@ $(document).ready(function () {
 
   function checkqueue() {
     var key = $('.apikey').val();
+    var catg = $('.classifycatg').text();
+    console.log(curerr);
+    if (curerr == true) {
+      return;
+    }
     if (key != '') {
       $.ajax({
           type: 'GET',
@@ -18,8 +25,9 @@ $(document).ready(function () {
           success: function (data) {
             if (data.error) {
               $('.msg').text(data.error);
+              curerr = true;
             } else {
-              if (data.status == 'complete') {
+              if (data.status == 'complete' && data.result.toLowerCase().indexOf('-'+catg+'-') >= 0) {
                 $('.msg').html('Finished last <a class="genlink tooltiplong" tip="'+data.result+'" href="'+data.url+'">File</a> ('+data.total+')');
                 $('.upload').text('Upload');
                 $('.upload').css({'background': '#2E7D32'});
@@ -38,7 +46,7 @@ $(document).ready(function () {
                 if (data.apiused) {
                   $('.apicalls').text('Used Today: '+data.apiused+' / '+data.apilimit);
                 }
-        				if (data.total) {
+        				if (data.total && data.result.toLowerCase().indexOf('-'+catg+'-') >= 0) {
                         $('.msg').html('Finished last <a class="genlink tooltiplong" tip="'+data.result+'" href="'+data.url+'">File</a> ('+data.total+')');
         				} else {
         					$('.msg').text('');
@@ -61,6 +69,7 @@ $(document).ready(function () {
     e.preventDefault();
     if ($(this).text() == 'Upload') {
       var formData = new FormData($('#fileupload')[0]);
+      curerr = false;
       $('.msg').text('Uploading...');
       $.ajax({
           type: 'POST',
@@ -71,11 +80,13 @@ $(document).ready(function () {
           success: function (data) {
             if (data.error) {
               $('.msg').text(data.error);
+              curerr = true;
             } else {
               if (data.status == 'processing') {
                 $('.msg').text('Processing...');
                 $('.upload').text('Cancel');
                 $('.upload').css({'background': '#981e1e'});
+                checkqueue();
               } else if (data.status == 'unavailable') {
                 $('.msg').text('All workers are busy. Try again in a minute.');
               } else if (data.status == 'running') {
@@ -97,6 +108,7 @@ $(document).ready(function () {
             success: function (data) {
               if (data.error) {
                 $('.msg').text(data.error);
+                curerr = true;
               } else {
                   $('.msg').text('Remaining rows cancelled.');
                   $('.upload').text('Upload');
