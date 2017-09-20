@@ -27,11 +27,11 @@ def searchtwitter(keywords, savename, key):
                                count=100,
                                result_type="recent",
                                include_entities=False,
-                               lang="en").items(3000)
+                               lang="en").items(5000)
             tweets = tweet_batch
 
             with open('Classify/temp/'+key+'/'+savename, 'w', newline="", encoding='utf-8') as destfile:
-                headers = ['Handle', 'Text', 'Created At']
+                headers = ['Handle', 'Followers', 'Text', 'Retweets', 'Favorites', 'Created At']
                 f = csv.DictWriter(destfile, fieldnames=headers)
                 f.writeheader()
                 totalcount = 0
@@ -40,7 +40,10 @@ def searchtwitter(keywords, savename, key):
                         totalcount += 1
                         writedata = {}
                         writedata['Handle'] = tweet.author.screen_name
+                        writedata['Followers'] = tweet.author.followers_count
                         writedata['Text'] = tweet.text
+                        writedata['Retweets'] = tweet.retweet_count
+                        writedata['Favorites'] = tweet.favorite_count
                         writedata['Created At'] = tweet.created_at
                         f.writerow(writedata)
 
