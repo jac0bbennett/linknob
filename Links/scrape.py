@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 1/4/16
+# Copyright Jacob Bennett 9/22/17
 # Status: Stable
 
 import requests, lxml.html, json, re
@@ -82,16 +82,16 @@ class scrape_link:
             except Exception:
                 self.favicon = 'None'
 
-        # Return favicon with protocol
         if self.favicon != 'None':
+            # Return favicon with protocol
             self.favicon = proto + self.favicon
 
-        # Check to make sure it's an image
-        test = requests.get(self.favicon)
-        contype = test.headers['Content-Type']
-        contype = re.match('image/', contype)
-        if not contype:
-            self.favicon = 'http://' + linksplit[2] + '/favicon.ico'
+            # Check to make sure it's an image
+            test = requests.get(self.favicon)
+            contype = test.headers['Content-Type']
+            contype = re.match('image/', contype)
+            if not contype:
+                self.favicon = 'http://' + linksplit[2] + '/favicon.ico'
 
 
 # Check for valid linkid
