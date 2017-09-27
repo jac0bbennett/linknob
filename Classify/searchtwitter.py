@@ -33,7 +33,7 @@ def searchtwitter(keywords, savename, key, include_rt=False):
                                count=100,
                                result_type="recent",
                                include_entities=False,
-                               lang="en").items(100)
+                               lang="en").items(5000)
             tweets = tweet_batch
 
             with open('Classify/temp/'+key+'/'+savename, 'w', newline="", encoding='utf-8') as destfile:
