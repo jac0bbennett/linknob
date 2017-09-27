@@ -28,9 +28,11 @@
         <b>Key:</b><br>
         <input type="text" name="apikey" class="geninput apikey" {% if 'classifykey' in session %}value="{{ session['classifykey'] }}"{% endif %}
          placeholder="API Key" style="width:200px;"><br><br>
-         <b>Keywords in tweets:</b><br>
+         <b>Twitter Query:</b><br>
          <input id="keywords" type="text" name="keywords" class="geninput"
-          placeholder="Keyword" style="width:200px;"><br>
+          placeholder="Query" style="width:200px;">
+           <input type="checkbox" name="include_rt" id="include_rt" value="1" style="margin-left:15px;"><label for="include_rt">Include Retweets</label>
+          <br>
         <span style="float:right;margin-top:-45px;">
         <button class="greenbutton upload" id="searchtweet" {% if queuedfile %}style="background:#981e1e;"{% endif %}>{% if queuedfile %}Cancel{% else %}Submit{% endif %}</button>
       </span>

@@ -53,13 +53,19 @@ $(document).ready(function () {
     if ($(this).text() == 'Submit') {
       $('.msg').text('Submitting...');
       curerr = false;
+      if ($('#include_rt').is(":checked")) {
+        var include_rt = 1;
+      } else {
+        var include_rt = 0;
+      }
       $.ajax({
           type: 'POST',
           contentType: 'application/json; charset=utf-8',
           url: '/api/classify/twitter',
           data: JSON.stringify({
                 key: $('.apikey').val(),
-                keywords: $('#keywords').val()
+                keywords: $('#keywords').val(),
+                include_rt: include_rt
           }),
           processData: false,
           success: function (data) {

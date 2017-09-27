@@ -1,4 +1,4 @@
-import tweepy, csv
+import tweepy, csv, time
 from Models.models import FileQueue, db
 from config import app
 
@@ -16,38 +16,65 @@ def get_authorization():
     return auth
 
 
-def searchtwitter(keywords, savename, key):
+def searchtwitter(keywords, savename, key, include_rt=False):
     with app.app_context():
+
+        try:
+            fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
+        except AttributeError:
+            time.sleep(3)
+            fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
+
         try:
             api = tweepy.API(get_authorization(), wait_on_rate_limit=True)
-
 
             tweet_batch = tweepy.Cursor(api.search,
                                q=keywords,
                                count=100,
                                result_type="recent",
                                include_entities=False,
-                               lang="en").items(5000)
+                               lang="en").items(100)
             tweets = tweet_batch
 
             with open('Classify/temp/'+key+'/'+savename, 'w', newline="", encoding='utf-8') as destfile:
-                headers = ['Handle', 'Followers', 'Text', 'Retweets', 'Favorites', 'Created At']
+                headers = ['Id', 'Handle', 'Followers', 'Text', 'Retweets', 'Favorites', 'Created At']
+
+                if include_rt:
+                    headers.append('RT')
+                    headers.append('Original Id')
+
                 f = csv.DictWriter(destfile, fieldnames=headers)
                 f.writeheader()
                 totalcount = 0
                 for tweet in tweets:
-                    if (not tweet.retweeted) and ('RT @' not in tweet.text) and (keywords.lower() in tweet.text.lower()):
+                    try:
+                        rt_status = tweet.retweeted_status
+                    except AttributeError:
+                        rt_status = None
+                    if (((include_rt == False) and (not rt_status)) or (include_rt)) and (keywords.lower() in tweet.text.lower()):
                         totalcount += 1
                         writedata = {}
+                        writedata['Id'] = tweet.id_str
                         writedata['Handle'] = tweet.author.screen_name
                         writedata['Followers'] = tweet.author.followers_count
                         writedata['Text'] = tweet.text
                         writedata['Retweets'] = tweet.retweet_count
-                        writedata['Favorites'] = tweet.favorite_count
                         writedata['Created At'] = tweet.created_at
+
+                        if include_rt:
+                            if (rt_status):
+                                writedata['RT'] = 1
+                                writedata['Original Id'] = tweet.retweeted_status.id_str
+                                writedata['Favorites'] = tweet.retweeted_status.favorite_count
+                            else:
+                                writedata['RT'] = 0
+                                writedata['Original Id'] = tweet.id_str
+                                writedata['Favorites'] = tweet.favorite_count
+                        else:
+                            writedata['Favorites'] = tweet.favorite_count
+
                         f.writerow(writedata)
 
-            fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
 
             fileq.status = 'complete'
             fileq.complete = totalcount

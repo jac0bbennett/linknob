@@ -146,7 +146,7 @@ def queuefile(uploadname, savename, keycheck, type='topics', support=0, confiden
         elif type == 'assoc':
             process = threading.Thread(target=mbasket.calc, kwargs={'support_threshold': support, 'confidence_threshold': confidence, 'uploadname': uploadname, 'savename': savename, 'key': keycheck.key, 'antqnt': antqnt, 'upformat': upformat})
         elif type == 'twitter':
-            process = threading.Thread(target=searchtwitter, kwargs={'keywords': topictypes, 'savename': savename, 'key': keycheck.key})
+            process = threading.Thread(target=searchtwitter, kwargs={'keywords': topictypes, 'savename': savename, 'key': keycheck.key, 'include_rt': upformat})
         process.daemon = True
         process.start()
         filestatus = 'processing'
@@ -331,12 +331,16 @@ def twitterwords():
         session['classifykey'] = key
 
         keywords = request.json['keywords']
+        if 'include_rt' in request.json and int(request.json['include_rt']) == 1:
+            include_rt = 1
+        else:
+            include_rt = 0
 
         if not os.path.exists(os.path.join('Classify/temp/'+key)):
             os.makedirs(os.path.join('Classify/temp/'+key))
         savename = secure_filename(request.json['keywords'].split(',')[0])+'-twitter-'+str(datetime.now()).split('.')[0].replace(':', '-')+'.csv'
 
-        queue = queuefile(None, savename, keycheck, type='twitter', topictypes=keywords)
+        queue = queuefile(None, savename, keycheck, type='twitter', topictypes=keywords, upformat=include_rt)
         return jsonify({'status': queue, 'savename': savename})
 
 #TODO Display files based on DB catg
