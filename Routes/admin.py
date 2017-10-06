@@ -15,7 +15,7 @@ import importlib, re
 @app.route('/i/dashboard')
 def dashboard():
     if 'user' in session and session['rank'] == 3:
-        title = 'Dashboard'
+        title = 'Dashboardz'
         # Query site stats
         users = User.query.filter(User.joindate != None).order_by(
                 User.joindate.desc()).limit(20)
