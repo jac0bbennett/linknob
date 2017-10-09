@@ -78,7 +78,7 @@ def processfile(uploadname, savename, key, topictypes):
                 url = row['Url']
                 if fileq.status == 'cancelled':
                     break
-                elif keycheck.queries < keycheck.querylimit:
+                elif ClassifyKey.totalQueries() < 5000:
                     if not url.startswith('http'):
                         url = 'http://' + url
                     writedata = {}
@@ -167,9 +167,9 @@ def queuefile(uploadname, savename, keycheck, type='topics', support=0, confiden
 def checkqueueid(key):
     check = FileQueue.query.filter_by(key=key).order_by(FileQueue.added.desc()).first()
     apikey = ClassifyKey.query.filter_by(key=key).first()
-    if apikey and (datetime.date(apikey.lastquery) != datetime.date(datetime.now())):
-        apikey.queries = 0
-        db.session.commit()
+    lastquery = FileQueue.query.order_by(FileQueue.added.desc()).first()
+    if apikey and (datetime.date(lastquery.added) != datetime.date(datetime.now())):
+        ClassifyKey.resetQueries()
     if check:
         return jsonify({
         'id': check.id,
@@ -179,7 +179,7 @@ def checkqueueid(key):
         'total': check.total,
         'catg': check.category,
         'added': check.added,
-        'apiused': apikey.queries,
+        'apiused': ClassifyKey.totalQueries(),
         'apilimit': apikey.querylimit,
         'url': '/api/classify/temp/'+check.save+'?key='+check.key
         })

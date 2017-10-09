@@ -31,6 +31,7 @@ $(document).ready(function () {
                 $('.msg').html('Finished last <a class="genlink tooltiplong" tip="'+data.result+'" href="'+data.url+'">File</a> ('+data.total+')');
                 $('.upload').text('Upload');
                 $('.upload').css({'background': '#2E7D32'});
+                $('.apicalls').text('Used Today: '+data.apiused+' / '+data.apilimit);
               }
               else if ((data.complete != data.total) && (data.status != 'cancelled')) {
                 if (data.result.toLowerCase().indexOf('-assoc-') >= 0) {
@@ -38,7 +39,6 @@ $(document).ready(function () {
                 } else {
                   $('.msg').text('Processing... '+data.complete+'/'+data.total);
                 }
-                $('.apicalls').text('Used Today: '+data.apiused+' / '+data.apilimit);
               } else if (data.status == 'cancelled') {
                 $('.msg').html('Cancelled last <a class="genlink tooltiplong" tip="'+data.result+'" href="'+data.url+'">File</a> ('+data.complete+')')
               }

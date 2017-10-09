@@ -489,6 +489,16 @@ class ClassifyKey(db.Model):
     def __repr__(self):
         return '<Email %r>' % self.email
 
+    def totalQueries():
+        totalQueries = ClassifyKey.query.with_entities(func.sum(ClassifyKey.queries)).scalar()
+        return totalQueries
+
+    def resetQueries():
+        print('reset qs')
+        for i in ClassifyKey.query.all():
+            i.queries = 0
+        db.session.commit()
+
 class FileQueue(db.Model):
     __bind_key__ = 'classify'
     __tablename__ = 'filequeue'
