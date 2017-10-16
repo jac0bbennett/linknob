@@ -15,6 +15,18 @@ def get_authorization():
     auth.set_access_token(info['access_token'], info['access_token_secret'])
     return auth
 
+def checkKeywords(keywords, text, exact=False):
+    if exact:
+        if keywords in text:
+            return True
+        else:
+            return False
+    else:
+        for i in keywords.split(' '):
+            if i not in text:
+                return False
+        return True
+
 
 def searchtwitter(keywords, savename, key, include_rt=False):
     with app.app_context():
@@ -46,12 +58,19 @@ def searchtwitter(keywords, savename, key, include_rt=False):
                 f = csv.DictWriter(destfile, fieldnames=headers)
                 f.writeheader()
                 totalcount = 0
+
+                if keywords.startswith('"') and keywords.endswith('"'):
+                    exact = True
+                    keywords = keywords.replace('"', '')
+                else:
+                    exact = False
+
                 for tweet in tweets:
                     try:
                         rt_status = tweet.retweeted_status
                     except AttributeError:
                         rt_status = None
-                    if (((include_rt == False) and (not rt_status)) or (include_rt)) and (keywords.lower() in tweet.text.lower()):
+                    if (((include_rt == False) and (not rt_status)) or (include_rt)) and checkKeywords(keywords, tweet.text.lower(), exact):
                         totalcount += 1
                         writedata = {}
                         writedata['Id'] = tweet.id_str
