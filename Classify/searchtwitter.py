@@ -33,9 +33,11 @@ def searchtwitter(keywords, savename, key, include_rt=False):
 
         try:
             fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
+            print(fileq.status)
         except AttributeError:
             time.sleep(3)
             fileq = FileQueue.query.filter_by(key=key).filter(FileQueue.status=='processing').first()
+
 
         try:
             api = tweepy.API(get_authorization(), wait_on_rate_limit=True)
@@ -45,7 +47,7 @@ def searchtwitter(keywords, savename, key, include_rt=False):
                                count=100,
                                result_type="recent",
                                include_entities=False,
-                               lang="en").items(5000)
+                               lang="en").items(2000)
             tweets = tweet_batch
 
             with open('Classify/temp/'+key+'/'+savename, 'w', newline="", encoding='utf-8') as destfile:
@@ -94,12 +96,15 @@ def searchtwitter(keywords, savename, key, include_rt=False):
 
                         f.writerow(writedata)
 
+                    print(totalcount)
 
+
+            print('almost done')
             fileq.status = 'complete'
             fileq.complete = totalcount
             fileq.total = totalcount
-
             db.session.commit()
+            print('finished')
 
         except Exception as e:
             print(e)
