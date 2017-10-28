@@ -56,20 +56,25 @@ def processfile(uploadname, savename, key, topictypes):
         if 'general' in topictypes:
             for topic in gentopics:
                 alltopics.append(topic)
+            alltopics.extend(["Top_Topic", "TopicProbability"])
         if 'computer' in topictypes:
             for topic in comptopics:
                 alltopics.append(topic)
+            alltopics.extend(["Top_Computer", "ComputerProbability"])
         if 'business' in topictypes:
             for topic in biztopics:
                 alltopics.append(topic)
+            alltopics.extend(["Top_Business", "BusinessProbability"])
         if 'society' in topictypes:
             for topic in soctopics:
                 alltopics.append(topic)
+            alltopics.extend(["Top_Society", "SocietyProbability"])
         fullsize = 0
         for i in topictypes:
             fullsize += 1
         fileq.total = fileq.total * fullsize
         db.session.commit()
+
         with open('Classify/temp/'+key+'/'+savename, 'w', newline="") as destfile, open('Classify/temp/uploads/'+uploadname, 'r') as r:
             f = csv.DictWriter(destfile, fieldnames=alltopics)
             f.writeheader()
@@ -81,11 +86,35 @@ def processfile(uploadname, savename, key, topictypes):
                 elif ClassifyKey.totalQueries() < 5000:
                     if not url.startswith('http'):
                         url = 'http://' + url
+
                     writedata = {}
                     writedata['Id'] = row['Id']
                     writedata['Url'] = url
 
-                    def appenddata(data):
+                    # MOVE TO UCLASSIFY UTILS
+                    def calculateTop(data, topic):
+                        topCols = {'general': 'Topic', 'computer': 'Computer', 'business': 'Business', 'society': 'Society'}
+                        firstVal = None
+                        topTop = None
+                        topVal = None
+                        for i in data:
+                            if not firstVal:
+                                firstVal = data[i]
+                                if all(value == firstVal for value in data.values()):
+                                    topTop = "UNK"
+                                    topVal = 0
+                                    break
+                            else:
+                                if not topVal:
+                                    topVal = data[i]
+                                else:
+                                    if data[i] > topVal:
+                                        topTop = i
+                                        topVal = data[i]
+                        writedata['Top_'+topCols[topic]] = topTop
+                        writedata[topCols[topic]+'Probability'] = "{0:.0f}%".format(topVal * 100)
+
+                    def appenddata(data, topic):
                         #data = {}
                         try:
                             data = data['cls1']
@@ -94,6 +123,9 @@ def processfile(uploadname, savename, key, topictypes):
                         if data:
                             for i in data:
                                 writedata[i] = data[i]
+
+                        calculateTop(data, topic)
+
                         keycheck.queries += 1
                         keycheck.lastquery = datetime.now()
                         fileq.complete += 1
@@ -104,19 +136,19 @@ def processfile(uploadname, savename, key, topictypes):
                         #req = requests.get(url)
                         req = requests.get('http://uclassify.com/browse/uclassify/topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
                         data = req.json()
-                        appenddata(data)
+                        appenddata(data, 'general')
                     if 'computer' in topictypes:
                         req = requests.get('http://uclassify.com/browse/uclassify/computer-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
                         data = req.json()
-                        appenddata(data)
+                        appenddata(data, 'computer')
                     if 'business' in topictypes:
                         req = requests.get('http://uclassify.com/browse/uclassify/business-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
                         data = req.json()
-                        appenddata(data)
+                        appenddata(data, 'business')
                     if 'society' in topictypes:
                         req = requests.get('http://uclassify.com/browse/uclassify/society-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
                         data = req.json()
-                        appenddata(data)
+                        appenddata(data, 'society')
                     f.writerow(writedata)
         if fileq.status != 'cancelled':
             fileq.status = 'complete'
