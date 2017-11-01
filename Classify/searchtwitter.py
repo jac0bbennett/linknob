@@ -72,7 +72,7 @@ def searchtwitter(keywords, savename, key, include_rt=False):
                         rt_status = tweet.retweeted_status
                     except AttributeError:
                         rt_status = None
-                    if (((include_rt == False) and (not rt_status)) or (include_rt)) and checkKeywords(keywords, tweet.text.lower(), exact):
+                    if (((include_rt == False) and (not rt_status)) or (include_rt)) and checkKeywords(keywords.lower(), tweet.text.lower(), exact):
                         totalcount += 1
                         writedata = {}
                         writedata['Id'] = tweet.id_str
@@ -96,15 +96,12 @@ def searchtwitter(keywords, savename, key, include_rt=False):
 
                         f.writerow(writedata)
 
-                    print(totalcount)
 
 
-            print('almost done')
             fileq.status = 'complete'
             fileq.complete = totalcount
             fileq.total = totalcount
             db.session.commit()
-            print('finished')
 
         except Exception as e:
             print(e)

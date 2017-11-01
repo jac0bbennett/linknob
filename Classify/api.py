@@ -79,6 +79,7 @@ def processfile(uploadname, savename, key, topictypes):
             f = csv.DictWriter(destfile, fieldnames=alltopics)
             f.writeheader()
             d = csv.DictReader(r)
+
             for row in d:
                 url = row['Url']
                 if fileq.status == 'cancelled':
