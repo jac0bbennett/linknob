@@ -69,6 +69,7 @@ def processfile(uploadname, savename, key, topictypes):
             for topic in soctopics:
                 alltopics.append(topic)
             alltopics.extend(["Top_Society", "SocietyProbability"])
+        alltopics.extend(["Est. Category", "Est. Probability"])
         fullsize = 0
         for i in topictypes:
             fullsize += 1
@@ -92,12 +93,15 @@ def processfile(uploadname, savename, key, topictypes):
                     writedata['Id'] = row['Id']
                     writedata['Url'] = url
 
+                    endCol = {'topGen': 'UNK', 'estTopic': 'UNK', 'estProb': 0}
+
                     # MOVE TO UCLASSIFY UTILS
                     def calculateTop(data, topic):
                         topCols = {'general': 'Topic', 'computer': 'Computer', 'business': 'Business', 'society': 'Society'}
                         firstVal = None
                         topTop = None
                         topVal = None
+
                         for i in data:
                             if not firstVal:
                                 firstVal = data[i]
@@ -112,6 +116,24 @@ def processfile(uploadname, savename, key, topictypes):
                                     if data[i] > topVal:
                                         topTop = i
                                         topVal = data[i]
+
+                        if 'general' in topictypes:
+                            if topic == 'general':
+                                if topTop == 'UNK':
+                                    endCol['topGen'] = "UNK"
+                                elif topVal <= 0.5:
+                                    endCol['topGen'] = topTop
+                                    endCol['estTopic'] = topTop
+                                    endCol['estProb'] = topVal
+                                elif topVal != 'UNK' and topVal > 0.5:
+                                    endCol['topGen'] = topTop
+                                    endCol['estTopic'] = topTop
+                                    endCol['estProb'] = topVal
+                            else:
+                                if topic == endCol['topGen'].lower():
+                                    endCol['estTopic'] = topTop
+                                    endCol['estProb'] = topVal
+
                         writedata['Top_'+topCols[topic]] = topTop
                         writedata[topCols[topic]+'Probability'] = "{0:.0f}%".format(topVal * 100)
 
@@ -150,6 +172,10 @@ def processfile(uploadname, savename, key, topictypes):
                         req = requests.get('http://uclassify.com/browse/uclassify/society-topics/ClassifyUrl/?readkey='+uclassifyKey+'&output=json&url='+url)
                         data = req.json()
                         appenddata(data, 'society')
+
+                    writedata['Est. Category'] = endCol['estTopic']
+                    writedata['Est. Probability'] = "{0:.0f}%".format(endCol['estProb'] * 100)
+
                     f.writerow(writedata)
         if fileq.status != 'cancelled':
             fileq.status = 'complete'
