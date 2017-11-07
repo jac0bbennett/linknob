@@ -81,3 +81,12 @@ def resetkey():
 @app.route('/favicon.ico')
 def faviconico():
     return send_file('static/images/favicon.ico', mimetype='image/png')
+
+
+@app.route('/api/classify')
+@app.route('/api/classify/<page>')
+def redirectToClassify(page=None):
+    if page:
+        return redirect('https://datauplift.com/api/classify/'+page)
+    else:
+        return redirect('https://datauplift.com/api/classify')
