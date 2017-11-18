@@ -1,6 +1,6 @@
 $(window).load(function () {
   $('.loading').hide();
-  $('#searchinput').attr('placeholder', 'Search');
+  $('#searchinput').attr('placeholder', $.parseHTML("&#xF002;")[0].data+' Search');
 });
 
 titletext = $('title').text();

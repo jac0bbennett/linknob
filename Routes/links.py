@@ -214,8 +214,8 @@ def viewchain(chainuuid):
 
         if catg == 'new':
             title = chain.title + ' | Linknob'
-        elif catg == 'scored':
-            title = chain.title + ' | Linknob | Scored (alpha)'
+        elif catg == 'top':
+            title = chain.title + ' | Linknob | Top'
         else:
             abort(404)
 
@@ -234,7 +234,13 @@ def viewchain(chainuuid):
                 if after:
                     after = after.id
                 links = Link.query.join(Chainlink, (Chainlink.link == Link.id)).filter(Chainlink.chain==chain.id).order_by(Chainlink.added.desc()).paginate(page, PER_PAGE, linkcount).items
+            elif catg == 'top':
+                after = Link.query.join(Chainlink, (Chainlink.link == Link.id)).filter(Chainlink.chain==chain.id).order_by(Chainlink.added.desc()).first()
+                if after:
+                    after = after.id
+                links = Link.query.join(Chainlink, (Chainlink.link == Link.id)).filter(Chainlink.chain==chain.id).order_by(Link.points.desc()).paginate(page, PER_PAGE, linkcount).items
             elif catg == 'scored':
+                abort(404)
                 after = None
                 PER_PAGE = 50
                 linkcount = Link.query.limit(50).count()

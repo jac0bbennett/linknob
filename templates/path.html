@@ -9,16 +9,16 @@
             <div>
                 <h3>Post a Link:</h3>
                 <center>
-                    <input type="text" name="link" id="link" placeholder="Link">
+                    <i class="fa fa-link" aria-hidden="true"></i> <input type="text" name="link" id="link" placeholder="Link">
                     <br>
                     <br>
-                    <input type="text" name="comment" id="comment" placeholder="Comment/Tags (Optional)">
+                    <i class="fa fa-align-left" aria-hidden="true"></i> <input type="text" name="comment" id="comment" placeholder="Comment/Tags (Optional)">
                     <br>
                     <br>
-                    <input type="text" name="ptname" id="ptname" placeholder="Point Name (default=Cool)">
+                    <i class="fa fa-thumbs-up" aria-hidden="true"></i> <input type="text" name="ptname" id="ptname" placeholder="Point Name (default=Cool)">
                     <br>
                     <br>
-                    <button class="sublnc greenbutton" style="background: #29bf5d;">Submit</button><span class="msg"></span>
+                    <button class="sublnc greenbutton">Submit <i class="fa fa-paper-plane" aria-hidden="true"></i></button><span class="msg"></span>
                 </center>
             </div>
             {% else %}
@@ -27,12 +27,21 @@
             <hr>
         </div>
         <div id="catg">
-            {% if catg == 'new' %}<a tip="New" class="tooltip newicon" href="/i/path"><img title="New" src="/static/images/newhover.png" width="35px" align="middle"></a>{% else %}
-            <a tip="New" class="tooltip newicon" href="/i/path"><img class="newicon" src="/static/images/newbefore.png" width="35px" align="middle">
-            </a>{% endif %} <!-- {% if catg == 'scored' %}<a tip="Scored" class="tooltip" href="/i/path?catg=scored"><img title="Scored" src="/static/images/scoredhover.png" width="28px" align="middle"></a>{% else %}
-            <a tip="Scored" class="tooltip" href="/i/path?catg=scored"><img class="todayicon" src="/static/images/scoredbefore.png" width="28px" align="middle">
-            </a>{% endif %} -->{% if catg == 'top' %}<a tip="Top" class="tooltip topicon" href="/i/path?catg=top"><img title="Top" src="/static/images/tophover.png" width="32px" align="middle"></a>{% else %}
-            <a tip="Top" class="tooltip topicon" href="/i/path?catg=top"><img class="topicon" src="/static/images/topbefore.png" width="32px" align="middle">
+            {% if catg == 'new' %}
+            <a tip="New" class="tooltip newicon selectedicon" href="/i/path">
+              <i class="fa fa-certificate" aria-hidden="true"></i>
+            </a>
+            {% else %}
+            <a tip="New" class="tooltip newicon" href="/i/path">
+              <i class="fa fa-certificate" aria-hidden="true"></i>
+            </a>{% endif %}
+            {% if catg == 'top' %}
+            <a tip="Top" class="tooltip topicon selectedicon" href="/i/path?catg=top">
+              <i class="fa fa-star" aria-hidden="true"></i>
+            </a>
+            {% else %}
+            <a tip="Top" class="tooltip topicon" href="/i/path?catg=top">
+              <i class="fa fa-star" aria-hidden="true"></i>
             </a>{% endif %}
         </div>
         {% if catg == 'scored' %}

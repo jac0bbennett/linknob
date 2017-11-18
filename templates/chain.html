@@ -34,11 +34,29 @@
         <span class="graytext">{{ chain.description }}</span><br>
         <br>
         <div id="catg">
-        {% if catg == 'new' %}<a tip="New" class="tooltip newicon" href="/c/{{ chain.uuid }}"><img title="New" src="/static/images/newhover.png" width="35px" align="middle"></a>{% else %}
-        <a tip="New" class="tooltip newicon" href="/c/{{ chain.uuid }}"><img class="newicon" src="/static/images/newbefore.png" width="35px" align="middle">
-        </a>{% endif %} {% if catg == 'scored' %}<a tip="Scored" class="tooltip" href="/c/{{ chain.uuid }}?catg=scored"><img title="Scored" src="/static/images/scoredhover.png" width="28px" align="middle"></a>{% else %}
-        <a tip="Scored" class="tooltip" href="/c/{{ chain.uuid }}?catg=scored"><img class="todayicon" src="/static/images/scoredbefore.png" width="28px" align="middle">
-        </a>{% endif %}
+          {% if catg == 'new' %}
+          <a tip="New" class="tooltip newicon selectedicon" href="/c/{{chain.uuid}}">
+            <i class="fa fa-certificate" aria-hidden="true"></i>
+          </a>
+          {% else %}
+          <a tip="New" class="tooltip newicon" href="/c/{{chain.uuid}}">
+            <i class="fa fa-certificate" aria-hidden="true"></i>
+          </a>
+          {% endif %}
+          {% if catg == 'top' %}
+          <a tip="Top" class="tooltip topicon selectedicon" href="/c/{{chain.uuid}}?catg=top">
+            <i class="fa fa-star" aria-hidden="true"></i>
+          </a>
+          {% else %}
+          <a tip="Top" class="tooltip topicon" href="/c/{{chain.uuid}}?catg=top">
+            <i class="fa fa-star" aria-hidden="true"></i>
+          </a>
+          {% endif %}
+          {% if catg == 'scored' %}
+          <a tip="Scored" class="tooltip scoredicon selectedicon" href="/c/{{chain.uuid}}?catg=scored">
+            <i class="fa fa-circle" aria-hidden="true"></i>
+          </a>
+          {% endif %}
       </div><br>
         <div id="link_container">
           {% for link in links %}

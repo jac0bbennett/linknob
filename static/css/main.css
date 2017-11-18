@@ -408,7 +408,7 @@ body {
 }
 
 .greenbutton {
-    background: #2E7D32;
+    background: #29bf5d;
     border: none;
     color: #fff;
     font-family: Roboto;
@@ -423,7 +423,7 @@ body {
 }
 
 .greenbutton:hover {
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    background: #24b055;
 }
 
 .deletebutton {
@@ -719,7 +719,7 @@ hr {
     font-weight: 300;
     -webkit-transition: 500ms ease;
     transition: 500ms ease;
-    font-family: Roboto;
+    font-family: Roboto, FontAwesome;
 }
 
 #searchinput:hover {
@@ -786,6 +786,15 @@ hr {
 .webfavicon {
     vertical-align: text-bottom;
     width: 25px;
+}
+
+.newicon, .topicon, .scoredicon {
+  font-size: 26pt;
+  color: gray;
+}
+
+.selectedicon {
+  color: #E6B730;
 }
 
 #statblock {
