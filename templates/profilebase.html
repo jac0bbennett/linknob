@@ -36,19 +36,19 @@
         </center>
         <div id="catg">
           {% if catg == 'new' %}
-          <a tip="New" class="tooltip newicon selectedicon" href="/{{ pseudo }}">
+          <a tip="New" class="tooltip newicon selectedicon" href="/{{ user.pseudo }}">
             <i class="fa fa-certificate" aria-hidden="true"></i>
           </a>
           {% else %}
-          <a tip="New" class="tooltip newicon" href="/{{ pseudo }}">
+          <a tip="New" class="tooltip newicon" href="/{{ user.pseudo }}">
             <i class="fa fa-certificate" aria-hidden="true"></i>
           </a>{% endif %}
           {% if catg == 'top' %}
-          <a tip="Top" class="tooltip topicon selectedicon" href="/{{ pseudo }}?catg=top">
+          <a tip="Top" class="tooltip topicon selectedicon" href="/{{ user.pseudo }}?catg=top">
             <i class="fa fa-star" aria-hidden="true"></i>
           </a>
           {% else %}
-          <a tip="Top" class="tooltip topicon" href="/i/{{ pseudo }}?catg=top">
+          <a tip="Top" class="tooltip topicon" href="/i/{{ userr.pseudo }}?catg=top">
             <i class="fa fa-star" aria-hidden="true"></i>
           </a>{% endif %}
         </div>
