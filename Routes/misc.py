@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-# Copyright Jacob Bennett 10/2/16
+# Copyright Jacob Bennett 4/8/19
 
-from flask import render_template, request, session, flash, send_file, abort, redirect, url_for, jsonify
+from flask import render_template, request, session, flash, send_file, abort, redirect, url_for, jsonify, json
 from config import app, db, pepper, bsalt, mailgunkey
 from Models.models import User, Resetkey
-from utils import codegen
+from utils import codegen, escapeit
 from datetime import datetime
 from hashlib import md5
 import bcrypt, requests
