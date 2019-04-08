@@ -90,3 +90,21 @@ def redirectToClassify(page=None):
         return redirect('https://datauplift.com/api/classify/'+page)
     else:
         return redirect('https://datauplift.com/api/classify')
+
+
+
+@app.route('/api/contact', methods=['POST'])
+def contactme():
+    name = request.form['name']
+    email = request.form['email']
+    msg = request.form['msg']
+
+    requests.post(
+                        "https://api.mailgun.net/v3/linknob.com/messages",
+                        auth=("api", mailgunkey),
+                        data={"from": "Contact Form (Linknob API) <noreply@linknob.com>",
+                              "to": ["jacobwbennett@gmail.com"],
+                              "subject": name + " | Contact Form",
+                              "html": '<html>'+ msg + '<br>------------------------<br> From: ' + email + '</html>'})
+
+    return ''

@@ -77,14 +77,15 @@ def new(catg):
             after = None
             PER_PAGE = 50
             linkcount = Link.query.filter(Link.visibility == 1).limit(50).count()
+
             links = Link.query.join(Point, (Point.link == Link.id)).group_by(Link.id).filter((Link.visibility == 1) & (Link.points > 0) & (Link.age >= 60)).order_by((score(Link.points, Link.age, func.count(Point.id))).desc()).limit(50)
-            '''
-            #Get visible score
-            for link in links:
-                timedif = (datetime.now() - link.time).total_seconds()
-                print("Alg: " + "((" + str(link.points) + "/" + str(timedif) + ")" + "/" + str(Point.query.filter_by(link=link.id).count()) + ")" + " * 100000000")
-                print(link.link + ": " + str(int(((link.points/timedif) / Point.query.filter_by(link=link.id).count()) * 100000000)))
-            '''
+
+            # #Get visible score
+            # for link in links:
+            #     timedif = (datetime.now() - link.time).total_seconds()
+            #     print("Alg: " + "((" + str(link.points) + "/" + str(timedif) + ")" + "/" + str(Point.query.filter_by(link=link.id).count()) + ")" + " * 100000000")
+            #     print(link.link + ": " + str(int(((link.points/timedif) / Point.query.filter_by(link=link.id).count()) * 100000000)))
+            
     pagination = Pagination(page, PER_PAGE, linkcount)
     return render_template('linknob.html', title=title, links=links, catg=catg, pagination=pagination, catgpage='global', after=after, trendingurls=trend.urls())
 
