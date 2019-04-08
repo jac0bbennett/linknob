@@ -93,19 +93,22 @@ def redirectToClassify(page=None):
 
 
 
-@app.route('/api/contact', methods=['POST'])
+@app.route('/api/contact', methods=['POST', 'OPTIONS'])
 def contactme():
-    reqData = json.loads(request.data)
-    name = escapeit(reqData['name'])
-    email = escapeit(reqData['email'])
-    msg = escapeit(reqData['msg'])
+    if (request.method == 'POST'):
+        reqData = json.loads(request.data)
+        name = escapeit(reqData['name'])
+        email = escapeit(reqData['email'])
+        msg = escapeit(reqData['msg'])
 
-    requests.post(
-                        "https://api.mailgun.net/v3/linknob.com/messages",
-                        auth=("api", mailgunkey),
-                        data={"from": "Contact Form (Linknob API) <noreply@linknob.com>",
-                              "to": ["jacobwbennett@gmail.com"],
-                              "subject": name + " | Contact Form",
-                              "html": '<html>'+ msg + '<br>------------------------<br> From: ' + email + '</html>'})
+        requests.post(
+                            "https://api.mailgun.net/v3/linknob.com/messages",
+                            auth=("api", mailgunkey),
+                            data={"from": "Contact Form (Linknob API) <noreply@linknob.com>",
+                                "to": ["jacobwbennett@gmail.com"],
+                                "subject": name + " | Contact Form",
+                                "html": '<html>'+ msg + '<br>------------------------<br> From: ' + email + '</html>'})
 
-    return jsonify()
+        return jsonify()
+    else:
+        return jsonify({'status': 'wrong method'})
