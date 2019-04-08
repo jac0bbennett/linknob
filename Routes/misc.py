@@ -2,7 +2,7 @@
 
 # Copyright Jacob Bennett 10/2/16
 
-from flask import render_template, request, session, flash, send_file, abort, redirect, url_for
+from flask import render_template, request, session, flash, send_file, abort, redirect, url_for, jsonify
 from config import app, db, pepper, bsalt, mailgunkey
 from Models.models import User, Resetkey
 from utils import codegen
@@ -95,9 +95,10 @@ def redirectToClassify(page=None):
 
 @app.route('/api/contact', methods=['POST'])
 def contactme():
-    name = request.form['name']
-    email = request.form['email']
-    msg = request.form['msg']
+    reqData = json.loads(request.data)
+    name = escapeit(reqData['name'])
+    email = escapeit(reqData['email'])
+    msg = escapeit(reqData['msg'])
 
     requests.post(
                         "https://api.mailgun.net/v3/linknob.com/messages",
@@ -107,4 +108,4 @@ def contactme():
                               "subject": name + " | Contact Form",
                               "html": '<html>'+ msg + '<br>------------------------<br> From: ' + email + '</html>'})
 
-    return ''
+    return jsonify()
